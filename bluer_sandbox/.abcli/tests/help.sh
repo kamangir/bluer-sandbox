@@ -18,11 +18,6 @@ function test_bluer_sandbox_help() {
         "@sandbox test list" \
         \
         "@sandbox browse" \
-        "@sandbox leaf" \
-        "@sandbox node" \
-        "@sandbox node leaf" \
-        \
-        "@sandbox task" \
         \
         "bluer_sandbox"; do
         abcli_eval ,$options \
