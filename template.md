@@ -10,4 +10,8 @@ items:::
 
 ---
 
+> 🌀 [`blue-sandbox`](https://github.com/kamangir/blue-objects) for the [Global South](https://github.com/kamangir/bluer-south).
+
+---
+
 signature:::
