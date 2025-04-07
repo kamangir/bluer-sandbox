@@ -30,7 +30,7 @@ graph LR
 
     ip_address --> notebooks_connect
 
-    notebooks_host
+    notebooks_host --> ip_address
 
     notebooks_create --> notebook
 
