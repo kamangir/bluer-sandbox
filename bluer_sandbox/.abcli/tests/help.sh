@@ -5,6 +5,15 @@ function test_bluer_sandbox_help() {
 
     local module
     for module in \
+        \
+        "@notebooks" \
+        "@notebooks open" \
+        "@notebooks build" \
+        "@notebooks code" \
+        "@notebooks connect" \
+        "@notebooks create" \
+        "@notebooks host" \
+        \
         "@sandbox" \
         \
         "@sandbox pypi" \
