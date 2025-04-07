@@ -17,6 +17,7 @@ setup(
         NAME: [
             "config.env",
             ".abcli/**/*.sh",
+            "assets/*",
         ],
     },
 )
