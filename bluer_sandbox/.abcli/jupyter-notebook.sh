@@ -10,7 +10,7 @@ function bluer_sandbox_notebooks() {
         return
     fi
 
-    abcli_log_error "@notebooks: $task: command not found."
+    bluer_ai_log_error "@notebooks: $task: command not found."
     return 1
 }
 
