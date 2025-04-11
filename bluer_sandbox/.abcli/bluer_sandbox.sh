@@ -10,7 +10,7 @@ function bluer_sandbox() {
 
         local object_name_1=$(abcli_clarify_object $3 .)
 
-        abcli_eval dryrun=$do_dryrun \
+        bluer_ai_eval dryrun=$do_dryrun \
             python3 -m bluer_sandbox \
             task \
             --what "$what" \
@@ -20,10 +20,9 @@ function bluer_sandbox() {
         return
     fi
 
-    abcli_generic_task \
+    bluer_ai_generic_task \
         plugin=bluer_sandbox,task=$task \
         "${@:2}"
 }
 
 abcli_log $(bluer_sandbox version --show_icon 1)
-
