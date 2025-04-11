@@ -8,7 +8,7 @@ function bluer_sandbox() {
         local do_dryrun=$(abcli_option "$options" dryrun 0)
         local what=$(abcli_option "$options" what all)
 
-        local object_name_1=$(abcli_clarify_object $3 .)
+        local object_name_1=$(bluer_ai_clarify_object $3 .)
 
         bluer_ai_eval dryrun=$do_dryrun \
             python3 -m bluer_sandbox \
