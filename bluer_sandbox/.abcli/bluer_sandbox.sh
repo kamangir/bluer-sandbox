@@ -25,4 +25,4 @@ function bluer_sandbox() {
         "${@:2}"
 }
 
-abcli_log $(bluer_sandbox version --show_icon 1)
+bluer_ai_log $(bluer_sandbox version --show_icon 1)
