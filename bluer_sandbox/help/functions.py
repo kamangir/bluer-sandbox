@@ -7,28 +7,10 @@ from bluer_sandbox.help.notebooks import help_functions as help_notebooks
 from bluer_sandbox import ALIAS
 
 
-def help_browse(
-    tokens: List[str],
-    mono: bool,
-) -> str:
-    options = "actions|repo"
-
-    return show_usage(
-        [
-            "@sandbox",
-            "browse",
-            f"[{options}]",
-        ],
-        "browse bluer_sandbox.",
-        mono=mono,
-    )
-
-
 help_functions = generic_help_functions(plugin_name=ALIAS)
 
 help_functions.update(
     {
-        "browse": help_browse,
         "notebooks": help_notebooks,
     }
 )
