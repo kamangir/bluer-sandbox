@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 function bluer_sandbox_notebooks_code() {
-    local notebook_name=$(abcli_clarify_input $1 notebook)
+    local notebook_name=$(bluer_ai_clarify_input $1 notebook)
 
     bluer_sandbox_notebooks_create "$1"
 
