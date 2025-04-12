@@ -26,8 +26,6 @@ function test_bluer_sandbox_help() {
         "@sandbox test" \
         "@sandbox test list" \
         \
-        "@sandbox browse" \
-        \
         "bluer_sandbox"; do
         bluer_ai_eval ,$options \
             bluer_ai_help $module
