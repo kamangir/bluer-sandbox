@@ -2,8 +2,8 @@
 
 function bluer_sandbox_notebooks_connect() {
     local options=$1
-    local do_setup=$(abcli_option_int "$options" setup 0)
-    local ip_address=$(abcli_option "$options" ip)
+    local do_setup=$(bluer_ai_option_int "$options" setup 0)
+    local ip_address=$(bluer_ai_option "$options" ip)
     ip_address=$(echo "$ip_address" | tr . -)
 
     # https://docs.aws.amazon.com/dlami/latest/devguide/setup-jupyter.html

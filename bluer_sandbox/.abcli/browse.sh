@@ -2,7 +2,7 @@
 
 function bluer_sandbox_browse() {
     local options=$1
-    local what=$(abcli_option_choice "$options" actions,repo repo)
+    local what=$(bluer_ai_option_choice "$options" actions,repo repo)
 
     local url="https://github.com/kamangir/bluer-sandbox"
     [[ "$what" == "actions" ]] &&
@@ -10,4 +10,3 @@ function bluer_sandbox_browse() {
 
     bluer_ai_browse $url
 }
-

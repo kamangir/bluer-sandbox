@@ -2,7 +2,7 @@
 
 function bluer_sandbox_notebooks_host() {
     local options=$1
-    local do_setup=$(abcli_option_int "$options" setup 0)
+    local do_setup=$(bluer_ai_option_int "$options" setup 0)
 
     if [[ "$do_setup" == 1 ]]; then
         jupyter notebook password
