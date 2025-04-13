@@ -9,8 +9,7 @@ function bluer_sandbox_offline_llm() {
         return
     fi
 
-    bluer_ai_log_error "@sandbox: offline_llm: $task: command not found."
-    return 1
+    python3 -m bluer_sandbox.offline_llm "$@"
 }
 
 bluer_ai_source_caller_suffix_path /offline_llm
