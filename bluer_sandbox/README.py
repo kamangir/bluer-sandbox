@@ -13,13 +13,13 @@ items = README.Items(
             "name": "`@notebooks`",
             "marquee": "https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true",
             "description": "jupyter Notebooks",
-            "url": "./assets/template.ipynb",
+            "url": "./bluer_sandbox/assets/template.ipynb",
         },
         {
             "name": "offline LLM",
             "marquee": "https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true",
             "description": "using [llama.cpp](https://github.com/ggerganov/llama.cpp)",
-            "url": "./docs/offline_llm.md",
+            "url": "./bluer_sandbox/docs/offline_llm.md",
         },
     ]
 )

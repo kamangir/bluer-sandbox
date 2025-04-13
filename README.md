@@ -39,7 +39,7 @@ graph LR
 
 |   |   |
 | --- | --- |
-| [``@notebooks``](./assets/template.ipynb) [![image](https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true)](./assets/template.ipynb) jupyter Notebooks | [`offline LLM`](./docs/offline_llm.md) [![image](https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true)](./docs/offline_llm.md) using [llama.cpp](https://github.com/ggerganov/llama.cpp) |
+| [``@notebooks``](./bluer_sandbox/assets/template.ipynb) [![image](https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/assets/template.ipynb) jupyter Notebooks | [`offline LLM`](./bluer_sandbox/docs/offline_llm.md) [![image](https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/offline_llm.md) using [llama.cpp](https://github.com/ggerganov/llama.cpp) |
 
 ---
 
@@ -50,4 +50,4 @@ graph LR
 
 [![pylint](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml) [![pytest](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml) [![bashtest](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml) [![PyPI version](https://img.shields.io/pypi/v/bluer-sandbox.svg)](https://pypi.org/project/bluer-sandbox/) [![PyPI - Downloads](https://img.shields.io/pypi/dd/bluer-sandbox)](https://pypistats.org/packages/bluer-sandbox)
 
-built by 🌀 [`bluer README`](https://github.com/kamangir/bluer-objects/tree/main/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.37.1`](https://github.com/kamangir/bluer-sandbox).
+built by 🌀 [`bluer README`](https://github.com/kamangir/bluer-objects/tree/main/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.38.1`](https://github.com/kamangir/bluer-sandbox).
