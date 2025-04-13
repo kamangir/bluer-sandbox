@@ -11,19 +11,16 @@ items = README.Items(
     [
         {
             "name": "`@assets`",
-            "marquee": "https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true",
             "description": "Asset management in [github/kamangir/assets](https://github.com/kamangir/assets).",
             "url": "./bluer_sandbox/assets/",
         },
         {
             "name": "`@notebooks`",
-            "marquee": "https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true",
             "description": "A bluer Jupyter Notebook.",
             "url": "./bluer_sandbox/assets/template.ipynb",
         },
         {
             "name": "offline LLM",
-            "marquee": "https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true",
             "description": "using [llama.cpp](https://github.com/ggerganov/llama.cpp).",
             "url": "./bluer_sandbox/docs/offline_llm.md",
         },
