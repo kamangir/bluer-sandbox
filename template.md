@@ -9,6 +9,8 @@ pip install bluer-sandbox
 ```mermaid
 graph LR
 
+    assets_publish["@assets publish extensions=png+txt,push <object-name>"]
+
     notebooks_build["@notebooks build <notebook-name>"]
 
     notebooks_code["@notebooks code <notebook-name>"]
@@ -21,6 +23,12 @@ graph LR
 
     notebooks_open["@notebooks open <notebook-name>"]
 
+    offline_llm_install["@offline_llm install"]
+
+    offline_llm_prompt["@offline_llm prompt~~- <prompt> <object-name>"]
+
+    object["📂 object"]:::folder
+    prompt["🗣️ prompt"]:::folder
     notebook["📘 notebook"]:::folder
     ip_address["🛜 <ip-address>"]:::folder
 
@@ -35,6 +43,11 @@ graph LR
     notebooks_create --> notebook
 
     notebook --> notebooks_open
+
+    prompt --> offline_llm_prompt
+    offline_llm_prompt --> object
+
+    object --> assets_publish
 ```
 
 items:::
