@@ -9,6 +9,8 @@ pip install bluer-sandbox
 ```mermaid
 graph LR
 
+    assets_publish["@assets publish extensions=png+txt,push <object-name>"]
+
     notebooks_build["@notebooks build <notebook-name>"]
 
     notebooks_code["@notebooks code <notebook-name>"]
@@ -44,6 +46,8 @@ graph LR
 
     prompt --> offline_llm_prompt
     offline_llm_prompt --> object
+
+    object --> assets_publish
 ```
 
 items:::
