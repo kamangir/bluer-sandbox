@@ -5,6 +5,8 @@ function test_bluer_sandbox_help() {
 
     local module
     for module in \
+        "@assets" \
+        "@assets publish" \
         \
         "@notebooks" \
         "@notebooks open" \
@@ -13,6 +15,10 @@ function test_bluer_sandbox_help() {
         "@notebooks connect" \
         "@notebooks create" \
         "@notebooks host" \
+        \
+        "@offline_llm" \
+        "@offline_llm install" \
+        "@offline_llm prompt" \
         \
         "@sandbox" \
         \

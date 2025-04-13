@@ -10,7 +10,9 @@ setup(
     description=DESCRIPTION,
     packages=[
         NAME,
+        f"{NAME}.assets",
         f"{NAME}.help",
+        f"{NAME}.offline_llm",
     ],
     include_package_data=True,
     package_data={
