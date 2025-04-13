@@ -18,7 +18,7 @@ items = README.Items(
         {
             "name": "offline LLM",
             "marquee": "https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true",
-            "description": "using [llama.cpp](https://github.com/ggerganov/llama.cpp)",
+            "description": "using [llama.cpp](https://github.com/ggerganov/llama.cpp).",
             "url": "./bluer_sandbox/docs/offline_llm.md",
         },
     ]
