@@ -12,7 +12,7 @@ items = README.Items(
         {
             "name": "`@notebooks`",
             "marquee": "https://github.com/kamangir/assets/raw/main/blue-plugin/marquee.png?raw=true",
-            "description": "jupyter Notebooks",
+            "description": "A bluer Jupyter Notebook.",
             "url": "./bluer_sandbox/assets/template.ipynb",
         },
         {
