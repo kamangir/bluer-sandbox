@@ -12,7 +12,7 @@ pip install bluer-sandbox
 
 [@assets](./bluer_sandbox/docs/aliases/assets.md), 
 [@notebooks](./bluer_sandbox/docs/aliases/notebooks.md), 
-[@offline_prompt](./bluer_sandbox/docs/aliases/offline_prompt.md).
+[@offline_llm](./bluer_sandbox/docs/aliases/offline_llm.md).
 
 ```mermaid
 graph LR
