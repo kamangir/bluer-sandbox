@@ -1,5 +1,7 @@
 # assets
 
+Asset management in [github/kamangir/assets](https://github.com/kamangir/assets).
+
 ```bash
 @assets \
 	publish \
