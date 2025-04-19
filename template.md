@@ -11,6 +11,7 @@ pip install bluer-sandbox
 ## aliases
 
 [@assets](./bluer_sandbox/docs/aliases/assets.md), 
+[@docker](./bluer_sandbox/docs/aliases/docker.md), 
 [@notebooks](./bluer_sandbox/docs/aliases/notebooks.md), 
 [@offline_llm](./bluer_sandbox/docs/aliases/offline_llm.md).
 

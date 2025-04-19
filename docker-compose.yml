@@ -1,0 +1,3 @@
+services:
+  bluer_ai:
+    image: kamangir/bluer_ai:latest

@@ -57,6 +57,9 @@ def build():
                 "path": "docs/aliases/assets.md",
             },
             {
+                "path": "docs/aliases/docker.md",
+            },
+            {
                 "path": "docs/aliases/notebooks.md",
             },
             {
