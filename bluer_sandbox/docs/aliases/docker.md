@@ -27,10 +27,4 @@
 @docker \
 	seed
  . seed docker 🌱 .
-@docker \
-	source \
-	[cat,dryrun,verbose] \
-	<script-name> \
-	[<args>]
- . source <script-name> <args> through the docker image.
 ```

@@ -114,25 +114,6 @@ def help_seed(
     )
 
 
-def help_source(
-    tokens: List[str],
-    mono: bool,
-) -> str:
-    options = xtra("cat,dryrun,verbose", mono=mono)
-
-    return show_usage(
-        [
-            "@docker",
-            "source",
-            f"[{options}]",
-            "<script-name>",
-            "[<args>]",
-        ],
-        "source <script-name> <args> through the docker image.",
-        mono=mono,
-    )
-
-
 help_functions = {
     "browse": help_browse,
     "build": help_build,
@@ -141,5 +122,4 @@ help_functions = {
     "push": help_push,
     "run": help_run,
     "seed": help_seed,
-    "source": help_source,
 }
