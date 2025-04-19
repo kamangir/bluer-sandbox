@@ -9,8 +9,8 @@ function bluer_sandbox_docker() {
         return
     fi
 
-    abcli_log_error "@docker: $task: command not found."
+    bluer_ai_log_error "@docker: $task: command not found."
     return 1
 }
 
-abcli_source_caller_suffix_path /docker
+bluer_ai_source_caller_suffix_path /docker
