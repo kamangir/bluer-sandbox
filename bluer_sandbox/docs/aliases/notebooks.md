@@ -1,5 +1,7 @@
 # notebooks
 
+A [bluer Jupyter Notebook](../../assets/template.ipynb).
+
 ```bash
 @notebooks \
 	build \

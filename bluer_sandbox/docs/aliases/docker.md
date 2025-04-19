@@ -1,5 +1,7 @@
 # docker
 
+Asset management in [github/kamangir/assets](https://github.com/kamangir/assets).
+
 ```bash
 @docker \
 	browse \
