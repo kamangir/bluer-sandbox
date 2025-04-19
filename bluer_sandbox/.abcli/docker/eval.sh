@@ -12,7 +12,7 @@ function bluer_sandbox_docker_eval() {
         /root/git/bluer-ai/bluer_ai/.abcli/bluer_ai.sh \
         $eval_options \
         bluer_ai_eval $options \
-        ${@:3}"
+        ${@:2}"
 
     local bluer_sandbox_path=$(python3 -m bluer_sandbox locate)
 
