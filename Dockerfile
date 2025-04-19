@@ -84,7 +84,6 @@ RUN pip install -e .
 RUN mkdir -p /root/git/bluer-sandbox
 ADD ./bluer-sandbox /root/git/bluer-sandbox
 WORKDIR /root/git/bluer-sandbox
-RUN rm -v ./.env
 RUN pip install -e .
 
 # release mode
