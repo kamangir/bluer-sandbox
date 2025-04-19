@@ -16,7 +16,6 @@ function test_bluer_sandbox_help() {
         "@docker push" \
         "@docker run" \
         "@docker seed" \
-        "@docker source" \
         \
         "@notebooks" \
         "@notebooks open" \
