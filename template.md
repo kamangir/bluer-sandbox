@@ -2,9 +2,17 @@
 
 🌀 A sandbox for ideas and experiments.
 
+## installation
+
 ```bash
 pip install bluer-sandbox
 ```
+
+## aliases
+
+[@assets](./bluer_sandbox/docs/aliases/assets.md), 
+[@notebooks](./bluer_sandbox/docs/aliases/notebooks.md), 
+[@offline_llm](./bluer_sandbox/docs/aliases/offline_llm.md).
 
 ```mermaid
 graph LR
