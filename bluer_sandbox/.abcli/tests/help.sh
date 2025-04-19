@@ -8,6 +8,15 @@ function test_bluer_sandbox_help() {
         "@assets" \
         "@assets publish" \
         \
+        "@docker" \
+        "@docker browse" \
+        "@docker build" \
+        "@docker clear" \
+        "@docker eval" \
+        "@docker push" \
+        "@docker run" \
+        "@docker seed" \
+        \
         "@notebooks" \
         "@notebooks open" \
         "@notebooks build" \

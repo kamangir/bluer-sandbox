@@ -1,6 +1,6 @@
 from typing import List
 
-from bluer_ai.host import signature as abcli_signature
+from bluer_ai.host import signature as bluer_ai_signature
 
 from bluer_sandbox import fullname
 
@@ -8,4 +8,4 @@ from bluer_sandbox import fullname
 def signature() -> List[str]:
     return [
         fullname(),
-    ] + abcli_signature()
+    ] + bluer_ai_signature()

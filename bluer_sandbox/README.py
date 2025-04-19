@@ -10,16 +10,6 @@ from bluer_sandbox.help.functions import help_functions
 items = README.Items(
     [
         {
-            "name": "`@assets`",
-            "description": "Asset management in [github/kamangir/assets](https://github.com/kamangir/assets).",
-            "url": "./bluer_sandbox/assets/",
-        },
-        {
-            "name": "`@notebooks`",
-            "description": "A bluer Jupyter Notebook.",
-            "url": "./bluer_sandbox/assets/template.ipynb",
-        },
-        {
             "name": "offline LLM",
             "description": "using [llama.cpp](https://github.com/ggerganov/llama.cpp).",
             "marquee": "https://user-images.githubusercontent.com/1991296/230134379-7181e485-c521-4d23-a0d6-f7b3b61ba524.png",
@@ -33,6 +23,7 @@ def build():
     return all(
         README.build(
             items=readme.get("items", []),
+            cols=readme.get("cols", 3),
             path=os.path.join(file.path(__file__), readme["path"]),
             ICON=ICON,
             NAME=NAME,
@@ -48,6 +39,7 @@ def build():
             {
                 "path": "..",
                 "items": items,
+                "cols": 1,
             },
             {
                 "path": "docs/offline_llm.md",
@@ -55,6 +47,9 @@ def build():
             # aliases
             {
                 "path": "docs/aliases/assets.md",
+            },
+            {
+                "path": "docs/aliases/docker.md",
             },
             {
                 "path": "docs/aliases/notebooks.md",
