@@ -39,7 +39,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y python3-opencv
 RUN pip install opencv-python
 
-RUN pip install awscli
 RUN pip install setuptools
 
 # install blue packages
@@ -54,7 +53,6 @@ RUN pip uninstall -y bluer_ai
 RUN mkdir -p /root/git/bluer-ai
 ADD ./bluer-ai /root/git/bluer-ai
 WORKDIR /root/git/bluer-ai
-RUN rm -v .env
 # RUN pip install -e .
 #-----------------------------------------------------------------------------#
 
