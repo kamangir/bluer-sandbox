@@ -36,10 +36,28 @@ graph LR
 
     offline_llm_prompt["@offline_llm<br>prompt -<br>&lt;prompt&gt;<br>&lt;object-name&gt;"]
 
+    docker_browse["@docker<br>browse"]
+
+    docker_build["@docker<br>build"]
+
+    docker_clear["@docker<br>clear"]
+
+    docker_eval["@docker<br>eval -<br>&lt;command-line&gt;"]
+
+    docker_push["@docker<br>push"]
+
+    docker_run["@docker<br>run"]
+
+    docker_seed["@docker<br>seed"]
+
     object["📂 object"]:::folder
     prompt["🗣️ prompt"]:::folder
     notebook["📘 notebook"]:::folder
     ip_address["🛜 <ip-address>"]:::folder
+    docker_image["📂 docker image"]:::folder
+    docker_com["🕸️ docker.com"]:::folder
+    command_line["🗣️ <command-line>"]:::folder
+    clipboard["📋 clipboard"]:::folder
 
     notebook --> notebooks_build
 
@@ -57,6 +75,23 @@ graph LR
     offline_llm_prompt --> object
 
     object --> assets_publish
+
+    docker_seed["@docker<br>seed"]
+
+    docker_browse --> docker_com
+
+    docker_build --> docker_image
+
+    docker_clear
+
+    command_line --> docker_eval
+
+    docker_image --> docker_push 
+    docker_push --> docker_com
+
+    docker_image --> docker_run
+
+    docker_seed --> clipboard
 ```
 
 |   |
@@ -72,4 +107,4 @@ graph LR
 
 [![pylint](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml) [![pytest](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml) [![bashtest](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml) [![PyPI version](https://img.shields.io/pypi/v/bluer-sandbox.svg)](https://pypi.org/project/bluer-sandbox/) [![PyPI - Downloads](https://img.shields.io/pypi/dd/bluer-sandbox)](https://pypistats.org/packages/bluer-sandbox)
 
-built by 🌀 [`bluer README`](https://github.com/kamangir/bluer-objects/tree/main/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.55.1`](https://github.com/kamangir/bluer-sandbox).
+built by 🌀 [`bluer README`](https://github.com/kamangir/bluer-objects/tree/main/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.56.1`](https://github.com/kamangir/bluer-sandbox).

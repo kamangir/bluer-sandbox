@@ -36,10 +36,28 @@ graph LR
 
     offline_llm_prompt["@offline_llm prompt~~- <prompt> <object-name>"]
 
+    docker_browse["@docker browse"]
+
+    docker_build["@docker build"]
+
+    docker_clear["@docker clear"]
+
+    docker_eval["@docker eval~~- <command-line>"]
+
+    docker_push["@docker push"]
+
+    docker_run["@docker run"]
+
+    docker_seed["@docker seed"]
+
     object["📂 object"]:::folder
     prompt["🗣️ prompt"]:::folder
     notebook["📘 notebook"]:::folder
     ip_address["🛜 <ip-address>"]:::folder
+    docker_image["📂 docker image"]:::folder
+    docker_com["🕸️ docker.com"]:::folder
+    command_line["🗣️ <command-line>"]:::folder
+    clipboard["📋 clipboard"]:::folder
 
     notebook --> notebooks_build
 
@@ -57,6 +75,23 @@ graph LR
     offline_llm_prompt --> object
 
     object --> assets_publish
+
+    docker_seed["@docker seed"]
+
+    docker_browse --> docker_com
+
+    docker_build --> docker_image
+
+    docker_clear
+
+    command_line --> docker_eval
+
+    docker_image --> docker_push 
+    docker_push --> docker_com
+
+    docker_image --> docker_run
+
+    docker_seed --> clipboard
 ```
 
 items:::
