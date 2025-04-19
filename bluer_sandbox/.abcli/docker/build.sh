@@ -35,12 +35,12 @@ function bluer_sandbox_docker_build() {
     rm -rfv temp
 
     if [[ "$do_push" == "1" ]]; then
-        bluer_ai_docker_push $options
+        bluer_sandbox_docker_push $options
         [[ $? -ne 0 ]] && return 1
     fi
 
     if [[ "$do_run" == "1" ]]; then
-        bluer_ai_docker_run $options
+        bluer_sandbox_docker_run $options
         [[ $? -ne 0 ]] && return 1
     fi
 
