@@ -51,5 +51,15 @@ def build():
             {
                 "path": "docs/offline_llm.md",
             },
+            # aliases
+            {
+                "path": "docs/aliases/assets.md",
+            },
+            {
+                "path": "docs/aliases/notebooks.md",
+            },
+            {
+                "path": "docs/aliases/offline_llm.md",
+            },
         ]
     )
