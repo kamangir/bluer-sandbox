@@ -85,6 +85,7 @@ graph LR
     docker_clear
 
     command_line --> docker_eval
+    docker_image --> docker_eval
 
     docker_image --> docker_push 
     docker_push --> docker_com
