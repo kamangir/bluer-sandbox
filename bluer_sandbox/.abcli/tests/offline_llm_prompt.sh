@@ -10,6 +10,6 @@ function test_bluer_sandbox_offline_llm_prompt() {
 
     bluer_sandbox_offline_llm_prompt \
         download_model,tiny,~upload,$options \
-        "Who said Mathematics is the voice of God?" \
+        "Why is Mathematics said to be the Voice of God?" \
         $object_name
 }
