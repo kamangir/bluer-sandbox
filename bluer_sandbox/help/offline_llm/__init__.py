@@ -5,7 +5,7 @@ from bluer_options.terminal import show_usage, xtra
 from bluer_sandbox.help.offline_llm.model import help_functions as help_model
 
 
-def help_install(
+def help_build(
     tokens: List[str],
     mono: bool,
 ) -> str:
@@ -14,10 +14,10 @@ def help_install(
     return show_usage(
         [
             "@offline_llm",
-            "install",
+            "build",
             f"[{options}]",
         ],
-        "install offline_llm.",
+        "build offline_llm.",
         mono=mono,
     )
 
@@ -42,7 +42,7 @@ def help_prompt(
 
 
 help_functions = {
-    "install": help_install,
+    "build": help_build,
     "model": help_model,
     "prompt": help_prompt,
 }

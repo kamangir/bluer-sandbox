@@ -2,9 +2,9 @@
 
 ```bash
 @offline_llm \
-	install \
+	build \
 	[dryrun]
- . install offline_llm.
+ . build offline_llm.
 @offline_llm \
 	model \
 	download \
