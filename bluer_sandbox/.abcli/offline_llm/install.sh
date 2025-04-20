@@ -19,14 +19,4 @@ function bluer_sandbox_offline_llm_install() {
         cmake --build build --config Release
     [[ $? -ne 0 ]] && return 1
     popd >/dev/null
-
-    local model_object_name="offline-llm-model-object"
-    local model_object_path=$ABCLI_OBJECT_ROOT/$model_object_name
-    mkdir -pv $model_object_path
-
-    pushd $model_object_path >/dev/null
-    # download a 4-bit quantized GGUF model (Mistral 7B example)
-    bluer_ai_eval dryrun=$do_dryrun \
-        wget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf
-    popd >/dev/null
 }

@@ -27,6 +27,9 @@ function test_bluer_sandbox_help() {
         \
         "@offline_llm" \
         "@offline_llm install" \
+        "@offline_llm model" \
+        "@offline_llm model download" \
+        "@offline_llm model get" \
         "@offline_llm prompt" \
         \
         "@sandbox" \

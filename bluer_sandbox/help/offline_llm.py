@@ -20,11 +20,50 @@ def help_install(
     )
 
 
+def help_model_get(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    options = "tiny"
+
+    options_what = "filename | object | repo"
+
+    return show_usage(
+        [
+            "@offline_llm",
+            "model",
+            "get",
+            f"[{options}]",
+            f"[{options_what}]",
+        ],
+        "get things.",
+        mono=mono,
+    )
+
+
+def help_model_download(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    options = xtra("dryrun,overwrite,tiny", mono=mono)
+
+    return show_usage(
+        [
+            "@offline_llm",
+            "model",
+            "download",
+            f"[{options}]",
+        ],
+        "download the model.",
+        mono=mono,
+    )
+
+
 def help_prompt(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("~upload", mono=mono)
+    options = xtra("tiny,~upload", mono=mono)
 
     return show_usage(
         [
@@ -41,5 +80,9 @@ def help_prompt(
 
 help_functions = {
     "install": help_install,
+    "model": {
+        "download": help_model_download,
+        "get": help_model_get,
+    },
     "prompt": help_prompt,
 }
