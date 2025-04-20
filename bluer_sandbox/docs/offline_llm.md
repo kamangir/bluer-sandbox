@@ -13,8 +13,8 @@
 @offline_llm \
 	model \
 	get \
-	[tiny] \
-	[filename | object | repo]
+	[filename | object_name | repo_name] \
+	[tiny]
  . get things.
 @offline_llm \
 	prompt \
