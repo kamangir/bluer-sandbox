@@ -18,15 +18,16 @@ function test_bluer_sandbox_help() {
         "@docker seed" \
         \
         "@notebooks" \
-        "@notebooks open" \
         "@notebooks build" \
         "@notebooks code" \
         "@notebooks connect" \
         "@notebooks create" \
         "@notebooks host" \
+        "@notebooks open" \
         \
         "@offline_llm" \
         "@offline_llm build" \
+        "@offline_llm chat" \
         "@offline_llm model" \
         "@offline_llm model download" \
         "@offline_llm model get" \
