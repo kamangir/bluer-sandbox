@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # https://chatgpt.com/c/67fae383-ecc8-8005-b3fa-a6aeb08ca931
-function bluer_sandbox_offline_llm_install() {
+function bluer_sandbox_offline_llm_build() {
     local options=$1
     local do_dryrun=$(bluer_ai_option_int "$options" dryrun 0)
 

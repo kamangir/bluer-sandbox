@@ -2,9 +2,9 @@
 
 ```bash
 @offline_llm \
-	install \
+	build \
 	[dryrun]
- . install offline_llm.
+ . build offline_llm.
 @offline_llm \
 	model \
 	download \
@@ -15,10 +15,10 @@
 	get \
 	[filename | object_name | repo_name] \
 	[tiny]
- . get things.
+ . get model properties.
 @offline_llm \
 	prompt \
-	[tiny,~upload] \
+	[download_model,tiny,~upload] \
 	"<prompt>" \
 	[-|<object-name>]
  . "<prompt>" -> offline_llm.

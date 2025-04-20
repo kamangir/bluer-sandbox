@@ -4,6 +4,12 @@ function bluer_sandbox_offline_llm_prompt() {
     local options=$1
     local do_upload=$(bluer_ai_option_int "$options" upload 1)
     local tiny=$(bluer_ai_option_int "$options" tiny 0)
+    local download_model=$(bluer_ai_option_int "$options" download_model 0)
+
+    if [[ "$download_model" == 1 ]]; then
+        bluer_sandbox_offline_llm_model_download tiny=$tiny
+        [[ $? -ne 0 ]] && return 1
+    fi
 
     local prompt=$2
     bluer_ai_log "🗣️ $prompt"
@@ -20,6 +26,11 @@ function bluer_sandbox_offline_llm_prompt() {
     bluer_ai_log "model: $model_object_name/$filename"
 
     pushd $abcli_path_git/llama.cpp >/dev/null
+
+    if [[ ! -f "./build/bin/llama-cli" ]]; then
+        bluer_ai_log_error "llama-cli not found, please run '@offline_llm build' first."
+        return 1
+    fi
 
     ./build/bin/llama-cli \
         -m $ABCLI_OBJECT_ROOT/$model_object_name/$filename \

@@ -26,7 +26,7 @@ function test_bluer_sandbox_help() {
         "@notebooks host" \
         \
         "@offline_llm" \
-        "@offline_llm install" \
+        "@offline_llm build" \
         "@offline_llm model" \
         "@offline_llm model download" \
         "@offline_llm model get" \
