@@ -20,6 +20,7 @@ function bluer_sandbox_offline_llm_prompt() {
     bluer_ai_log "model: $model_object_name/$filename"
 
     pushd $abcli_path_git/llama.cpp >/dev/null
+
     ./build/bin/llama-cli \
         -m $ABCLI_OBJECT_ROOT/$model_object_name/$filename \
         -p "$prompt\n" \
