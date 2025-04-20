@@ -3,43 +3,46 @@ from typing import List
 from bluer_options.terminal import show_usage, xtra
 
 
-def help_install(
+def help_get(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("dryrun", mono=mono)
+    options_what = "filename | object_name | repo_name"
+
+    options = "tiny"
 
     return show_usage(
         [
             "@offline_llm",
-            "install",
+            "model",
+            "get",
+            f"[{options_what}]",
             f"[{options}]",
         ],
-        "install offline_llm.",
+        "get things.",
         mono=mono,
     )
 
 
-def help_prompt(
+def help_download(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("~upload", mono=mono)
+    options = xtra("dryrun,overwrite,tiny", mono=mono)
 
     return show_usage(
         [
             "@offline_llm",
-            "prompt",
+            "model",
+            "download",
             f"[{options}]",
-            '"<prompt>"',
-            "[-|<object-name>]",
         ],
-        '"<prompt>" -> offline_llm.',
+        "download the model.",
         mono=mono,
     )
 
 
 help_functions = {
-    "install": help_install,
-    "prompt": help_prompt,
+    "download": help_download,
+    "get": help_get,
 }

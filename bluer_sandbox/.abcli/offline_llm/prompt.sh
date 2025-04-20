@@ -3,6 +3,7 @@
 function bluer_sandbox_offline_llm_prompt() {
     local options=$1
     local do_upload=$(bluer_ai_option_int "$options" upload 1)
+    local tiny=$(bluer_ai_option_int "$options" tiny 0)
 
     local prompt=$2
     bluer_ai_log "🗣️ $prompt"
@@ -13,16 +14,23 @@ function bluer_sandbox_offline_llm_prompt() {
 
     echo "$prompt" >$object_path/prompt.txt
 
+    local model_object_name=$(bluer_sandbox_offline_llm_model_get object_name tiny=$tiny)
+    local filename=$(bluer_sandbox_offline_llm_model_get filename tiny=$tiny)
+
+    bluer_ai_log "model: $model_object_name/$filename"
+
     pushd $abcli_path_git/llama.cpp >/dev/null
+
     ./build/bin/llama-cli \
-        -m $ABCLI_OBJECT_ROOT/offline-llm-model-object/mistral-7b-instruct-v0.1.Q4_K_M.gguf \
-        -p "$prompt" \
+        -m $ABCLI_OBJECT_ROOT/$model_object_name/$filename \
+        -p "$prompt\n" \
         -n 300 \
         --color \
-        --temp 0.7 | tee $object_path/output.txt
+        --temp 0.7 \
+        -no-cnv | tee $object_path/output.txt
     [[ $? -ne 0 ]] && return 1
 
-    popd $abcli_path_git/llama.cpp >/dev/null
+    popd >/dev/null
 
     python3 -m bluer_sandbox.offline_llm \
         post_process \
