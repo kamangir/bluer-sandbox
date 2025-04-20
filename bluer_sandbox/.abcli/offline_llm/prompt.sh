@@ -29,7 +29,7 @@ function bluer_sandbox_offline_llm_prompt() {
         -no-cnv | tee $object_path/output.txt
     [[ $? -ne 0 ]] && return 1
 
-    popd $abcli_path_git/llama.cpp >/dev/null
+    popd >/dev/null
 
     python3 -m bluer_sandbox.offline_llm \
         post_process \
