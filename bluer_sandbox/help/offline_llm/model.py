@@ -19,7 +19,7 @@ def help_get(
             f"[{options_what}]",
             f"[{options}]",
         ],
-        "get things.",
+        "get model properties.",
         mono=mono,
     )
 

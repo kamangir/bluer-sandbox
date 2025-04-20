@@ -4,6 +4,12 @@ function bluer_sandbox_offline_llm_prompt() {
     local options=$1
     local do_upload=$(bluer_ai_option_int "$options" upload 1)
     local tiny=$(bluer_ai_option_int "$options" tiny 0)
+    local download_model=$(bluer_ai_option_int "$options" download_model 0)
+
+    if [[ "$download_model" == 1 ]]; then
+        bluer_sandbox_offline_llm_model_download tiny=$tiny
+        [[ $? -ne 0 ]] && return 1
+    fi
 
     local prompt=$2
     bluer_ai_log "🗣️ $prompt"

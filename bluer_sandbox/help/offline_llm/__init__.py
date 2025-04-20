@@ -26,7 +26,7 @@ def help_prompt(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("tiny,~upload", mono=mono)
+    options = xtra("download_model,tiny,~upload", mono=mono)
 
     return show_usage(
         [
