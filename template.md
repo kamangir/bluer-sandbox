@@ -32,7 +32,9 @@ graph LR
 
     notebooks_open["@notebooks open <notebook-name>"]
 
-    offline_llm_install["@offline_llm install"]
+    offline_llm_build["@offline_llm build"]
+
+    offline_llm_model_download["@offline_llm model download"]
 
     offline_llm_prompt["@offline_llm prompt~~- <prompt> <object-name>"]
 
@@ -58,6 +60,8 @@ graph LR
     docker_com["🕸️ docker.com"]:::folder
     command_line["🗣️ <command-line>"]:::folder
     clipboard["📋 clipboard"]:::folder
+    llm["🧠 llm"]:::folder
+    llama_cpp["🛠️ llama_cpp"]:::folder
 
     notebook --> notebooks_build
 
@@ -71,7 +75,13 @@ graph LR
 
     notebook --> notebooks_open
 
+    offline_llm_build --> llama_cpp
+
+    offline_llm_model_download --> llm
+
     prompt --> offline_llm_prompt
+    llama_cpp --> offline_llm_prompt
+    llm --> offline_llm_prompt
     offline_llm_prompt --> object
 
     object --> assets_publish
