@@ -16,16 +16,6 @@ parser.add_argument(
     help="chat",
 )
 parser.add_argument(
-    "--n_tokens",
-    type=int,
-    default=300,
-)
-parser.add_argument(
-    "--temp",
-    type=float,
-    default=0.7,
-)
-parser.add_argument(
     "--tiny",
     type=int,
     help="0 | 1",
@@ -35,11 +25,7 @@ args = parser.parse_args()
 
 success = False
 if args.task == "chat":
-    success = chat(
-        tiny=args.tiny == 1,
-        n_tokens=args.n_tokens,
-        temp=args.temp,
-    )
+    success = chat(tiny=args.tiny == 1)
 else:
     success = None
 

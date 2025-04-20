@@ -1,3 +1,4 @@
 bluer_ai
 
 huggingface-hub
+llama-cpp-python

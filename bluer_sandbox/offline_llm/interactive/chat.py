@@ -4,17 +4,13 @@ from bluer_objects import objects
 
 from bluer_sandbox import NAME
 from bluer_sandbox.offline_llm.model.functions import get
-from bluer_sandbox.offline_llm.interactive.interface import LlamaCppInterface
+from bluer_sandbox.offline_llm.interactive.interface import LlamaInterface
 from bluer_sandbox.logger import logger
 
 NAME = module.name(__file__, NAME)
 
 
-def chat(
-    tiny: bool = False,
-    n_tokens: int = 300,
-    temp: float = 0.7,
-) -> bool:
+def chat(tiny: bool = False) -> bool:
     logger.info(
         "{}.chat: {}".format(
             NAME,
@@ -26,26 +22,6 @@ def chat(
     model_filename = get("filename", tiny=tiny)
     logger.info(f"model: {model_object_name}/{model_filename}")
 
-    llama = LlamaCppInterface(
-        model_path=objects.path_of(
-            object_name=model_object_name,
-            filename=model_filename,
-        ),
-        n_tokens=n_tokens,
-        temp=temp,
-    )
-
-    llama.initialize()
-
-    try:
-        while True:
-            user_input = input("\nYou: ")
-            if user_input.strip().lower() == "quit":
-                break
-
-            response = llama.send_prompt(user_input)
-            print(f"\nLlama: {response}")
-    finally:
-        llama.shutdown()
+    logger.info("🪄")
 
     return True

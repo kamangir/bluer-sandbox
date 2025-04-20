@@ -28,19 +28,13 @@ def help_chat(
 ) -> str:
     options = xtra("download_model,tiny,~upload", mono=mono)
 
-    args = [
-        "[--n_tokens <300>]",
-        "[--temp 0.7]",
-    ]
-
     return show_usage(
         [
             "@offline_llm",
             "chat",
             f"[{options}]",
             "[-|<object-name>]",
-        ]
-        + args,
+        ],
         "chat with offline_llm.",
         mono=mono,
     )

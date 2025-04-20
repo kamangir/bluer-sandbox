@@ -8,9 +8,7 @@
 @offline_llm \
 	chat \
 	[download_model,tiny,~upload] \
-	[-|<object-name>] \
-	[--n_tokens <300>] \
-	[--temp 0.7]
+	[-|<object-name>]
  . chat with offline_llm.
 @offline_llm \
 	model \
