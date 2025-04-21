@@ -4,7 +4,7 @@ from bluer_objects import storage, mlflow
 
 os.environ["MLFLOW_TRACKING_URI"] = os.path.join(
     os.environ.get("HOME"),
-    "mlruns",
+    "mlflow",
 )
 
 
