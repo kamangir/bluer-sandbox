@@ -10,6 +10,9 @@
 	[download_model,tiny,~upload] \
 	[-|<object-name>]
  . chat with offline_llm.
+@plugin \
+	create_env
+ . create env.
 @offline_llm \
 	model \
 	download \
