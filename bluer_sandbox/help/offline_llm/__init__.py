@@ -40,6 +40,20 @@ def help_chat(
     )
 
 
+def help_create_env(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    return show_usage(
+        [
+            "@plugin",
+            "create_env",
+        ],
+        "create env.",
+        mono=mono,
+    )
+
+
 def help_prompt(
     tokens: List[str],
     mono: bool,
@@ -62,6 +76,7 @@ def help_prompt(
 help_functions = {
     "build": help_build,
     "chat": help_chat,
+    "create_env": help_create_env,
     "model": help_model,
     "prompt": help_prompt,
 }

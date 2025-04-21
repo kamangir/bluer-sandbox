@@ -28,6 +28,7 @@ function test_bluer_sandbox_help() {
         "@offline_llm" \
         "@offline_llm build" \
         "@offline_llm chat" \
+        "@offline_llm create_env" \
         "@offline_llm model" \
         "@offline_llm model download" \
         "@offline_llm model get" \
