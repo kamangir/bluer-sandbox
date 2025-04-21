@@ -22,6 +22,24 @@ def help_build(
     )
 
 
+def help_chat(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    options = xtra("download_model,tiny,~upload", mono=mono)
+
+    return show_usage(
+        [
+            "@offline_llm",
+            "chat",
+            f"[{options}]",
+            "[-|<object-name>]",
+        ],
+        "chat with offline_llm.",
+        mono=mono,
+    )
+
+
 def help_prompt(
     tokens: List[str],
     mono: bool,
@@ -43,6 +61,7 @@ def help_prompt(
 
 help_functions = {
     "build": help_build,
+    "chat": help_chat,
     "model": help_model,
     "prompt": help_prompt,
 }

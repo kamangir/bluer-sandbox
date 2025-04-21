@@ -6,6 +6,11 @@
 	[dryrun]
  . build offline_llm.
 @offline_llm \
+	chat \
+	[download_model,tiny,~upload] \
+	[-|<object-name>]
+ . chat with offline_llm.
+@offline_llm \
 	model \
 	download \
 	[dryrun,overwrite,tiny]
