@@ -18,14 +18,18 @@ def publish(
     object_name: str,
     list_of_extensions: List[str],
     prefix: str = "",
+    asset_name: str = "",
     log: bool = True,
 ) -> bool:
+    if not asset_name:
+        asset_name = object_name
     logger.info(
-        "{}.publish: {}/{}.* for {}".format(
+        "{}.publish: {}/{}.* for {} -> {}".format(
             NAME,
             object_name,
             prefix,
             ", ".join(list_of_extensions),
+            asset_name,
         )
     )
 
@@ -39,7 +43,7 @@ def publish(
             published_filename = os.path.join(
                 abcli_path_git,
                 "assets",
-                object_name,
+                asset_name,
                 file.name_and_extension(filename),
             )
 
@@ -51,6 +55,6 @@ def publish(
                 ):
                     return False
 
-    logger.info(f"🔗  https://github.com/kamangir/assets/tree/main/{object_name}")
+    logger.info(f"🔗  https://github.com/kamangir/assets/tree/main/{asset_name}")
 
     return True
