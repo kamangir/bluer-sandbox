@@ -36,6 +36,11 @@ parser.add_argument(
     type=str,
     default="",
 )
+parser.add_argument(
+    "--asset_name",
+    type=str,
+    default="",
+)
 args = parser.parse_args()
 
 success = False
@@ -44,6 +49,7 @@ if args.task == "publish":
         object_name=args.object_name,
         list_of_extensions=args.extensions.split("+"),
         prefix=args.prefix,
+        asset_name=args.asset_name,
     )
 else:
     success = None

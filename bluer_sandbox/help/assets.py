@@ -17,6 +17,7 @@ def help_publish(
     )
 
     args = [
+        "[--asset_name <other-object-name>]",
         "[--prefix <prefix>]",
     ]
 
