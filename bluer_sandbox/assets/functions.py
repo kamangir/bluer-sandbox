@@ -44,16 +44,18 @@ def publish(
                 abcli_path_git,
                 "assets",
                 asset_name,
-                file.name_and_extension(filename),
+                file.name_and_extension(filename).replace(
+                    object_name,
+                    asset_name,
+                ),
             )
 
-            if extension in ["png", "jpg", "jpeg", "gif", "txt"]:
-                if not file.copy(
-                    filename,
-                    published_filename,
-                    log=log,
-                ):
-                    return False
+            if not file.copy(
+                filename,
+                published_filename,
+                log=log,
+            ):
+                return False
 
     logger.info(f"🔗  https://github.com/kamangir/assets/tree/main/{asset_name}")
 
