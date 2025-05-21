@@ -41,21 +41,25 @@ def build():
                 "items": items,
                 "cols": 1,
             },
+        ]
+        + [
             {
-                "path": "docs/offline_llm.md",
-            },
-            # aliases
+                "path": f"docs/{doc}.md",
+            }
+            for doc in [
+                "offline_llm",
+                "LSTM",
+            ]
+        ]
+        + [
             {
-                "path": "docs/aliases/assets.md",
-            },
-            {
-                "path": "docs/aliases/docker.md",
-            },
-            {
-                "path": "docs/aliases/notebooks.md",
-            },
-            {
-                "path": "docs/aliases/offline_llm.md",
-            },
+                "path": f"docs/aliases/{alias}.md",
+            }
+            for alias in [
+                "assets",
+                "docker",
+                "notebooks",
+                "offline_llm",
+            ]
         ]
     )
