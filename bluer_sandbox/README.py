@@ -41,8 +41,12 @@ def build():
                 "items": items,
                 "cols": 1,
             },
+            # docs
             {
                 "path": "docs/offline_llm.md",
+            },
+            {
+                "path": "docs/LSTM.md",
             },
             # aliases
             {
