@@ -72,7 +72,7 @@ graph LR
     arvancloud_machine["🖥️ arvancloud"]:::folder
 
 
-    arvancloud_ssh -> arvancloud_machine
+    arvancloud_ssh --> arvancloud_machine
 
 
     object --> assets_publish
