@@ -10,6 +10,12 @@ from bluer_sandbox.help.functions import help_functions
 items = README.Items(
     [
         {
+            "name": "arvancloud",
+            "description": "tools to work with [arvancloud](https://arvancloud.ir/).",
+            "marquee": "https://github.com/kamangir/assets/blob/main/arvancloud/arvancloud.png?raw=true",
+            "url": "./bluer_sandbox/docs/arvancloud.md",
+        },
+        {
             "name": "offline LLM",
             "description": "using [llama.cpp](https://github.com/ggerganov/llama.cpp).",
             "marquee": "https://user-images.githubusercontent.com/1991296/230134379-7181e485-c521-4d23-a0d6-f7b3b61ba524.png",
@@ -47,6 +53,7 @@ def build():
                 "path": f"docs/{doc}.md",
             }
             for doc in [
+                "arvancloud",
                 "offline_llm",
                 "LSTM",
             ]

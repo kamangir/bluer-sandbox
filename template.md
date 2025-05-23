@@ -18,25 +18,11 @@ pip install bluer-sandbox
 ```mermaid
 graph LR
 
+    arvancloud_ssh["@arvan ssh"]
+
+
     assets_publish["@assets publish extensions=png+txt,push <object-name>"]
 
-    notebooks_build["@notebooks build <notebook-name>"]
-
-    notebooks_code["@notebooks code <notebook-name>"]
-    
-    notebooks_connect["@notebooks connect ip=<ip-address>"]
-
-    notebooks_create["@notebooks create <notebook-name>"]
-
-    notebooks_host["@notebooks host"]
-
-    notebooks_open["@notebooks open <notebook-name>"]
-
-    offline_llm_build["@offline_llm build"]
-
-    offline_llm_model_download["@offline_llm model download"]
-
-    offline_llm_prompt["@offline_llm prompt~~- <prompt> <object-name>"]
 
     docker_browse["@docker browse"]
 
@@ -52,6 +38,27 @@ graph LR
 
     docker_seed["@docker seed"]
 
+
+    notebooks_build["@notebooks build <notebook-name>"]
+
+    notebooks_code["@notebooks code <notebook-name>"]
+    
+    notebooks_connect["@notebooks connect ip=<ip-address>"]
+
+    notebooks_create["@notebooks create <notebook-name>"]
+
+    notebooks_host["@notebooks host"]
+
+    notebooks_open["@notebooks open <notebook-name>"]
+
+
+    offline_llm_build["@offline_llm build"]
+
+    offline_llm_model_download["@offline_llm model download"]
+
+    offline_llm_prompt["@offline_llm prompt~~- <prompt> <object-name>"]
+
+
     object["📂 object"]:::folder
     prompt["🗣️ prompt"]:::folder
     notebook["📘 notebook"]:::folder
@@ -62,29 +69,14 @@ graph LR
     clipboard["📋 clipboard"]:::folder
     llm["🧠 llm"]:::folder
     llama_cpp["🛠️ llama_cpp"]:::folder
+    arvancloud_machine["🖥️ arvancloud"]:::folder
 
-    notebook --> notebooks_build
 
-    notebook --> notebooks_code
+    arvancloud_ssh -> arvancloud_machine
 
-    ip_address --> notebooks_connect
-
-    notebooks_host --> ip_address
-
-    notebooks_create --> notebook
-
-    notebook --> notebooks_open
-
-    offline_llm_build --> llama_cpp
-
-    offline_llm_model_download --> llm
-
-    prompt --> offline_llm_prompt
-    llama_cpp --> offline_llm_prompt
-    llm --> offline_llm_prompt
-    offline_llm_prompt --> object
 
     object --> assets_publish
+
 
     docker_seed["@docker seed"]
 
@@ -103,6 +95,29 @@ graph LR
     docker_image --> docker_run
 
     docker_seed --> clipboard
+
+
+    notebook --> notebooks_build
+
+    notebook --> notebooks_code
+
+    ip_address --> notebooks_connect
+
+    notebooks_host --> ip_address
+
+    notebooks_create --> notebook
+
+    notebook --> notebooks_open
+
+
+    offline_llm_build --> llama_cpp
+
+    offline_llm_model_download --> llm
+
+    prompt --> offline_llm_prompt
+    llama_cpp --> offline_llm_prompt
+    llm --> offline_llm_prompt
+    offline_llm_prompt --> object
 ```
 
 items:::
