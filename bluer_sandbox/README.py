@@ -45,7 +45,7 @@ def build():
             {
                 "path": "..",
                 "items": items,
-                "cols": 1,
+                "cols": 2,
             },
         ]
         + [
