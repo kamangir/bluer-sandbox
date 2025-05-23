@@ -1,9 +1,9 @@
 #! /usr/bin/env bash
 
-function bluer_sandbox_node() {
+function bluer_sandbox_arvancloud() {
     local task=${1:-ssh}
 
-    local function_name=bluer_sandbox_node_$task
+    local function_name=bluer_sandbox_arvancloud_$task
     if [[ $(type -t $function_name) == "function" ]]; then
         $function_name "${@:2}"
         return

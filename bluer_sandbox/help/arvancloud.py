@@ -11,12 +11,11 @@ def help_ssh(
 
     return show_usage(
         [
-            "@plugin",
-            "node",
+            "@arvan",
+            "ssh",
             f"[{options}]",
-            "[.|<object-name>]",
         ],
-        "bluer-plugin node <object-name>.",
+        "ssh -> arvancloud.",
         mono=mono,
     )
 
