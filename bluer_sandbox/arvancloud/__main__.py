@@ -3,9 +3,9 @@ import argparse
 from blueness import module
 from blueness.argparse.generic import sys_exit
 
-from bluer_plugin import NAME
-from bluer_plugin.node.functions import func
-from bluer_plugin.logger import logger
+from bluer_sandbox import NAME
+from bluer_sandbox.arvancloud.seed import generate_seed
+from bluer_sandbox.logger import logger
 
 NAME = module.name(__file__, NAME)
 
@@ -13,19 +13,15 @@ parser = argparse.ArgumentParser(NAME)
 parser.add_argument(
     "task",
     type=str,
-    help="task",
-)
-parser.add_argument(
-    "--arg",
-    type=bool,
-    default=0,
-    help="0|1",
+    help="generate_seed",
 )
 args = parser.parse_args()
 
 success = False
-if args.task == "task":
-    success = func(args.arg)
+if args.task == "generate_seed":
+    success, seed = generate_seed()
+    if success:
+        print(seed)
 else:
     success = None
 
