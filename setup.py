@@ -24,4 +24,7 @@ setup(
             "assets/*",
         ],
     },
+    extras_require={
+        "llama": ["llama-cpp-python"],
+    },
 )
