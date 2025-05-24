@@ -12,3 +12,5 @@ alias @offline_llm=bluer_sandbox_offline_llm
 alias @notebooks=bluer_sandbox_notebooks
 
 alias @sandbox=bluer_sandbox
+
+alias @speedtest=bluer_sandbox_speedtest
