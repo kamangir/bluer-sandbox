@@ -39,7 +39,7 @@ def help_ssh(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("dryrun", mono=mono)
+    options = xtra("dryrun,~seed", mono=mono)
 
     return show_usage(
         [
