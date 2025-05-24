@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+alias @arvan=bluer_sandbox_arvancloud
+alias @arvancloud=bluer_sandbox_arvancloud
+
 alias @assets=bluer_sandbox_assets
 
 alias @docker=bluer_sandbox_docker

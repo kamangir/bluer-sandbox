@@ -11,3 +11,6 @@ def test_required_env():
 
 def test_bluer_sandbox_env():
     assert env.BLUER_SANDBOX_CONFIG
+
+    assert env.ARVANCLOUD_IP
+    assert env.ARVANCLOUD_PRIVATE_KEY

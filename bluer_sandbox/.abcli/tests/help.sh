@@ -5,6 +5,11 @@ function test_bluer_sandbox_help() {
 
     local module
     for module in \
+        "@arvan" \
+        "@arvan seed" \
+        "@arvan set_ip" \
+        "@arvan ssh" \
+        \
         "@assets" \
         "@assets publish" \
         \
