@@ -59,6 +59,7 @@ graph LR
 
     offline_llm_prompt["@offline_llm prompt~~- <prompt> <object-name>"]
 
+    speedtest["@speedtest"]
 
     object["📂 object"]:::folder
     prompt["🗣️ prompt"]:::folder
@@ -76,7 +77,6 @@ graph LR
     arvancloud_ssh --> arvancloud_machine
 
     arvancloud_set_ip --> ip_address
-
 
 
     object --> assets_publish
