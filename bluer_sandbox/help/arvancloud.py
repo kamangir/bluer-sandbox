@@ -20,6 +20,21 @@ def help_seed(
     )
 
 
+def help_set_ip(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    return show_usage(
+        [
+            "@arvan",
+            "set_ip",
+            "<ip-address>",
+        ],
+        "set arvancloud ip.",
+        mono=mono,
+    )
+
+
 def help_ssh(
     tokens: List[str],
     mono: bool,
@@ -39,5 +54,6 @@ def help_ssh(
 
 help_functions = {
     "seed": help_seed,
+    "set_ip": help_set_ip,
     "ssh": help_ssh,
 }
