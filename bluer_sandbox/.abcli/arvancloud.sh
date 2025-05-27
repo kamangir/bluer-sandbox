@@ -9,11 +9,6 @@ function bluer_sandbox_arvancloud() {
         return
     fi
 
-    if [ "$task" == "seed" ]; then
-        bluer_ai_seed arvancloud "${@:2}"
-        return
-    fi
-
     python3 bluer_sandbox.arvancloud "$@"
 }
 
