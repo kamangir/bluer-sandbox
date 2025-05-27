@@ -22,7 +22,7 @@ function bluer_ai_seed_arvancloud() {
     seed="${seed}pip3 install bluer_objects[opencv]$delim"
     seed="${seed}pip3 install --upgrade opencv-python-headless$delim_section"
 
-    bluer_ai_env_dot_seed $abcli_path_git/bluer-objects
+    bluer_ai_env_dot_seed $(python3 -m bluer_objects locate)
     [[ $? -ne 0 ]] && return 1
 
     seed="${seed}source ./bluer_ai/.abcli/bluer_ai.sh$delim_section"
