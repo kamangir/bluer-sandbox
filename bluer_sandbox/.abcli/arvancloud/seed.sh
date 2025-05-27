@@ -4,6 +4,8 @@
 function bluer_ai_seed_arvancloud() {
     # seed is NOT local
 
+    bluer_ai_seed add_kaggle
+
     bluer_ai_seed add_ssh_key
 
     bluer_ai_seed add_bluer_ai
