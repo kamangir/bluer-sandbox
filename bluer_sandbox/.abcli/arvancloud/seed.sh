@@ -21,8 +21,8 @@ function bluer_ai_seed_arvancloud() {
     seed="${seed}pip3 install setuptools$delim"
     seed="${seed}pip3 install -e .$delim"
 
-    bluer_ai_seed add_repo bluer-objects
-    seed="${seed}pip3 install -e .$delim"
+    bluer_ai_seed add_repo repo=bluer-objects
+    seed="${seed}pip3 install -e .$delim_section"
 
     seed="${seed}pip3 install --upgrade opencv-python-headless$delim_section"
 
