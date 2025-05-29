@@ -26,9 +26,9 @@ function bluer_ai_seed_arvancloud() {
 
     seed="${seed}pip3 install --upgrade opencv-python-headless$delim_section"
 
-    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-objects/.env \$abcli_path_git/bluer-objects/.env)$delim_section"
+    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-objects/.env \$HOME/git/bluer-objects/.env)$delim_section"
 
-    seed="${seed}source ./bluer_ai/.abcli/bluer_ai.sh$delim_section"
+    seed="${seed}source \$HOME/git/bluer-ai/bluer_ai/.abcli/bluer_ai.sh$delim_section"
 }
 
 function bluer_sandbox_arvancloud_seed() {
