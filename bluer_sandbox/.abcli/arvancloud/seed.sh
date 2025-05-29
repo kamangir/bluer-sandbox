@@ -19,7 +19,7 @@ function bluer_ai_seed_arvancloud() {
 
     seed="${seed}pip install --upgrade pip --no-input$delim"
     seed="${seed}pip3 install setuptools$delim"
-    seed="${seed}pip3 install -e .$delim"
+    seed="${seed}pip3 install -e .$delim_section"
 
     bluer_ai_seed add_repo repo=bluer-objects
     seed="${seed}pip3 install -e .$delim_section"
