@@ -20,11 +20,13 @@ function bluer_ai_seed_arvancloud() {
     seed="${seed}pip install --upgrade pip --no-input$delim"
     seed="${seed}pip3 install setuptools$delim"
     seed="${seed}pip3 install -e .$delim"
-    seed="${seed}pip3 install bluer_objects[opencv]$delim"
+
+    bluer_ai_seed add_bluer_objects
+    seed="${seed}pip3 install -e .$delim"
+
     seed="${seed}pip3 install --upgrade opencv-python-headless$delim_section"
 
-    bluer_ai_env_dot_seed $(python3 -m bluer_objects locate)
-    [[ $? -ne 0 ]] && return 1
+    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-objects/.env \$abcli_path_git/bluer-objects/.env)$delim_section
 
     seed="${seed}source ./bluer_ai/.abcli/bluer_ai.sh$delim_section"
 }
