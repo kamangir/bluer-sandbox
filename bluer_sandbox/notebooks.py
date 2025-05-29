@@ -6,11 +6,6 @@ from IPython.display import display, HTML
 
 from bluer_objects import storage, mlflow
 
-os.environ["MLFLOW_TRACKING_URI"] = os.path.join(
-    os.environ.get("HOME"),
-    "mlflow",
-)
-
 
 def get_image_base64(filename):
     with open(filename, "rb") as f:

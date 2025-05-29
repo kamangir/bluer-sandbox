@@ -8,7 +8,7 @@ function bluer_ai_seed_arvancloud() {
 
     bluer_ai_seed add_ssh_key
 
-    bluer_ai_seed add_bluer_ai
+    bluer_ai_seed add_repo
 
     seed="${seed}sudo apt-get update$delim"
     seed="${seed}sudo apt install -y python3-pip$delim"
@@ -19,14 +19,16 @@ function bluer_ai_seed_arvancloud() {
 
     seed="${seed}pip install --upgrade pip --no-input$delim"
     seed="${seed}pip3 install setuptools$delim"
-    seed="${seed}pip3 install -e .$delim"
-    seed="${seed}pip3 install bluer_objects[opencv]$delim"
+    seed="${seed}pip3 install -e .$delim_section"
+
+    bluer_ai_seed add_repo repo=bluer-objects
+    seed="${seed}pip3 install -e .$delim_section"
+
     seed="${seed}pip3 install --upgrade opencv-python-headless$delim_section"
 
-    bluer_ai_env_dot_seed $(python3 -m bluer_objects locate)
-    [[ $? -ne 0 ]] && return 1
+    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-objects/.env \$HOME/git/bluer-objects/.env)$delim_section"
 
-    seed="${seed}source ./bluer_ai/.abcli/bluer_ai.sh$delim_section"
+    seed="${seed}source \$HOME/git/bluer-ai/bluer_ai/.abcli/bluer_ai.sh$delim_section"
 }
 
 function bluer_sandbox_arvancloud_seed() {

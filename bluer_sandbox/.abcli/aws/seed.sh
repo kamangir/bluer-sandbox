@@ -40,11 +40,11 @@ function bluer_sandbox_seed_aws() {
     fi
 
     if [[ "$target" == "studio_classic_sagemaker" ]]; then
-        bluer_ai_seed add_bluer_ai ~clone
+        bluer_ai_seed add_repo ~clone
     elif [[ "$target" == "studio_classic_sagemaker_system" ]]; then
-        bluer_ai_seed add_bluer_ai https
+        bluer_ai_seed add_repo https
     else
-        bluer_ai_seed add_bluer_ai
+        bluer_ai_seed add_repo
     fi
 
     bluer_ai_seed add_bluer_ai_env
