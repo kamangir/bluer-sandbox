@@ -19,7 +19,6 @@ pip install bluer-sandbox
 graph LR
 
     arvancloud_ssh["@arvan ssh"]
-    arvancloud_set_ip["@arvan set_ip <ip-address>"]
 
 
     assets_publish["@assets publish extensions=png+txt,push <object-name>"]
@@ -74,9 +73,8 @@ graph LR
     arvancloud_machine["🖥️ arvancloud"]:::folder
 
 
+    ip_address --> arvancloud_ssh
     arvancloud_ssh --> arvancloud_machine
-
-    arvancloud_set_ip --> ip_address
 
 
     object --> assets_publish

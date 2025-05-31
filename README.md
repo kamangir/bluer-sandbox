@@ -19,7 +19,6 @@ pip install bluer-sandbox
 graph LR
 
     arvancloud_ssh["@arvan<br>ssh"]
-    arvancloud_set_ip["@arvan<br>set_ip<br>&lt;ip-address&gt;"]
 
 
     assets_publish["@assets<br>publish<br>extensions=png+txt,push<br>&lt;object-name&gt;"]
@@ -74,9 +73,8 @@ graph LR
     arvancloud_machine["🖥️ arvancloud"]:::folder
 
 
+    ip_address --> arvancloud_ssh
     arvancloud_ssh --> arvancloud_machine
-
-    arvancloud_set_ip --> ip_address
 
 
     object --> assets_publish
@@ -137,4 +135,4 @@ graph LR
 
 [![pylint](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml) [![pytest](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml) [![bashtest](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml) [![PyPI version](https://img.shields.io/pypi/v/bluer-sandbox.svg)](https://pypi.org/project/bluer-sandbox/) [![PyPI - Downloads](https://img.shields.io/pypi/dd/bluer-sandbox)](https://pypistats.org/packages/bluer-sandbox)
 
-built by 🌀 [`bluer README`](https://github.com/kamangir/bluer-objects/tree/main/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.139.1`](https://github.com/kamangir/bluer-sandbox).
+built by 🌀 [`bluer README`](https://github.com/kamangir/bluer-objects/tree/main/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.141.1`](https://github.com/kamangir/bluer-sandbox).
