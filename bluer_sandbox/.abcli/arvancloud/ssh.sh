@@ -5,6 +5,12 @@ function bluer_sandbox_arvancloud_ssh() {
     local do_dryrun=$(bluer_ai_option_int "$options" dryrun 0)
     local do_seed=$(bluer_ai_option_int "$options" seed 1)
 
+    local ip_address=$2
+    if [[ -z "$ip_address" ]]; then
+        bluer_ai_log_error "ip address not found."
+        return 1
+    fi
+
     local pem_filename="$HOME/.ssh/$ARVANCLOUD_PRIVATE_KEY.pem"
     if [[ ! -f "$pem_filename" ]]; then
         bluer_ai_log_error "$pem_filename not found."
@@ -23,5 +29,5 @@ function bluer_sandbox_arvancloud_ssh() {
     bluer_ai_eval dryrun=$do_dryrun \
         ssh \
         -i $pem_filename \
-        ubuntu@$ARVANCLOUD_IP
+        ubuntu@$ip_address
 }

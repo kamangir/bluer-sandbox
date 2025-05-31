@@ -7,7 +7,6 @@ function test_bluer_sandbox_help() {
     for module in \
         "@arvan" \
         "@arvan seed" \
-        "@arvan set_ip" \
         "@arvan ssh" \
         \
         "@assets" \
