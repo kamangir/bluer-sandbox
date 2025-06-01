@@ -34,6 +34,8 @@ function bluer_ai_seed_arvancloud() {
     bluer_ai_seed add_repo repo=bluer-flow
     seed="${seed}pip3 install -e .$delim_section"
 
+    bluer_ai_seed add_repo repo=assets
+
     seed="${seed}source \$HOME/git/bluer-ai/bluer_ai/.abcli/bluer_ai.sh$delim_section"
 }
 
