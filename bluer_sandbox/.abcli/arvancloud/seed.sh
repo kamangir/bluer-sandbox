@@ -28,6 +28,12 @@ function bluer_ai_seed_arvancloud() {
 
     seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-objects/.env \$HOME/git/bluer-objects/.env)$delim_section"
 
+    bluer_ai_seed add_repo repo=bluer-sandbox
+    seed="${seed}pip3 install -e .$delim_section"
+
+    bluer_ai_seed add_repo repo=bluer-flow
+    seed="${seed}pip3 install -e .$delim_section"
+
     seed="${seed}source \$HOME/git/bluer-ai/bluer_ai/.abcli/bluer_ai.sh$delim_section"
 }
 
