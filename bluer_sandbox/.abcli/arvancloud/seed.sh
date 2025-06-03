@@ -23,16 +23,20 @@ function bluer_ai_seed_arvancloud() {
 
     bluer_ai_seed add_repo repo=bluer-objects
     seed="${seed}pip3 install -e .$delim_section"
+    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-objects/.env \$HOME/git/bluer-objects/.env)$delim_section"
 
     seed="${seed}pip3 install --upgrade opencv-python-headless$delim_section"
 
-    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-objects/.env \$HOME/git/bluer-objects/.env)$delim_section"
-
     bluer_ai_seed add_repo repo=bluer-sandbox
     seed="${seed}pip3 install -e .$delim_section"
+    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-sandbox/.env \$HOME/git/bluer-sandbox/.env)$delim_section"
 
     bluer_ai_seed add_repo repo=bluer-flow
     seed="${seed}pip3 install -e .$delim_section"
+
+    bluer_ai_seed add_repo repo=bluer-geo
+    seed="${seed}pip3 install -e .$delim_section"
+    seed="${seed}$(bluer_ai_seed add_file $abcli_path_git/bluer-geo/.env \$HOME/git/bluer-geo/.env)$delim_section"
 
     bluer_ai_seed add_repo repo=assets
 
