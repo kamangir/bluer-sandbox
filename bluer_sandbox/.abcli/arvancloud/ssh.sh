@@ -26,6 +26,10 @@ function bluer_sandbox_arvancloud_ssh() {
         [[ $? -ne 0 ]] && return 1
     fi
 
+    # https://chatgpt.com/c/683e8862-1078-8005-85e5-ff3915347e3e
+    ssh-keygen -R $ip_address # Remove any old entry
+    ssh-keyscan -t ed25519 $ip_address >>~/.ssh/known_hosts
+
     bluer_ai_eval dryrun=$do_dryrun \
         ssh \
         -i $pem_filename \
