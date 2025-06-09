@@ -26,7 +26,7 @@ def beep(
         pygame.mixer.quit()
 
 
-note_frequencies = {
+note_frequencies_basic = {
     "C4": 261.63,
     "C#4": 277.18,
     "Db4": 277.18,
@@ -46,6 +46,21 @@ note_frequencies = {
     "B4": 493.88,
     "C5": 523.25,
 }
+
+note_frequencies = {}
+
+A4_freq = 440.0
+A4_midi = 69
+
+for midi_num in range(21, 109):  # MIDI 21 (A0) to MIDI 108 (C8)
+    freq = A4_freq * 2 ** ((midi_num - A4_midi) / 12)
+
+    # MIDI note name
+    octave = (midi_num // 12) - 1
+    note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+    name = note_names[midi_num % 12] + str(octave)
+
+    note_frequencies[name] = round(freq, 2)
 
 pirates_of_caribbean = [
     "E4",
@@ -105,7 +120,7 @@ for note in no_time_to_die_notes:
     freq = note_frequencies.get(note, 440)
     beep(
         freq,
-        300,
+        1000,
         open=False,
         close=False,
     )
