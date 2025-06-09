@@ -15,11 +15,13 @@ def beep(
     if open:
         pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
 
-    t = np.linspace(0, duration, int(sample_rate * duration), False)
-    wave = (np.sin(2 * np.pi * frequency * t) * 32767).astype(np.int16)
+    if frequency is not None:
+        t = np.linspace(0, duration, int(sample_rate * duration), False)
+        wave = (np.sin(2 * np.pi * frequency * t) * 32767).astype(np.int16)
 
-    sound = pygame.sndarray.make_sound(wave)
-    sound.play()
+        sound = pygame.sndarray.make_sound(wave)
+        sound.play()
+
     time.sleep(duration)
 
     if close:
@@ -113,14 +115,171 @@ no_time_to_die_notes = [
     "F4",  # "is just the blood you owe..."
 ]
 
+pink_panther_notes = [
+    # Opening sneaky motif
+    "E4",
+    "G4",
+    "G#4",
+    "A4",
+    None,
+    "C5",
+    "B4",
+    None,
+    "E4",
+    "G4",
+    "G#4",
+    "A4",
+    None,
+    "B4",
+    "A4",
+    None,
+    # Cool descending phrase
+    "G#4",
+    None,
+    "E4",
+    "G#4",
+    "A4",
+    None,
+    "C5",
+    "B4",
+    None,
+    # Repeat with variation
+    "E4",
+    "G4",
+    "G#4",
+    "A4",
+    None,
+    "C5",
+    "B4",
+    None,
+    "E4",
+    "G4",
+    "G#4",
+    "A4",
+    None,
+    "B4",
+    "A4",
+    None,
+    # Jazzy transition
+    "G#4",
+    "B4",
+    "C5",
+    None,
+    "D5",
+    "C5",
+    "B4",
+    "A4",
+    # Build up with repetition
+    "E4",
+    "G4",
+    "G#4",
+    "A4",
+    None,
+    "C5",
+    "B4",
+    None,
+    "E4",
+    "G4",
+    "G#4",
+    "A4",
+    None,
+    "C5",
+    "B4",
+    None,
+    # Dramatic high end
+    "F5",
+    None,
+    "E5",
+    "D#5",
+    "E5",
+    None,
+    "C5",
+    None,
+    "B4",
+    "A4",
+    None,
+]
+
+
+interstellar_notes = [
+    # Opening motif (slow and atmospheric)
+    "C4",
+    "E4",
+    "G4",
+    "B4",
+    "G4",
+    "E4",
+    "C4",
+    None,
+    "C4",
+    "E4",
+    "G4",
+    "B4",
+    "C5",
+    "B4",
+    "G4",
+    None,
+    # Repeats with variations
+    "D4",
+    "F4",
+    "A4",
+    "C5",
+    "A4",
+    "F4",
+    "D4",
+    None,
+    "D4",
+    "F4",
+    "A4",
+    "C5",
+    "D5",
+    "C5",
+    "A4",
+    None,
+    # Rhythmic development
+    "E4",
+    "G4",
+    "B4",
+    "D5",
+    "B4",
+    "G4",
+    "E4",
+    None,
+    "E4",
+    "G4",
+    "B4",
+    "D5",
+    "E5",
+    "D5",
+    "B4",
+    None,
+    # Emotional peak (play slower)
+    "F4",
+    "A4",
+    "C5",
+    "E5",
+    "C5",
+    "A4",
+    "F4",
+    None,
+    "F4",
+    "A4",
+    "C5",
+    "E5",
+    "F5",
+    "E5",
+    "C5",
+    None,
+]
+
 
 beep(440, 500, close=False)
 
-for note in no_time_to_die_notes:
+for note in interstellar_notes:
     freq = note_frequencies.get(note, 440)
     beep(
         freq,
-        1000,
+        250,
         open=False,
         close=False,
     )
