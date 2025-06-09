@@ -6,12 +6,13 @@ import time
 def beep(
     frequency=440,
     duration_ms=500,
-    initialize: bool = True,
+    open: bool = True,
+    close: bool = True,
 ):
     sample_rate = 44100
     duration = duration_ms / 1000
 
-    if initialize:
+    if open:
         pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
 
     t = np.linspace(0, duration, int(sample_rate * duration), False)
@@ -21,7 +22,7 @@ def beep(
     sound.play()
     time.sleep(duration)
 
-    if initialize:
+    if close:
         pygame.mixer.quit()
 
 
@@ -79,14 +80,15 @@ pirates_notes = [
 ]
 
 
-beep(440, 500)
+beep(440, 500, close=False)
 
 for note in pirates_notes:
-    freq = note_frequencies.get(note, 440)  # default to A4 if not found
+    freq = note_frequencies.get(note, 440)
     beep(
         freq,
         300,
-        initialize=False,
-    )  # play each note for 300 ms
+        open=False,
+        close=False,
+    )
 
-beep(440, 500)
+beep(440, 500, open=False)
