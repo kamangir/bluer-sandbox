@@ -3,18 +3,26 @@ import pygame
 import time
 
 
-def beep(frequency=440, duration_ms=500):
+def beep(
+    frequency=440,
+    duration_ms=500,
+    initialize: bool = True,
+):
     sample_rate = 44100
     duration = duration_ms / 1000
 
-    pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
+    if initialize:
+        pygame.mixer.init(frequency=sample_rate, size=-16, channels=1)
+
     t = np.linspace(0, duration, int(sample_rate * duration), False)
     wave = (np.sin(2 * np.pi * frequency * t) * 32767).astype(np.int16)
 
     sound = pygame.sndarray.make_sound(wave)
     sound.play()
     time.sleep(duration)
-    pygame.mixer.quit()
+
+    if initialize:
+        pygame.mixer.quit()
 
 
 note_frequencies = {
@@ -70,9 +78,15 @@ pirates_notes = [
     "A4",  # ending phrase
 ]
 
-# Example
-# beep(440, 500)
+
+beep(440, 500)
 
 for note in pirates_notes:
     freq = note_frequencies.get(note, 440)  # default to A4 if not found
-    beep(freq, 300)  # play each note for 300 ms
+    beep(
+        freq,
+        300,
+        initialize=False,
+    )  # play each note for 300 ms
+
+beep(440, 500)
