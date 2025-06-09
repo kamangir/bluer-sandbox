@@ -47,7 +47,7 @@ note_frequencies = {
     "C5": 523.25,
 }
 
-pirates_notes = [
+pirates_of_caribbean = [
     "E4",
     "G4",
     "A4",
@@ -79,10 +79,29 @@ pirates_notes = [
     "A4",  # ending phrase
 ]
 
+no_time_to_die_notes = [
+    "C5",
+    "B4",
+    "A4",  # "I should have known..."
+    "C5",
+    "B4",
+    "A4",  # "I'd leave alone..."
+    "G4",
+    "A4",
+    "A4",  # "Just goes to show..."
+    "G4",
+    "F4",
+    "E4",  # "That the blood you bleed..."
+    "E4",
+    "F4",
+    "G4",
+    "F4",  # "is just the blood you owe..."
+]
+
 
 beep(440, 500, close=False)
 
-for note in pirates_notes:
+for note in no_time_to_die_notes:
     freq = note_frequencies.get(note, 440)
     beep(
         freq,
