@@ -38,6 +38,9 @@ function test_bluer_sandbox_help() {
         "@offline_llm model get" \
         "@offline_llm prompt" \
         \
+        "@parser" \
+        "@parser parse" \
+        \
         "@sandbox" \
         \
         "@sandbox pypi" \

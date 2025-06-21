@@ -4,6 +4,7 @@ from bluer_sandbox.help.assets import help_functions as help_assets
 from bluer_sandbox.help.docker import help_functions as help_docker
 from bluer_sandbox.help.notebooks import help_functions as help_notebooks
 from bluer_sandbox.help.offline_llm import help_functions as help_offline_llm
+from bluer_sandbox.help.parser import help_functions as help_offline_parser
 from bluer_sandbox.help.speedtest import help_speedtest
 
 from bluer_sandbox import ALIAS
@@ -18,6 +19,7 @@ help_functions.update(
         "docker": help_docker,
         "notebooks": help_notebooks,
         "offline_llm": help_offline_llm,
+        "parser": help_offline_parser,
         "speedtest": help_speedtest,
     }
 )
