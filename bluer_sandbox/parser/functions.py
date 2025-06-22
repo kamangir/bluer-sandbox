@@ -38,6 +38,11 @@ def parse(
             if not filename:
                 filename = re.sub(r"[^\w\s]", "_", url) + ".html"
 
+            filename = objects.path_of(
+                object_name=object_name,
+                filename=filename,
+            )
+
             with open(
                 filename,
                 "w",
