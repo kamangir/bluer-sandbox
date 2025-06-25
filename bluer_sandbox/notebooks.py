@@ -60,5 +60,4 @@ def upload(
     if public:
         return True
 
-    if not mlflow.log_run(object_name):
-        return False
+    return mlflow.log_run(object_name)
