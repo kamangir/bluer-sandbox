@@ -26,7 +26,7 @@
  . get model properties.
 @offline_llm \
 	prompt \
-	[download_model,tiny,~upload] \
+	[download_model,tiny,upload] \
 	"<prompt>" \
 	[-|<object-name>]
  . "<prompt>" -> offline_llm.

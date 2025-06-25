@@ -2,7 +2,7 @@
 
 function bluer_sandbox_offline_llm_prompt() {
     local options=$1
-    local do_upload=$(bluer_ai_option_int "$options" upload 1)
+    local do_upload=$(bluer_ai_option_int "$options" upload 0)
     local tiny=$(bluer_ai_option_int "$options" tiny 0)
     local download_model=$(bluer_ai_option_int "$options" download_model 0)
 
