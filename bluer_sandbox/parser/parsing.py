@@ -32,7 +32,11 @@ def parse(
         soup = BeautifulSoup(content, "html.parser")
 
         list_of_urls = list({link.get("href") for link in soup.find_all("a")})
-        list_of_urls = [url_ for url_ in list_of_urls if not url_.startswith("#")]
+        list_of_urls = [
+            url_
+            for url_ in list_of_urls
+            if isinstance(url_, str) and not url_.startswith("#")
+        ]
         list_of_urls = [
             urljoin(url, url_) if url_.startswith("/") else url_
             for url_ in list_of_urls
