@@ -1,4 +1,5 @@
 bluer_ai
 
+beautifulsoup4
 huggingface-hub
 ipdb

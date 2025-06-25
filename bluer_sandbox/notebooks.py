@@ -47,5 +47,17 @@ def imshow(
         display(HTML(html))
 
 
-def upload(object_name: str) -> bool:
-    return storage.upload(object_name) and mlflow.log_run(object_name)
+def upload(
+    object_name: str,
+    public: bool = False,
+) -> bool:
+    if not storage.upload(
+        object_name=object_name,
+        public=public,
+    ):
+        return False
+
+    if public:
+        return True
+
+    return mlflow.log_run(object_name)
