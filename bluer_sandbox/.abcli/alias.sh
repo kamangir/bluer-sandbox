@@ -12,6 +12,7 @@ alias @notebooks=bluer_sandbox_notebooks
 alias @parser=bluer_sandbox_parser
 
 alias @offline_llm=bluer_sandbox_offline_llm
+alias @ollm=bluer_sandbox_offline_llm
 
 alias @sandbox=bluer_sandbox
 
