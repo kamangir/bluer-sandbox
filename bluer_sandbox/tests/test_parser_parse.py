@@ -2,7 +2,7 @@ import pytest
 
 from bluer_objects import objects
 
-from bluer_sandbox.parser.functions import parse
+from bluer_sandbox.parser.parsing import parse
 
 
 @pytest.mark.parametrize(

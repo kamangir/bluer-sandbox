@@ -1,12 +1,15 @@
 from typing import Tuple, List
 import urllib.request
+from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import re
 
 from blueness import module
+from bluer_objects import path, file
 from bluer_objects import objects
 
 from bluer_sandbox import NAME
+from bluer_sandbox.parser.hashing import hash_of
 from bluer_sandbox.logger import logger
 
 
@@ -28,25 +31,29 @@ def parse(
         content = response.read().decode("utf-8")
         soup = BeautifulSoup(content, "html.parser")
 
+        list_of_urls = list(set([link.get("href") for link in soup.find_all("a")]))
+        list_of_urls = [url_ for url_ in list_of_urls if not url_.startswith("#")]
         list_of_urls = [
-            href
-            for href in [link.get("href") for link in soup.find_all("a")]
-            if re.match(r"^https?://", href)
+            urljoin(url, url_) if url_.startswith("/") else url_
+            for url_ in list_of_urls
         ]
+        logger.info(f"found {len(list_of_urls)} url(s):")
+        for index, url_ in enumerate(list_of_urls):
+            logger.info(f"#{index+1: 3}: {url_}")
 
         if object_name:
             if not filename:
-                filename = re.sub(r"[^\w\s]", "_", url) + ".html"
+                filename = "cache/{}.html".format(hash_of(url))
 
             filename = objects.path_of(
                 object_name=object_name,
                 filename=filename,
             )
 
-            with open(
-                filename,
-                "w",
-            ) as f:
+            if not path.create(file.path(filename)):
+                return False, []
+
+            with open(filename, "w") as f:
                 f.write(content)
 
             logger.info(f"-> {filename}")

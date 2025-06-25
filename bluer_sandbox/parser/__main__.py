@@ -4,7 +4,7 @@ from blueness import module
 from blueness.argparse.generic import sys_exit
 
 from bluer_sandbox import NAME
-from bluer_sandbox.parser.functions import parse
+from bluer_sandbox.parser.parsing import parse
 from bluer_sandbox.logger import logger
 
 NAME = module.name(__file__, NAME)
