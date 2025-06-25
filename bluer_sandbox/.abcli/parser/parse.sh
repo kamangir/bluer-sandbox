@@ -23,4 +23,6 @@ function bluer_sandbox_parser_parse() {
 
     [[ "$do_upload" == 1 ]] &&
         bluer_objects_upload - $object_name
+
+    return 0
 }
