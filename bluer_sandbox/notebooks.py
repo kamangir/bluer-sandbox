@@ -50,14 +50,16 @@ def imshow(
 def upload(
     object_name: str,
     public: bool = False,
+    zip: bool = False,
 ) -> bool:
     if not storage.upload(
         object_name=object_name,
         public=public,
+        zip=zip,
     ):
         return False
 
-    if public:
+    if public or zip:
         return True
 
     return mlflow.log_run(object_name)
