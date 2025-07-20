@@ -59,6 +59,7 @@ def build():
                 "arvancloud",
                 "offline_llm",
                 "LSTM",
+                "tor",
             ]
         ]
         + [{"path": "docs"}]
