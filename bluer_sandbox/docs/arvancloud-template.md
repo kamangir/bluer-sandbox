@@ -11,4 +11,4 @@
 
 | | |
 |-|-|
-| assets:::arvancloud/seed.png | 🔥 |
+| assets:::arvancloud/seed.png | assets:::arvancloud/terraformed.png |
