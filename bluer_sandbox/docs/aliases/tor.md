@@ -2,10 +2,10 @@
 
 ```bash
 @tor \
-	check
- . check tor.
-@tor \
 	start \
 	[install]
  . install tor.
+@tor \
+	test
+ . test tor.
 ```
