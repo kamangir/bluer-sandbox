@@ -19,7 +19,7 @@ items = README.Items(
             "name": "tor",
             "description": "tools to work with [tor](https://www.torproject.org/).",
             "marquee": "https://github.com/kamangir/assets/blob/main/tor/tor2.png?raw=true",
-            "url": "./bluer_sandbox/docs/alias/tor.md",
+            "url": "./bluer_sandbox/docs/aliases/tor.md",
         },
         {
             "name": "offline LLM",
