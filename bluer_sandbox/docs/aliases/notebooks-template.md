@@ -1,5 +1,5 @@
-# notebooks
+title:::
 
-A [bluer Jupyter Notebook](../../assets/template.ipynb).
+a [bluer Jupyter Notebook](../../assets/template.ipynb).
 
 help::: bluer_sandbox notebooks

@@ -1,6 +1,5 @@
 # LSTM
 
-
 ## algo
 
 - [Wikipedia](https://en.wikipedia.org/wiki/Long_short-term_memory)

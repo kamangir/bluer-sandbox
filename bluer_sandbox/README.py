@@ -16,6 +16,12 @@ items = README.Items(
             "url": "./bluer_sandbox/docs/arvancloud.md",
         },
         {
+            "name": "tor",
+            "description": "tools to work with [tor](https://www.torproject.org/).",
+            "marquee": "https://github.com/kamangir/assets/blob/main/tor/tor2.png?raw=true",
+            "url": "./bluer_sandbox/docs/tor.md",
+        },
+        {
             "name": "offline LLM",
             "description": "using [llama.cpp](https://github.com/ggerganov/llama.cpp).",
             "marquee": "https://user-images.githubusercontent.com/1991296/230134379-7181e485-c521-4d23-a0d6-f7b3b61ba524.png",
@@ -45,28 +51,29 @@ def build():
             {
                 "path": "..",
                 "items": items,
-                "cols": 2,
             },
         ]
         + [
-            {
-                "path": f"docs/{doc}.md",
-            }
+            {"path": f"docs/{doc}.md"}
             for doc in [
                 "arvancloud",
                 "offline_llm",
                 "LSTM",
+                "tor",
             ]
         ]
+        + [{"path": "docs"}]
+        + [{"path": "docs/aliases"}]
         + [
-            {
-                "path": f"docs/aliases/{alias}.md",
-            }
+            {"path": f"docs/aliases/{alias}.md"}
             for alias in [
+                "arvancloud",
                 "assets",
                 "docker",
                 "notebooks",
                 "offline_llm",
+                "speedtest",
+                "tor",
             ]
         ]
     )

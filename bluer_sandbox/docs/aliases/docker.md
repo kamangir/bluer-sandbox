@@ -1,4 +1,4 @@
-# docker
+# aliases: docker
 
 ```bash
 @docker \

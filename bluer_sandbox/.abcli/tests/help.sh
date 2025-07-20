@@ -55,6 +55,10 @@ function test_bluer_sandbox_help() {
         \
         "@speedtest" \
         \
+        "@tor" \
+        "@tor test" \
+        "@tor start" \
+        \
         "bluer_sandbox"; do
         bluer_ai_eval ,$options \
             bluer_ai_help $module

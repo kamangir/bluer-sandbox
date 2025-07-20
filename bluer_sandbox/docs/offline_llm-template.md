@@ -1,4 +1,7 @@
-# offline_llm
+title:::
+
+- using [llama.cpp](https://github.com/ggerganov/llama.cpp).
+- [@offline_llm](./aliases/offline_llm.md)
 
 ```bash
 @offline_llm build

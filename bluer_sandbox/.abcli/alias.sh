@@ -18,3 +18,5 @@ alias @llm=bluer_sandbox_offline_llm
 alias @sandbox=bluer_sandbox
 
 alias @speedtest=bluer_sandbox_speedtest
+
+alias @tor=bluer_sandbox_tor
