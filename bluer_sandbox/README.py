@@ -56,7 +56,7 @@ def build():
                 "LSTM",
             ]
         ]
-        + [{"path": f"docs"}]
+        + [{"path": "docs"}]
         + [
             {"path": f"docs/aliases/{alias}.md"}
             for alias in [
