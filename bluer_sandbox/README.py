@@ -57,6 +57,7 @@ def build():
             ]
         ]
         + [{"path": "docs"}]
+        + [{"path": "docs/aliases"}]
         + [
             {"path": f"docs/aliases/{alias}.md"}
             for alias in [
