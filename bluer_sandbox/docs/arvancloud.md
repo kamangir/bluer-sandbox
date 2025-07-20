@@ -7,5 +7,3 @@ https://arvancloud.ir/
 
 # Ctrl+V
 ```
-
-🔥
