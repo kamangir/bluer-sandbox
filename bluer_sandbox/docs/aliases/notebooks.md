@@ -1,6 +1,6 @@
-# notebooks
+# aliases: notebooks
 
-A [bluer Jupyter Notebook](../../assets/template.ipynb).
+a [bluer Jupyter Notebook](../../assets/template.ipynb).
 
 ```bash
 @notebooks \

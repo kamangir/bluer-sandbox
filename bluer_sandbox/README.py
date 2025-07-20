@@ -49,24 +49,24 @@ def build():
             },
         ]
         + [
-            {
-                "path": f"docs/{doc}.md",
-            }
+            {"path": f"docs/{doc}.md"}
             for doc in [
                 "arvancloud",
                 "offline_llm",
                 "LSTM",
             ]
         ]
+        + [{"path": f"docs"}]
         + [
-            {
-                "path": f"docs/aliases/{alias}.md",
-            }
+            {"path": f"docs/aliases/{alias}.md"}
             for alias in [
+                "arvancloud",
                 "assets",
                 "docker",
                 "notebooks",
                 "offline_llm",
+                "speedtest",
+                "tor",
             ]
         ]
     )

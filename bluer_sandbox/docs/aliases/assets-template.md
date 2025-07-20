@@ -1,5 +1,5 @@
-# assets
+title:::
 
-Asset management in [github/kamangir/assets](https://github.com/kamangir/assets).
+asset management in [github/kamangir/assets](https://github.com/kamangir/assets).
 
 help::: bluer_sandbox assets
