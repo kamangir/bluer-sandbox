@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-function bluer_sandbox_tor_install() {
+function bluer_sandbox_tor_start() {
     local options=$1
     local do_dryrun=$(bluer_ai_option_int "$options" dryrun 0)
     local do_install=$(bluer_ai_option_int "$options" install 0)
@@ -14,8 +14,5 @@ function bluer_sandbox_tor_install() {
         done
     fi
 
-    curl \
-        --socks5-hostname 127.0.0.1:9050 \
-        https://check.torproject.org/api/ip
-
+    bluer_sandbox_tor_check $options
 }

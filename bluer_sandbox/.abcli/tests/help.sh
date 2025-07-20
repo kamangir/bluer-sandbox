@@ -56,6 +56,7 @@ function test_bluer_sandbox_help() {
         "@speedtest" \
         \
         "@tor" \
+        "@tor check" \
         "@tor install" \
         \
         "bluer_sandbox"; do
