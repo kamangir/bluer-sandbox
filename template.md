@@ -16,7 +16,7 @@ pip install bluer-sandbox
 [@notebooks](./bluer_sandbox/docs/aliases/notebooks.md), 
 [@offline_llm](./bluer_sandbox/docs/aliases/offline_llm.md), 
 [@speedtest](./bluer_sandbox/docs/aliases/speedtest.md), 
-[@tor](./bluer_sandbox/docs/aliases/offline_llm.md).
+[@tor](./bluer_sandbox/docs/aliases/tor.md).
 
 items:::
 
