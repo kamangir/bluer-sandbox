@@ -7,7 +7,7 @@ function bluer_sandbox_tor_start() {
 
     if [[ "$do_install" == 1 ]]; then
         local module
-        for module in tor obfs4proxy; do
+        for module in tor torsocks obfs4proxy; do
             bluer_ai_eval dryrun=$do_dryrun \
                 brew install $module
             [[ $? -ne 0 ]] && return 1
