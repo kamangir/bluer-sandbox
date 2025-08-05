@@ -45,9 +45,9 @@ def group_anagrams(words: List[str]) -> Dict[str, List[str]]:
 
     for word in words:
         found: bool = False
-        for keyword in groups:
+        for keyword, group in groups.items():
             if is_anagram(word, keyword):
-                groups[keyword].append(word)
+                group.append(word)
                 found = True
                 break
 
@@ -107,7 +107,7 @@ def print_report(
     )
 
     logger.info("Anagram groups:")
-    for keyword, group in groups.items():
+    for group in groups.values():
         logger.info(group_as_str(group))
 
 
