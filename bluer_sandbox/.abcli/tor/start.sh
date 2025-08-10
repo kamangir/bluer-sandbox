@@ -14,5 +14,5 @@ function bluer_sandbox_tor_start() {
         done
     fi
 
-    bluer_sandbox_tor_check $options
+    bluer_sandbox_tor_test $options
 }
