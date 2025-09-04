@@ -1,4 +1,4 @@
-# aliases: offline_llm
+# aliases: offline-llm
 
 ```bash
 @offline_llm \
