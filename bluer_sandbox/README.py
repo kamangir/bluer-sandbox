@@ -10,6 +10,11 @@ from bluer_sandbox.help.functions import help_functions
 items = README.Items(
     [
         {
+            "name": "bluer village",
+            "description": "a bluer village.",
+            "url": "./bluer_sandbox/docs/aliases/village.md",
+        },
+        {
             "name": "arvancloud",
             "description": "tools to work with [arvancloud](https://arvancloud.ir/).",
             "marquee": "https://github.com/kamangir/assets/blob/main/arvancloud/arvancloud.png?raw=true",
@@ -74,6 +79,7 @@ def build():
                 "offline_llm",
                 "speedtest",
                 "tor",
+                "village",
             ]
         ]
     )

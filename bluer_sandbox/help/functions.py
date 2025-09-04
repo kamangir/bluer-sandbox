@@ -8,6 +8,7 @@ from bluer_sandbox.help.offline_llm import help_functions as help_offline_llm
 from bluer_sandbox.help.parser import help_functions as help_offline_parser
 from bluer_sandbox.help.speedtest import help_speedtest
 from bluer_sandbox.help.tor import help_functions as help_tor
+from bluer_sandbox.help.village import help_functions as help_village
 
 from bluer_sandbox import ALIAS
 
@@ -25,5 +26,6 @@ help_functions.update(
         "parser": help_offline_parser,
         "speedtest": help_speedtest,
         "tor": help_tor,
+        "village": help_village,
     }
 )

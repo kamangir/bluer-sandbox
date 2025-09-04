@@ -10,6 +10,7 @@ def test_required_env():
 
 
 def test_bluer_sandbox_env():
-    assert env.BLUER_SANDBOX_CONFIG
-
     assert env.ARVANCLOUD_PRIVATE_KEY
+
+    assert env.BLUER_VILLAGE_TEST_OBJECT
+    assert env.BLUER_VILLAGE_OBJECT
