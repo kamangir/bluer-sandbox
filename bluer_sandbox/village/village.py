@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from blueness import module
 from bluer_options.logger import log_list
@@ -18,6 +18,22 @@ class Village:
 
     families: List[Family] = []
 
+    def get_person(
+        self,
+        name: str,
+        add: bool = False,
+    ) -> Union[Person, None]:
+        for person in self.persons:
+            if person.name == name:
+                return person
+
+        if add:
+            person = Person(name=name)
+            self.persons.append(person)
+            return person
+
+        return None
+
     def load(
         self,
         object_name: str,
@@ -26,13 +42,18 @@ class Village:
         logger.info(f"{NAME}.load({object_name})")
 
         persons = get_from_object(object_name, "persons")
+
+        if not isinstance(persons, dict):
+            logger.error(f"persons is a {persons.__class__.__name__}, expected dict.")
+            return False
+
         self.persons = [
             Person(
-                name=person_.get("name", "unknown"),
-                sex=person_.get("sex", "female"),
-                death=person_.get("death", -1),
+                name=name,
+                sex=info.get("sex", "female"),
+                death=info.get("death", -1),
             )
-            for person_ in persons
+            for name, info in persons.items()
         ]
         if verbose:
             log_list(
@@ -46,6 +67,39 @@ class Village:
 
         families = get_from_object(object_name, "families")
 
-        logger.info("🪄")
+        if not isinstance(families, dict):
+            logger.error(f"families is a {families.__class__.__name__}, expected dict.")
+            return False
+
+        self.families = [
+            Family(
+                parents=[
+                    self.get_person(
+                        name.strip(),
+                        add=True,
+                    )
+                    for name in parents.split(" + ")
+                ],
+                children=[
+                    self.get_person(
+                        name.strip(),
+                        add=True,
+                    )
+                    for name in info.get("children", [])
+                ],
+                end=info.get("end", -1),
+            )
+            for parents, info in families.items()
+        ]
+
+        if verbose:
+            log_list(
+                logger,
+                "loaded",
+                [family.as_str() for family in self.families],
+                "family(s)",
+            )
+        else:
+            logger.info(f"loaded {len(self.families)} family(s).")
 
         return True

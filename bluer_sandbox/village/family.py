@@ -4,15 +4,21 @@ from bluer_sandbox.village.person import Person
 
 
 class Family:
-    def __init__(self):
-        self.parents: List[Person] = []
-        self.children: List[Person] = []
+    def __init__(
+        self,
+        parents: List[Person] = [],
+        children: List[Person] = [],
+        end: int = -1,
+    ):
+        self.parents = parents
+        self.children = children
+        self.end = end
 
     def as_str(
         self,
-        verbose: bool = True,
+        verbose: bool = False,
     ) -> str:
-        return "[{}]{}".format(
+        return "[{}]{}{}".format(
             " + ".join(
                 [person.as_str() if verbose else person.name for person in self.parents]
             ),
@@ -28,4 +34,5 @@ class Family:
                     )
                 )
             ),
+            ("" if self.end == -1 else f" (ended {self.end})"),
         )
