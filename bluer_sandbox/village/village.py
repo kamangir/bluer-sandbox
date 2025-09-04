@@ -63,6 +63,7 @@ class Village:
             "loaded",
             [person.as_str() for person in self.persons],
             "person(s)",
+            max_count=1000,
         )
 
         # loading families
@@ -100,6 +101,15 @@ class Village:
             "loaded",
             [family.as_str() for family in self.families],
             "family(s)",
+            max_count=1000,
+        )
+
+        log_list(
+            logger,
+            "created",
+            [person.as_str() for person in self.persons],
+            "person(s)",
+            max_count=1000,
         )
 
         return True
