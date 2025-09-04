@@ -16,6 +16,9 @@ setup(
         f"{NAME}.interview",
         f"{NAME}.offline_llm",
         f"{NAME}.offline_llm.model",
+        f"{NAME}.parser",
+        f"{NAME}.raspbian",
+        f"{NAME}.village",
     ],
     include_package_data=True,
     package_data={
