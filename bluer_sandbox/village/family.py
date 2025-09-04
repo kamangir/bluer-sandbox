@@ -5,7 +5,7 @@ from bluer_sandbox.village.person import Person
 
 class Family:
     def __init__(self):
-        self.persons: List[Person] = []
+        self.parents: List[Person] = []
         self.children: List[Person] = []
 
     def as_str(
@@ -14,7 +14,7 @@ class Family:
     ) -> str:
         return "[{}]{}".format(
             " + ".join(
-                [person.as_str() if verbose else person.name for person in self.persons]
+                [person.as_str() if verbose else person.name for person in self.parents]
             ),
             (
                 ""

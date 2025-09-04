@@ -15,7 +15,7 @@ def test_village_family_blank():
 def test_village_family_no_children():
     family = Family()
 
-    family.persons = [
+    family.parents = [
         Person(
             name="Arash",
             sex="male",
@@ -37,7 +37,7 @@ def test_village_family_no_children():
 def test_village_family_with_children():
     family = Family()
 
-    family.persons = [
+    family.parents = [
         Person(
             name="Arash",
             sex="male",

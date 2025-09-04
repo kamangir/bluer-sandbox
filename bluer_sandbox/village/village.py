@@ -5,4 +5,6 @@ from bluer_sandbox.village.person import Person
 
 
 class village:
-    persons: List[Person] = []
+    parents: List[Person] = []
+
+    families: List[Family] = []
