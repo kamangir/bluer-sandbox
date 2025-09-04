@@ -4,8 +4,9 @@ from bluer_sandbox.village.person import Person
 
 
 class Family:
-    persons: List[Person]
-    children: List[Person]
+    def __init__(self):
+        self.persons: List[Person] = []
+        self.children: List[Person] = []
 
     def as_str(
         self,

@@ -1,11 +1,4 @@
-from typing import UNION, NONE
-
-
 class Person:
-    name: str
-    sex: str
-    death: int
-
     def __init__(
         self,
         name: str,
@@ -24,3 +17,7 @@ class Person:
             self.sex,
             "" if self.death == -1 else f", death: {self.death}",
         )
+
+    @property
+    def is_alive(self) -> bool:
+        return self.death == -1
