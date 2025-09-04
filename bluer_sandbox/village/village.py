@@ -41,6 +41,7 @@ class Village:
     ) -> bool:
         logger.info(f"{NAME}.load({object_name})")
 
+        # loading persons
         persons = get_from_object(object_name, "persons")
 
         if not isinstance(persons, dict):
@@ -65,6 +66,7 @@ class Village:
         else:
             logger.info(f"loaded {len(self.persons)} person(s).")
 
+        # loading families
         families = get_from_object(object_name, "families")
 
         if not isinstance(families, dict):
