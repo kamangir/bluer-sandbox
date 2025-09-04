@@ -19,7 +19,8 @@ def help_analyze(
             "analyze",
             f"[{options}]",
             "[.|$BLUER_VILLAGE_TEST_OBJECT]",
-        ],
+        ]
+        + args,
         "analyze village.",
         mono=mono,
     )
