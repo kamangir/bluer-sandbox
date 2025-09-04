@@ -1,6 +1,9 @@
 from typing import List
 
 from blueness import module
+from bluer_options.logger import log_list
+from bluer_objects import file, objects
+from bluer_objects.metadata import get_from_object
 
 from bluer_sandbox import NAME
 from bluer_sandbox.village.family import Family
@@ -11,7 +14,7 @@ NAME = module.name(__file__, NAME)
 
 
 class Village:
-    parents: List[Person] = []
+    persons: List[Person] = []
 
     families: List[Family] = []
 
@@ -21,6 +24,27 @@ class Village:
         verbose: bool = False,
     ) -> bool:
         logger.info(f"{NAME}.load({object_name})")
+
+        persons = get_from_object(object_name, "persons")
+        self.persons = [
+            Person(
+                name=person_.get("name", "unknown"),
+                sex=person_.get("sex", "female"),
+                death=person_.get("death", -1),
+            )
+            for person_ in persons
+        ]
+        if verbose:
+            log_list(
+                logger,
+                "loaded",
+                [person.as_str() for person in self.persons],
+                "person(s)",
+            )
+        else:
+            logger.info(f"loaded {len(self.persons)} person(s).")
+
+        families = get_from_object(object_name, "families")
 
         logger.info("🪄")
 
