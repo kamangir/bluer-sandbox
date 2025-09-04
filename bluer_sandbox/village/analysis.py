@@ -1,7 +1,7 @@
 from blueness import module
 
-from bluer_plugin import NAME
-from bluer_plugin.logger import logger
+from bluer_sandbox import NAME
+from bluer_sandbox.logger import logger
 
 
 NAME = module.name(__file__, NAME)
