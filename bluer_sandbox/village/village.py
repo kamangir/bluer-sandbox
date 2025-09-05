@@ -43,6 +43,8 @@ class Village:
 
         # loading persons
         persons = get_from_object(object_name, "persons")
+        if verbose:
+            logger.info(f"persons: {persons}")
 
         if not isinstance(persons, dict):
             logger.error(f"persons is a {persons.__class__.__name__}, expected dict.")
@@ -56,18 +58,18 @@ class Village:
             )
             for name, info in persons.items()
         ]
-        if verbose:
-            log_list(
-                logger,
-                "loaded",
-                [person.as_str() for person in self.persons],
-                "person(s)",
-            )
-        else:
-            logger.info(f"loaded {len(self.persons)} person(s).")
+        log_list(
+            logger,
+            "loaded",
+            [person.as_str() for person in self.persons],
+            "person(s)",
+            max_count=1000,
+        )
 
         # loading families
         families = get_from_object(object_name, "families")
+        if verbose:
+            logger.info(f"families: {families}")
 
         if not isinstance(families, dict):
             logger.error(f"families is a {families.__class__.__name__}, expected dict.")
@@ -94,14 +96,20 @@ class Village:
             for parents, info in families.items()
         ]
 
-        if verbose:
-            log_list(
-                logger,
-                "loaded",
-                [family.as_str() for family in self.families],
-                "family(s)",
-            )
-        else:
-            logger.info(f"loaded {len(self.families)} family(s).")
+        log_list(
+            logger,
+            "loaded",
+            [family.as_str() for family in self.families],
+            "family(s)",
+            max_count=1000,
+        )
+
+        log_list(
+            logger,
+            "created",
+            [person.as_str() for person in self.persons],
+            "person(s)",
+            max_count=1000,
+        )
 
         return True
