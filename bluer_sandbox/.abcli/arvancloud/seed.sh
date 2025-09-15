@@ -14,6 +14,7 @@ function bluer_ai_seed_arvancloud() {
     seed="${seed}sudo apt install -y python3-pip$delim"
     seed="${seed}sudo apt install -y python3-venv$delim"
     seed="${seed}sudo apt install -y libgl1$delim_section"
+    seed="${seed}sudo apt install -y unzip$delim_section"
 
     bluer_ai_seed add_bluer_ai_env
 
