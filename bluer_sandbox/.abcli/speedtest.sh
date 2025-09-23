@@ -5,6 +5,12 @@ function bluer_sandbox_speedtest() {
     local do_install=$(bluer_ai_option_int "$options" install 1)
     local do_dryrun=$(bluer_ai_option_int "$options" dryrun 0)
 
+    if [[ "$BLUER_AI_WIFI_SSID" == "Sion" ]]; then
+        bluer_ai_browse \
+            https://speedtest.mci.ir/
+        return
+    fi
+
     local install_command=""
     if [[ "$do_install" == 1 ]]; then
         if [[ "$abcli_is_mac" == true ]]; then
