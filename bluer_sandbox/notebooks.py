@@ -1,8 +1,9 @@
-import os
+import numpy as np
 from typing import List, Union
 import base64
 from functools import reduce
 from IPython.display import display, HTML
+import matplotlib.pyplot as plt
 
 from bluer_objects import storage, mlflow
 
@@ -15,12 +16,24 @@ def get_image_base64(filename):
 
 def imshow(
     list_of_files: Union[
+        np.ndarray,
         List[List[str]],
         List[str],
         str,
     ],
     dryrun: bool = False,
 ):
+    if isinstance(list_of_files, np.ndarray):
+        plt.figure(figsize=(10, 10))
+        plt.imshow(
+            list_of_files,
+            cmap="viridis",
+            aspect="equal",
+        )
+        plt.axis("off")
+        plt.show()
+        return
+
     if not isinstance(list_of_files, list):
         list_of_files = [list_of_files]
     list_of_files = [(row if isinstance(row, list) else [row]) for row in list_of_files]
