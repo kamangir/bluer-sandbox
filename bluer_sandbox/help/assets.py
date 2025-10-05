@@ -3,6 +3,29 @@ from typing import List
 from bluer_options.terminal import show_usage, xtra
 
 
+def help_cd(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    options = "".join(
+        [
+            xtra("create,", mono=mono),
+            "vol=<2>",
+        ]
+    )
+
+    return show_usage(
+        [
+            "@assets",
+            "cd",
+            f"[{options}]",
+            "[<path>]",
+        ],
+        "cd assets volume.",
+        mono=mono,
+    )
+
+
 def help_publish(
     tokens: List[str],
     mono: bool,
@@ -35,5 +58,6 @@ def help_publish(
 
 
 help_functions = {
+    "cd": help_cd,
     "publish": help_publish,
 }

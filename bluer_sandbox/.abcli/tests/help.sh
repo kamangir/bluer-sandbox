@@ -10,6 +10,7 @@ function test_bluer_sandbox_help() {
         "@arvan ssh" \
         \
         "@assets" \
+        "@assets cd" \
         "@assets publish" \
         \
         "@docker" \
