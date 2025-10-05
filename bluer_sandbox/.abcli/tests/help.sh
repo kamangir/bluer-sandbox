@@ -11,6 +11,7 @@ function test_bluer_sandbox_help() {
         \
         "@assets" \
         "@assets cd" \
+        "@assets mv" \
         "@assets publish" \
         \
         "@docker" \

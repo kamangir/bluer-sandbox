@@ -6,7 +6,6 @@ function bluer_sandbox_assets_cd() {
     local volume=$(bluer_ai_option "$options" vol)
 
     local path=$2
-
     path=$abcli_path_git/assets$volume/$path
 
     if [[ "$do_create" == 1 ]]; then

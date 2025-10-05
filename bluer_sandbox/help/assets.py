@@ -1,6 +1,7 @@
 from typing import List
 
 from bluer_options.terminal import show_usage, xtra
+from bluer_ai.help.git import push_options
 
 
 def help_cd(
@@ -26,6 +27,37 @@ def help_cd(
     )
 
 
+def help_mv(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    options = "".join(
+        [
+            xtra("create,", mono=mono),
+            "extension=<png>,vol=<2>",
+        ]
+    )
+
+    return show_usage(
+        [
+            "@assets",
+            "mv",
+            f"[{options}]",
+            "[<path>]",
+            "[push,{}]".format(
+                push_options(
+                    mono=mono,
+                    uses_actions=False,
+                    uses_pull_request=False,
+                    uses_workflows=False,
+                )
+            ),
+        ],
+        "mv assets to volume.",
+        mono=mono,
+    )
+
+
 def help_publish(
     tokens: List[str],
     mono: bool,
@@ -33,7 +65,7 @@ def help_publish(
     options = "".join(
         [
             xtra("download,", mono=mono),
-            "extensions=png+txt",
+            "extensions=<png+txt>",
             xtra(",~pull,", mono=mono),
             "push",
         ]
@@ -59,5 +91,6 @@ def help_publish(
 
 help_functions = {
     "cd": help_cd,
+    "mv": help_mv,
     "publish": help_publish,
 }
