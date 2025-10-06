@@ -9,11 +9,6 @@ function test_bluer_sandbox_help() {
         "@arvan seed" \
         "@arvan ssh" \
         \
-        "@assets" \
-        "@assets cd" \
-        "@assets mv" \
-        "@assets publish" \
-        \
         "@docker" \
         "@docker browse" \
         "@docker build" \
