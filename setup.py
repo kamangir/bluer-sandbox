@@ -10,7 +10,6 @@ setup(
     description=DESCRIPTION,
     packages=[
         NAME,
-        f"{NAME}.assets",
         f"{NAME}.help",
         f"{NAME}.help.offline_llm",
         f"{NAME}.interview",

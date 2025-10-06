@@ -2,6 +2,7 @@ import os
 
 from bluer_options.help.functions import get_help
 from bluer_objects import file, README
+from bluer_objects.README.consts import assets
 
 from bluer_sandbox import NAME, VERSION, ICON, REPO_NAME
 from bluer_sandbox.help.functions import help_functions
@@ -17,13 +18,13 @@ items = README.Items(
         {
             "name": "arvancloud",
             "description": "tools to work with [arvancloud](https://arvancloud.ir/).",
-            "marquee": "https://github.com/kamangir/assets/blob/main/arvancloud/arvancloud.png?raw=true",
+            "marquee": f"{assets}/arvancloud/arvancloud.png?raw=true",
             "url": "./bluer_sandbox/docs/arvancloud.md",
         },
         {
             "name": "tor",
             "description": "tools to work with [tor](https://www.torproject.org/).",
-            "marquee": "https://github.com/kamangir/assets/blob/main/tor/tor2.png?raw=true",
+            "marquee": f"{assets}/tor/tor2.png?raw=true",
             "url": "./bluer_sandbox/docs/tor.md",
         },
         {
@@ -73,7 +74,6 @@ def build():
             {"path": f"docs/aliases/{alias}.md"}
             for alias in [
                 "arvancloud",
-                "assets",
                 "docker",
                 "notebooks",
                 "offline_llm",
