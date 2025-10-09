@@ -24,6 +24,7 @@ def build():
                 help_functions,
                 mono=True,
             ),
+            macros=readme.get("macros", {}),
         )
         for readme in [
             {
