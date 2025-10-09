@@ -1,5 +1,7 @@
 title:::
 
+ai for kids.
+
 ## procedure
 
 1. group the kids, describe the experiments, kids pick a sheet and select an experiment.
