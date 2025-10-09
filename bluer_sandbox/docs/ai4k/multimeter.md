@@ -1,8 +1,8 @@
 # ai4k: multimeter
 
-measure the voltage of batteries, AC, battery-bus w/ different lights + on charger, what else?
-measure the resistance of water, metal, what else?
-what else?
+- measure the voltage of batteries, AC, battery-bus w/ different lights + on charger, what else?
+- measure the resistance of water, metal, what else?
+- what else?
 
 |   |
 | --- |

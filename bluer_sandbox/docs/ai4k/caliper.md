@@ -1,8 +1,8 @@
 # ai4k: caliper
 
-measure the thickness of hair, paper, finger (what's wrong?)
-measure the different sides of a spoon, what else?
-what else?
+- measure the thickness of hair, paper, finger (what's wrong?)
+- measure the different sides of a spoon, what else?
+- what else?
 
 |   |
 | --- |
