@@ -1,4 +1,4 @@
-from bluer_objects.README.items import Items_of_dict, list_of_dict
+from bluer_objects.README.items import Items_of_dict, list_of_dict, ImageItems
 
 from bluer_sandbox.ai4k.experiments import dict_of_experiments
 
@@ -13,7 +13,11 @@ docs = [
 ] + [
     {
         "path": f"../docs/ai4k/{experiment_name}.md",
-        "marquee": info.get("marquee", ""),
+        "items": ImageItems(
+            {
+                info.get("marquee", ""): "",
+            }
+        ),
         "macros": {
             "description:::": [info["description"]],
         },
