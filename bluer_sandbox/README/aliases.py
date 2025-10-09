@@ -1,10 +1,10 @@
 docs = [
     {
-        "path": "docs/aliases",
+        "path": "../docs/aliases",
     },
 ] + [
     {
-        "path": f"docs/aliases/{alias}.md",
+        "path": f"../docs/aliases/{alias}.md",
     }
     for alias in [
         "arvancloud",

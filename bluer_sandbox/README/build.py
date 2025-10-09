@@ -45,6 +45,6 @@ def build():
                 "tor",
             ]
         ]
-        # + ai4k.docs
-        # + aliases.docs
+        + ai4k.docs
+        + aliases.docs
     )
