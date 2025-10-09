@@ -1,5 +1,5 @@
-from bluer_sandbox import README
+from bluer_sandbox.README.build import build
 
 
 def test_build_README():
-    assert README.build()
+    assert build()
