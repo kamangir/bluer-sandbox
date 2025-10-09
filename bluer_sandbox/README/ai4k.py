@@ -19,7 +19,7 @@ docs = [
             }
         ),
         "macros": {
-            "description:::": [info["description"]],
+            "description:::": info["description"],
         },
     }
     for experiment_name, info in dict_of_experiments.items()
