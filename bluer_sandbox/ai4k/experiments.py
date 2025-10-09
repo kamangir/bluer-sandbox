@@ -19,7 +19,7 @@ dict_of_experiments: Dict[str, Dict] = {
     },
     "ultrasonic": {
         "marquee": f"{assets2}/ultrasonic-sensor-tester/00.jpg?raw=true",
-        "description": "tester, make sense of how it works, measure with one sensor, arzhang.",
+        "description": "[ultrasonic sensor tester](https://github.com/kamangir/bluer-sbc/blob/main/bluer_sbc/docs/ultrasonic-sensor-tester.md), make sense of how it works, measure with one sensor, [arzhang](https://github.com/kamangir/bluer-ugv/tree/main/bluer_ugv/docs/arzhang).",
         "doc": "https://docs.google.com/document/d/1reuY9N9Aaf6adRIOKOe7NaPj7R-4J7XVQflDrQKl4uM/edit?usp=sharing",
         "pdf": "TBA",
     },
