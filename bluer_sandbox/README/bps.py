@@ -6,7 +6,7 @@ docs = [
     {
         "path": "../docs/bps.md",
         "items": ImageItems(
-            {f"{bps_assets2}/{index:02}.png": "" for index in range(3)}
+            {f"{bps_assets2}/{index+1:02}.png": "" for index in range(3)}
         ),
     },
 ]
