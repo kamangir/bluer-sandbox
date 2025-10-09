@@ -10,6 +10,12 @@ items = README.Items(
             "url": "./bluer_sandbox/docs/ai4k",
         },
         {
+            "name": "bps",
+            "description": "bluer-positioning system.",
+            "marquee": f"{assets2}/bps/02.png?raw=true",
+            "url": "./bluer_sandbox/docs/bps",
+        },
+        {
             "name": "bluer village",
             "description": "a bluer village.",
             "url": "./bluer_sandbox/docs/aliases/village.md",

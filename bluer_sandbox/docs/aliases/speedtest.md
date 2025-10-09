@@ -2,6 +2,6 @@
 
 ```bash
 @speedtest \
-	[dryrun,~install]
+	[dryrun,~install,~ping]
  . speedtest.
 ```

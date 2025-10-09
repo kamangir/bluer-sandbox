@@ -7,7 +7,7 @@ def help_speedtest(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("dryrun,~install", mono=mono)
+    options = xtra("dryrun,~install,~ping", mono=mono)
 
     return show_usage(
         [
