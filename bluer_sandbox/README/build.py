@@ -30,21 +30,21 @@ def build():
                 "path": "../..",
                 "items": items,
             },
-            # {
-            #    "path": "docs",
-            # },
+            {
+                "path": "../docs",
+            },
         ]
-        # + [
-        #    {
-        #        "path": f"../docs/{doc}.md",
-        #    }
-        #    for doc in [
-        #        "arvancloud",
-        #        "offline_llm",
-        #        "LSTM",
-        #        "tor",
-        #    ]
-        # ]
+        + [
+            {
+                "path": f"../docs/{doc}.md",
+            }
+            for doc in [
+                "arvancloud",
+                "offline_llm",
+                "LSTM",
+                "tor",
+            ]
+        ]
         # + ai4k.docs
         # + aliases.docs
     )
