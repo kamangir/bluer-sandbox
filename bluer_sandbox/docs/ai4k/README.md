@@ -6,4 +6,4 @@
 
 |   |   |   |
 | --- | --- | --- |
-| [`multimeter`](./multimeter.md) [![image](template)](./multimeter.md)  | [`caliper`](./caliper.md) [![image](template)](./caliper.md)  | [`ultrasonic`](./ultrasonic.md) [![image](template)](./ultrasonic.md)  |
+| [`multimeter`](./multimeter.md) [![image](https://github.com/kamangir/assets2/raw/main/ai4k/20251009_114411.jpg)](./multimeter.md)  | [`caliper`](./caliper.md) [![image](https://github.com/kamangir/assets2/raw/main/ai4k/20250616_112027.jpg)](./caliper.md)  | [`ultrasonic`](./ultrasonic.md) [![image](https://github.com/kamangir/assets2/raw/main/ultrasonic-sensor-tester/00.jpg?raw=true)](./ultrasonic.md)  |
