@@ -1,17 +1,13 @@
+from bluer_objects.README.items import Items_of_dict, list_of_dict
+
 from bluer_sandbox.ai4k.experiments import dict_of_experiments
 
 docs = [
     {
         "path": "../docs/ai4k",
+        "items": Items_of_dict(dict_of_experiments),
         "macros": {
-            "list:::": sorted(
-                [
-                    "1. [{experiment_name}](./{experiment_name}.md).".format(
-                        experiment_name=experiment_name
-                    )
-                    for experiment_name in dict_of_experiments
-                ]
-            ),
+            "list:::": list_of_dict(dict_of_experiments),
         },
     },
 ] + [
