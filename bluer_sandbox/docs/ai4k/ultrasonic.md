@@ -1,5 +1,5 @@
 # ai4k: ultrasonic
 
-TBA
+tester, make sense of how it works, measure with one sensor, arzhang.
 
 urls:::

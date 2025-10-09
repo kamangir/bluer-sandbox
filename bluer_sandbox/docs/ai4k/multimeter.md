@@ -1,5 +1,5 @@
 # ai4k: multimeter
 
-TBA
+batteries, AC, battery-bus w/ different lights + on charger, what else?
 
 urls:::

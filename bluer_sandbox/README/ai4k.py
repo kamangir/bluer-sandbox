@@ -14,6 +14,9 @@ docs = [
     {
         "path": f"../docs/ai4k/{experiment_name}.md",
         "marquee": info.get("marquee", ""),
+        "macros": {
+            "description:::": [info["description"]],
+        },
     }
     for experiment_name, info in dict_of_experiments.items()
     if experiment_name != "template"
