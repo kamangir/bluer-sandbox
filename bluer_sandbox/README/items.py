@@ -12,7 +12,7 @@ items = README.Items(
         {
             "name": "bps",
             "description": "bluer-positioning system.",
-            "marquee": f"{assets2}/bps/03.png?raw=true",
+            "marquee": f"{assets2}/bps/02.png?raw=true",
             "url": "./bluer_sandbox/docs/bps.md",
         },
         {
