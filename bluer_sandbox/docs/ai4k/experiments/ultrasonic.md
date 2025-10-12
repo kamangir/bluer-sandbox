@@ -1,4 +1,4 @@
-# ai4k: ultrasonic
+# ai4k: experiments: ultrasonic
 
 - watching the film [Here's What Bat Echolocation Sounds Like, Slowed Down](https://youtu.be/qJOloliWvB8?si=_lzHkcyTP0B1S7Ba).
 - work with the [ultrasonic sensor tester](https://github.com/kamangir/bluer-sbc/blob/main/bluer_sbc/docs/ultrasonic-sensor-tester.md), make sense of how it works, measure with one sensor.

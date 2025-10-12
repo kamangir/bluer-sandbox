@@ -1,4 +1,4 @@
-# ai4k: robin
+# ai4k: experiments: robin
 
 - what is [robin](https://github.com/kamangir/bluer-ugv/tree/main/bluer_ugv/docs/robin)?
 - what technologies make robin work?

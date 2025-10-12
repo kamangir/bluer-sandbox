@@ -1,6 +1,5 @@
 title:::
 
-ai for kids.
+list:::
 
-- [experiments](./experiments.md)
-- [sessions](./sessions.md)
+items:::

@@ -10,7 +10,7 @@ docs = [
         "path": "../docs/ai4k/sessions.md",
     },
     {
-        "path": "../docs/ai4k/experiments.md",
+        "path": "../docs/ai4k/experiments",
         "items": Items_of_dict(dict_of_experiments),
         "cols": 2,
         "macros": {

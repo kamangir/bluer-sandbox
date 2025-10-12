@@ -1,4 +1,4 @@
-# ai4k: caliper
+# ai4k: experiments: caliper
 
 - mechanical calipers
 - digital calipers
