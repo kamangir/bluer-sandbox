@@ -1,8 +1,4 @@
-title:::
-
-ai for kids.
-
-## sessions
+# ai4k: sessions
 
 1. for 8-20 kids as four teams. each team to include kids of different abilities.
 1. each team generates one report per experiment.
@@ -16,17 +12,16 @@ ai for kids.
     1. 40 min: 10 min per experiment per team, teams rotate.
     1. 10 min: what did we learn? clean-up.
 
-details:::PDCA
+
+<details>
+<summary>PDCA</summary>
+
 | Step | Description |
 | - | - |
 | **Plan** | Identify a goal or purpose, analyze problems, and plan actions for improvement. |
 | **Do** | Implement the plan on a small scale to test the change. |
 | **Check (or Study)** | Review and evaluate the results of the test, comparing outcomes to expectations. |
 | **Act** | Based on what was learned, standardize the successful approach or begin a new cycle for further improvement. |
-details:::
 
-## experiments
+</details>
 
-list:::
-
-items:::
