@@ -5,14 +5,6 @@ from bluer_objects.README.consts import assets2
 from bluer_sandbox.README.consts import ai4k_assets2
 
 dict_of_experiments: Dict[str, Dict] = {
-    "multimeter": {
-        "marquee": f"{ai4k_assets2}/20250616_112027.jpg",
-        "description": [
-            "measure the voltage of batteries, AC, battery-bus w/ different lights + on charger, what else?",
-            "measure the resistance of water, metal, what else?",
-            "what else?",
-        ],
-    },
     "caliper": {
         "marquee": f"{ai4k_assets2}/20251009_114411.jpg",
         "description": [
@@ -24,6 +16,14 @@ dict_of_experiments: Dict[str, Dict] = {
             "what else?",
         ],
     },
+    "multimeter": {
+        "marquee": f"{ai4k_assets2}/20250616_112027.jpg",
+        "description": [
+            "measure the voltage of batteries, AC, battery-bus w/ different lights + on charger, what else?",
+            "measure the resistance of water, metal, what else?",
+            "what else?",
+        ],
+    },
     "ultrasonic": {
         "marquee": f"{assets2}/ultrasonic-sensor-tester/00.jpg?raw=true",
         "description": [
@@ -31,6 +31,12 @@ dict_of_experiments: Dict[str, Dict] = {
             "work with the [ultrasonic sensor tester](https://github.com/kamangir/bluer-sbc/blob/main/bluer_sbc/docs/ultrasonic-sensor-tester.md), make sense of how it works, measure with one sensor.",
             "drive [arzhang](https://github.com/kamangir/bluer-ugv/tree/main/bluer_ugv/docs/arzhang) and measure how far from an obstacle it stops.",
         ],
+        "items": {
+            f"{assets2}/arzhang/20251005_112250.jpg?raw=true": "",
+            f"{assets2}/arzhang/VID-20250830-WA0000~3_1.gif?raw=true": "",
+            f"{assets2}/arzhang/VID-20250830-WA0000~3_1.gif?raw=true": "",
+        },
+        "cols": 2,
     },
     "robin": {
         "marquee": f"{assets2}/robin/20250807_103534.jpg?raw=true",
