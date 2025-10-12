@@ -6,6 +6,7 @@ docs = [
     {
         "path": "../docs/ai4k",
         "items": Items_of_dict(dict_of_experiments),
+        "cols": 2,
         "macros": {
             "list:::": list_of_dict(dict_of_experiments),
         },
@@ -16,6 +17,7 @@ docs = [
         "items": ImageItems(
             {
                 info.get("marquee", ""): "",
+                **info.get("items", {}),
             }
         ),
         "macros": {
