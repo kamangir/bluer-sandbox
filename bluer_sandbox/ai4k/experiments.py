@@ -45,6 +45,7 @@ dict_of_experiments: Dict[str, Dict] = {
             f"{assets2}/robin/20250728_112123.jpg?raw=true": "",
             f"{assets2}/robin/20250723_095155~2_1.gif?raw=true": "",
         },
+        "cols": 2,
     },
     "template": {
         "marquee": "template",

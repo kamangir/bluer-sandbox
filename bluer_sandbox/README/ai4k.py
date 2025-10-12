@@ -14,6 +14,7 @@ docs = [
 ] + [
     {
         "path": f"../docs/ai4k/{experiment_name}.md",
+        "cols": info.get("cols", 3),
         "items": ImageItems(
             {
                 info.get("marquee", ""): "",
