@@ -23,7 +23,7 @@ details:::PDCA
 | **Do** | Implement the plan on a small scale to test the change. |
 | **Check (or Study)** | Review and evaluate the results of the test, comparing outcomes to expectations. |
 | **Act** | Based on what was learned, standardize the successful approach or begin a new cycle for further improvement. |
-details
+details:::
 
 ## experiments
 
