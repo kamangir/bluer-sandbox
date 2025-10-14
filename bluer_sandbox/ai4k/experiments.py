@@ -38,18 +38,18 @@ dict_of_experiments: Dict[str, Dict] = {
         },
         "cols": 2,
     },
-    "robin": {
-        "marquee": f"{assets2}/robin/20250807_103534.jpg?raw=true",
+    "ravin": {
+        "marquee": f"{assets2}/ravin/20250807_103534.jpg?raw=true",
         "description": [
-            "what is [robin](https://github.com/kamangir/bluer-ugv/tree/main/bluer_ugv/docs/robin)?",
-            "what technologies make robin work?",
-            "drive robin",
-            "what are robin's shortcomings and how can we make it better?",
+            "what is [ravin](https://github.com/kamangir/bluer-ugv/tree/main/bluer_ugv/docs/ravin)?",
+            "what technologies make ravin work?",
+            "drive ravin",
+            "what are ravin's shortcomings and how can we make it better?",
         ],
         "items": {
-            f"{assets2}/robin/20250728_112123.jpg?raw=true": "",
-            f"{assets2}/robin/20250723_095022.jpg?raw=true": "",
-            f"{assets2}/robin/20250723_095155~2_1.gif?raw=true": "",
+            f"{assets2}/ravin/20250728_112123.jpg?raw=true": "",
+            f"{assets2}/ravin/20250723_095022.jpg?raw=true": "",
+            f"{assets2}/ravin/20250723_095155~2_1.gif?raw=true": "",
         },
         "cols": 2,
     },
