@@ -7,3 +7,9 @@ bluer-positioning system.
 items:::
 
 [AI convo](https://chatgpt.com/c/68e79d65-e938-8327-b1e1-2536f7b6fb41)
+
+## literature
+
+[From Robot Self‑Localization to Global‑Localization: An RSSI Based Approach” (ArXiv)](https://arxiv.org/abs/2112.10578) - 2021
+
+> presents a **simulation-based** method for enabling groups of mobile robots to localize themselves in GPS-denied environments. Some robots act as fixed beacons, broadcasting signals whose received strength (RSSI) is used by other robots to estimate their global position **through geometric reconstruction**. The approach was tested only in simulation (Webots) and not on physical robots. Reported average errors were about 0.6 m with 10 % Gaussian noise, 1.4 m with 20 % noise, and ≈0.1 m in near-ideal short-range conditions (3–3.5 m from beacons); within about 6 m of beacons, the total error remained under 1 m.
