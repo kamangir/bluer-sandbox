@@ -3,6 +3,7 @@
 function bluer_sandbox_bps_receiver() {
     bluer_ai_eval ,$1 \
         sudo \
-        hcitool \lescan \
+        hcitool \
+        lescan \
         "${@:2}"
 }

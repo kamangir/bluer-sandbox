@@ -6,7 +6,7 @@ function bluer_sandbox_bps() {
     local task=${1:-test}
 
     if [[ "$abcli_is_rpi" == false ]]; then
-        bluer_ai_log_error "@sandbox: bps: only runs on rpi."
+        bluer_ai_log_error "@bps: only runs on rpi."
         return 1
     fi
 
@@ -27,7 +27,7 @@ function bluer_sandbox_bps() {
         return
     fi
 
-    python3 bluer_sandbox.bps "$@"
+    bluer_ai_log_error "@bps: $task: command not found."
 }
 
 bluer_ai_source_caller_suffix_path /bps
