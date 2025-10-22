@@ -26,7 +26,7 @@ async def main():
     bus.export(obj_path, Hello())
 
     print(f"exported org.example.Hello at {obj_path}")
-    print('run  in another terminal: "source bps.sh introspect,N={bus.unique_name}"')
+    print(f'run in another terminal: "source bps.sh introspect,N={bus.unique_name}"')
 
     while True:
         await asyncio.sleep(1)
