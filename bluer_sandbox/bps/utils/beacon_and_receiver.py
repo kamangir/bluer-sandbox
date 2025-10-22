@@ -92,42 +92,36 @@ def parse_mdata(mdata_variant):
 
 
 async def scan_once(bus, t_scan=3.0):
-    """Listen for any D-Bus signal that includes ManufacturerData."""
+    """Listen for PropertiesChanged signals carrying ManufacturerData."""
     results = {}
 
     def handler(msg):
-        # Dump everything we get, so we can see what BlueZ is actually sending.
         if msg.message_type != constants.MessageType.SIGNAL:
             return
-        if "org.bluez" not in msg.sender:
+        if msg.interface != "org.freedesktop.DBus.Properties":
             return
-
-        print(f"\n--- SIGNAL ---")
-        print(f"Path: {msg.path}")
-        print(f"Interface: {msg.interface}")
-        print(f"Member: {msg.member}")
-        print(f"Body: {msg.body}")
-
         try:
-            # Try to extract ManufacturerData if present
-            if len(msg.body) >= 2:
-                changed = msg.body[1]
-                if isinstance(changed, dict) and "ManufacturerData" in changed:
-                    parsed = parse_mdata(changed["ManufacturerData"])
-                    if parsed:
-                        x, y, sigma = parsed
-                        rssi = changed.get("RSSI", 0)
-                        addr = msg.path.split("/")[-1].replace("_", ":")
-                        results[addr] = (x, y, sigma, rssi)
-                        print(
-                            f"[peer] {addr} RSSI={rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
-                        )
+            iface, changed, _ = msg.body
+            if iface != "org.bluez.Device1":
+                return
+            if "ManufacturerData" not in changed:
+                return
+            mdata = changed["ManufacturerData"]
+            parsed = parse_mdata(mdata)
+            if parsed:
+                x, y, sigma = parsed
+                rssi = changed.get("RSSI", 0)
+                addr = msg.path.split("/")[-1].replace("_", ":")
+                results[addr] = (x, y, sigma, rssi)
+                print(
+                    f"[peer] {addr} RSSI={rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
+                )
         except Exception as e:
             print(f"[hybrid] handler error: {e}")
 
     bus.add_message_handler(handler)
 
-    # Ensure LE discovery filter is active
+    # Set active scan filter
     introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
