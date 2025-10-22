@@ -32,7 +32,7 @@ function runme() {
         bluer_ai_log "starting ..."
 
         sudo systemctl start bluetooth
-        sudo systemctl status bluetooth
+        sudo systemctl status --no-pager bluetooth
 
         sudo hciconfig hci0 up
         hciconfig
