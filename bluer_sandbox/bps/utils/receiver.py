@@ -18,12 +18,14 @@ def to_dict(obj):
     """Safely convert a dataclass or object to a dict."""
     if dataclasses.is_dataclass(obj):
         return dataclasses.asdict(obj)
-    elif hasattr(obj, "__dict__"):
+
+    if hasattr(obj, "__dict__"):
         return vars(obj)
-    elif isinstance(obj, dict):
+
+    if isinstance(obj, dict):
         return obj
-    else:
-        return {"repr": repr(obj)}
+
+    return {"repr": repr(obj)}
 
 
 async def main(
