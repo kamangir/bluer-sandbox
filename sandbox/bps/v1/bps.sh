@@ -38,9 +38,9 @@ function runme() {
 
         sudo mkdir -pv /etc/systemd/system/bluetooth.service.d
 
-        mv -v \
+        sudo cp -v \
             ./override.conf \
-            /etc/systemd/system/bluetooth.service.d/override.conf >/dev/null
+            /etc/systemd/system/bluetooth.service.d/override.conf
 
         sudo systemctl daemon-reexec
         sudo systemctl daemon-reload
