@@ -18,7 +18,8 @@
  . introspect <1:234>.
 @bps \
 	receiver \
-	[~start_bluetooth]
+	[~start_bluetooth] \
+	[--timeout 10]
  . start receiver.
 @bps \
 	receiver \

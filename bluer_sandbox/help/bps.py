@@ -79,12 +79,17 @@ def help_receiver(
 ) -> str:
     options = xtra("~start_bluetooth", mono=mono)
 
+    args = [
+        "[--timeout 10]",
+    ]
+
     usage_1 = show_usage(
         [
             "@bps",
             "receiver",
             f"[{options}]",
-        ],
+        ]
+        + args,
         "start receiver.",
         mono=mono,
     )
