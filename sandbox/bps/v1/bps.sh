@@ -7,7 +7,7 @@ function runme() {
     fi
 
     local options=$1
-    local do_install=$(bluer_ai_option_int "$options" install 1)
+    local do_install=$(bluer_ai_option_int "$options" install 0)
     local do_start=$(bluer_ai_option_int "$options" start 1)
 
     if [[ "$do_install" == 1 ]]; then
@@ -37,6 +37,8 @@ function runme() {
         sudo hciconfig hci0 up
         hciconfig
     fi
+
+    python3 bps.py
 }
 
 runme "$@"
