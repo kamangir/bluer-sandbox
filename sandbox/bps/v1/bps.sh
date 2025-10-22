@@ -68,7 +68,7 @@ function runme() {
     elif [[ "$what" == "receiver" ]]; then
         sudo hcitool lescan
     elif [[ "$what" == "beacon+receiver" ]]; then
-        python3 bps.py
+        sudo -E $(which python3) bps.py
     else
         bluer_ai_log_error "cannot start $what."
     fi

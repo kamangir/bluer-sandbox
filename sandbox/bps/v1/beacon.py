@@ -78,7 +78,7 @@ async def main():
     bus.export(AD_OBJ_PATH, adv)
 
     # Give D-Bus a moment to register the object before BlueZ introspects it
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(2)
 
     msg = Message(
         destination=BUS_NAME,  # still talk *to* org.bluez
