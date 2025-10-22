@@ -64,7 +64,10 @@ function runme() {
 
     bluer_ai_log "starting $what ..."
     if [[ "$what" == "beacon" ]]; then
-        sudo -E $(which python3) beacon.py
+        bluer_ai_eval - \
+            sudo -E \
+            $(which python3) \
+            beacon.py
     elif [[ "$what" == "receiver" ]]; then
         sudo hcitool lescan
     elif [[ "$what" == "beacon+receiver" ]]; then
