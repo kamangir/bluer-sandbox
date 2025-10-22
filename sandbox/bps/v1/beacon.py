@@ -3,7 +3,7 @@ import struct, time
 
 ble_adapter = adapter.Adapter()
 adv = advertisement.Advertisement(1, ble_adapter.address)
-adv.add_local_name("TEST-PI")
+adv.local_name = "TEST-PI"
 adv.manufacturer_data = {0xFFFF: struct.pack("<fff", 1.0, 2.0, 3.0)}
 adv.start()
 print("Advertising… (Ctrl+C to stop)")
