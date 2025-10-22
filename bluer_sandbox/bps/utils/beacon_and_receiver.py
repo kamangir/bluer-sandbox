@@ -6,12 +6,11 @@ Each node alternates between:
   • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
   • Scanning for nearby nodes’ beacons using Bleak
 
-Compatible with Raspberry Pi OS / BlueZ 5.75.
+Tested on Raspberry Pi OS / BlueZ 5.75 / Bleak ≥ 0.22.
 """
 
 import asyncio
 import struct
-import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
 from dbus_next import Variant, BusType
@@ -85,15 +84,35 @@ async def scan_once_bleak(t_scan=5.0):
     """Perform a BLE scan using Bleak and parse manufacturer data."""
     results = {}
     print(f"[hybrid] bleak scanning for {t_scan:.1f}s …")
-    devices = await BleakScanner.discover(timeout=t_scan)
+
+    try:
+        devices = await BleakScanner.discover(timeout=t_scan)
+    except Exception as e:
+        print(f"[hybrid] scan error: {e}")
+        return results
+
     for d in devices:
-        mdata = d.metadata.get("manufacturer_data", {})
-        if MFG_ID in mdata and len(mdata[MFG_ID]) >= 12:
-            x, y, sigma = struct.unpack("<fff", bytes(mdata[MFG_ID][:12]))
-            results[d.address] = (x, y, sigma, d.rssi)
-            print(
-                f"[peer] {d.address} RSSI={d.rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
-            )
+        # Compatible with Bleak ≥0.22 (advertisement_data) and older versions (metadata)
+        adv = getattr(d, "advertisement_data", None)
+        mdata = getattr(adv, "manufacturer_data", None)
+
+        if mdata is None:
+            # fallback for older Bleak
+            mdata = getattr(d, "metadata", {}).get("manufacturer_data", {})
+
+        if not isinstance(mdata, dict) or MFG_ID not in mdata:
+            continue
+
+        data = mdata[MFG_ID]
+        if len(data) < 12:
+            continue
+
+        x, y, sigma = struct.unpack("<fff", bytes(data[:12]))
+        results[d.address] = (x, y, sigma, d.rssi)
+        print(
+            f"[peer] {d.address} RSSI={d.rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
+        )
+
     if not results:
         print("[hybrid] no peers detected")
     return results
