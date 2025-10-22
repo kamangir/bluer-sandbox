@@ -23,27 +23,48 @@ class Advertisement(ServiceInterface):
         self.type = "peripheral"
         self.include_tx_power = True
 
-    # ---- minimal read-only properties BlueZ expects ----
+    # ---- read-only properties (with dummy setters for safety) ----
     @dbus_property()
     def Type(self) -> "s":
         return self.type
+
+    @Type.setter
+    def Type(self, value: "s"):
+        pass
 
     @dbus_property()
     def LocalName(self) -> "s":
         return self.name
 
+    @LocalName.setter
+    def LocalName(self, value: "s"):
+        pass
+
     @dbus_property()
     def ServiceUUIDs(self) -> "as":
         return self.service_uuids
+
+    @ServiceUUIDs.setter
+    def ServiceUUIDs(self, value: "as"):
+        pass
 
     @dbus_property()
     def IncludeTxPower(self) -> "b":
         return self.include_tx_power
 
+    @IncludeTxPower.setter
+    def IncludeTxPower(self, value: "b"):
+        pass
+
     @dbus_property()
     def ManufacturerData(self) -> "a{qv}":
         return {0xFFFF: Variant("ay", self.manufacturer_data[0xFFFF])}
 
+    @ManufacturerData.setter
+    def ManufacturerData(self, value: "a{qv}"):
+        pass
+
+    # ---- BlueZ will call this when unregistering ----
     @method()
     def Release(self):
         print("[Beacon] Advertisement released by BlueZ")
@@ -56,7 +77,6 @@ async def main():
     adv = Advertisement("TEST-PI", x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJ_PATH, adv)
 
-    # Register advertisement with BlueZ
     msg = Message(
         destination=BUS_NAME,
         path=ADAPTER_PATH,
