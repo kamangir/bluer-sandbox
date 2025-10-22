@@ -8,6 +8,7 @@ docs = [
     }
     for alias in [
         "arvancloud",
+        "bps",
         "docker",
         "notebooks",
         "offline_llm",

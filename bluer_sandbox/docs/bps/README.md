@@ -10,4 +10,10 @@ bluer-positioning system.
 
 - [AI convo](https://chatgpt.com/c/68e79d65-e938-8327-b1e1-2536f7b6fb41)
 - [literature](./literature.md)
+
+> ℹ️ only works on rpi.
+
 - [sandbox](../../../sandbox/bps)
+- [bluer_sandbox.bps](../../bps)
+- [test & introspect](./test-introspect.md)
+- [beacon & receiver](./beacon-receiver.md)

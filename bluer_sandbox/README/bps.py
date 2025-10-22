@@ -13,6 +13,12 @@ docs = [
         "path": "../docs/bps/literature.md",
     },
     {
+        "path": "../docs/bps/beacon-receiver.md",
+    },
+    {
+        "path": "../docs/bps/test-introspect.md",
+    },
+    {
         "path": "../../sandbox/bps",
     },
     {
