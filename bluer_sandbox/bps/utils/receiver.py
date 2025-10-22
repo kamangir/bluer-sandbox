@@ -38,7 +38,7 @@ async def main(timeout: float = 10.0):
             for key, value in to_dict(advertisement_data).items():
                 logger.info(f" - {key}: {value}")
 
-        hr(width=30)
+        logger.info(hr(width=30))
 
     await BleakScanner.discover(
         timeout=timeout,
