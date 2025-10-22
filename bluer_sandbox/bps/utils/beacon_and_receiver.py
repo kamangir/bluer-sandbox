@@ -24,6 +24,8 @@ AD_IFACE = "org.bluez.LEAdvertisement1"
 
 
 class Advertisement(ServiceInterface):
+    """Minimal LE advertisement implementing org.bluez.LEAdvertisement1"""
+
     def __init__(self, name: str, x=0.0, y=0.0, sigma=1.0):
         super().__init__(AD_IFACE)
         self._name = name
@@ -107,6 +109,15 @@ async def unregister_advertisement(bus: MessageBus):
     await bus.call(msg)
 
 
+async def advertise_once(bus: MessageBus, duration: float = 2.0):
+    """Advertise for a short duration."""
+    logger.info(f"{NAME}: starting advertisement...")
+    adv = await register_advertisement(bus)
+    await asyncio.sleep(duration)
+    await unregister_advertisement(bus)
+    logger.info(f"{NAME}: stopped advertisement.")
+
+
 async def scan_once(duration: float = 8.0):
     """Run a short passive scan using bluetoothctl."""
     logger.info(f"{NAME}: scanning for {duration:.1f}s...")
@@ -117,25 +128,21 @@ async def scan_once(duration: float = 8.0):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
+
     try:
         await asyncio.sleep(duration)
     finally:
-        proc.terminate()
+        if proc.returncode is None:
+            try:
+                proc.terminate()
+            except ProcessLookupError:
+                pass
         await asyncio.create_subprocess_exec("bluetoothctl", "scan", "off")
+
     out, _ = await proc.communicate()
-    lines = out.decode(errors="ignore").splitlines()
-    for line in lines:
+    for line in out.decode(errors="ignore").splitlines():
         if "Device" in line:
             logger.info(f"{NAME}: found {line.strip()}")
-
-
-async def advertise_once(bus: MessageBus, duration: float = 2.0):
-    """Advertise for a short duration."""
-    logger.info(f"{NAME}: starting advertisement...")
-    adv = await register_advertisement(bus)
-    await asyncio.sleep(duration)
-    await unregister_advertisement(bus)
-    logger.info(f"{NAME}: stopped advertisement.")
 
 
 async def main():
