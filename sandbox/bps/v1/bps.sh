@@ -29,12 +29,52 @@ function runme() {
 
         pip install bleak
 
+        # ----
+        local bluez_version=5.75
+        local tar_filename=bluez-$bluez_version.tar.xz
+        local dir_name=bluez-$bluez_version
+        bluer_ai_log "upgrading bluez to $bluez_version..."
+
+        pushd $abcli_path_git >/dev/null
+
+        sudo apt remove --purge bluez -y
+        sudo apt update
+        sudo apt install -y \
+            build-essential \
+            libdbus-1-dev \
+            libglib2.0-dev \
+            libudev-dev \
+            libical-dev \
+            libreadline-dev
+
+        if [[ ! -d "$dir_name" ]]; then
+            [[ ! -f "$tar_filename" ]] &&
+                wget https://www.kernel.org/pub/linux/bluetooth/$tar_filename
+
+            tar xf $tar_filename
+        fi
+
+        cd $dir_name
+        ./configure --enable-experimental
+        make -j4
+        sudo make install
+        sudo systemctl restart bluetooth
+
+        bluetoothctl --version
+
+        popd $abcli_path_git >/dev/null
+
+        # --experimental
+        bluer_ai_log "turning experimental on ..."
+
+        local service_name=/usr/local/libexec/bluetooth/bluetoothd
+
         bluer_objects_file \
             sudo \
             replace \
-            /etc/systemd/system/dbus-org.bluez.service \
-            --this "ExecStart=/usr/libexec/bluetooth/bluetoothd" \
-            --that "ExecStart=/usr/libexec/bluetooth/bluetoothd --experimental" \
+            /lib/systemd/system/bluetooth.service \
+            --this "ExecStart=$service_name" \
+            --that "ExecStart=$service_name --experimental" \
             --cat $verbose \
             --save 1 \
             --whole_line 1
@@ -43,9 +83,8 @@ function runme() {
         sudo systemctl daemon-reload
         sudo systemctl restart bluetooth
 
-        bluer_ai_log "expecting: /usr/libexec/bluetooth/bluetoothd --experimental"
+        bluer_ai_log "expecting: $service_name --experimental"
         ps aux | grep bluetoothd
-
     fi
 
     if [[ "$do_start" == 1 ]]; then
