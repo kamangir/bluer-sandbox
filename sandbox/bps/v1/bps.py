@@ -93,23 +93,38 @@ class Receiver:
         print("[Receiver] BLE scanner stopped")
 
     async def _scan_once(self):
-        # Bleak 1.1.x returns a list of (device, adv_data) tuples
         devices = await BleakScanner.discover(
             timeout=self.scan_window_s,
             return_adv=True,
         )
         t = time.time()
 
-        for device, adv_data in devices:
-            name = adv_data.local_name or device.name
+        # case 1: dict form
+        if isinstance(devices, dict):
+            iterable = devices.items()
+        else:
+            # case 2: list of tuples or list of plain devices
+            first = devices[0] if devices else None
+            if isinstance(first, tuple):
+                iterable = devices
+            else:
+                iterable = [
+                    (d, getattr(d, "advertisement_data", None)) for d in devices
+                ]
+
+        for device, adv_data in iterable:
+            # get name safely
+            name = getattr(adv_data, "local_name", None) or getattr(
+                device, "name", None
+            )
             if not name:
                 continue
 
-            md = adv_data.manufacturer_data or {}
-
+            # manufacturer data safely
+            md = getattr(adv_data, "manufacturer_data", None) or {}
             if 0xFFFF in md and len(md[0xFFFF]) >= 12:
                 x, y, sigma = struct.unpack("<fff", md[0xFFFF][:12])
-                self.latest[name] = (x, y, sigma, device.rssi, t)
+                self.latest[name] = (x, y, sigma, getattr(device, "rssi", 0), t)
                 print(
                     f"[Receiver] {name} → RSSI={device.rssi}  pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
                 )
