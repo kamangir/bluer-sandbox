@@ -29,19 +29,21 @@ function runme() {
         pip install bleak
 
         bluer_objects_file \
+            sudo \
             replace \
             /etc/systemd/system/dbus-org.bluez.service \
-            --this "ExecStart=/usr/lib/bluetooth/bluetoothd" \
-            --that "ExecStart=/usr/lib/bluetooth/bluetoothd --experimental" \
+            sudo \
+            --this "ExecStart=/usr/libexec/bluetooth/bluetoothd" \
+            --that "ExecStart=/usr/libexec/bluetooth/bluetoothd --experimental" \
             --cat 1 \
-            --save 0 \
+            --save 1 \
             --whole_line 1
 
         sudo systemctl daemon-reexec
         sudo systemctl daemon-reload
         sudo systemctl restart bluetooth
 
-        bluer_ai_log "expecting: /usr/lib/bluetooth/bluetoothd --experimental"
+        bluer_ai_log "expecting: /usr/libexec/bluetooth/bluetoothd --experimental"
         ps aux | grep bluetoothd
 
     fi
