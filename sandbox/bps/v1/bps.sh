@@ -22,7 +22,6 @@ function runme() {
             cmake
 
         pip3 install bluezero
-        python3 -c "import bluezero; print(bluezero.__version__)"
 
         pip install bleak
     fi
