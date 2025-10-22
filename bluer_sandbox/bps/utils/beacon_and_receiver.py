@@ -91,23 +91,8 @@ def parse_mdata(mdata_variant):
     return None
 
 
-async def scan_once(bus: MessageBus, t_scan: float = 3.0):
-    """Perform active scan using org.bluez.Adapter1, including manufacturer data."""
-    match = (
-        "type='signal',interface='org.freedesktop.DBus.Properties',"
-        "member='PropertiesChanged',arg0='org.bluez.Device1'"
-    )
-
-    add_match_msg = Message(
-        destination="org.freedesktop.DBus",
-        path="/org/freedesktop/DBus",
-        interface="org.freedesktop.DBus",
-        member="AddMatch",
-        signature="s",
-        body=[match],
-    )
-    await bus.call(add_match_msg)
-
+async def scan_once(bus, t_scan=3.0):
+    """Perform active scan and listen for ManufacturerData packets."""
     results = {}
 
     def handler(msg):
@@ -124,22 +109,26 @@ async def scan_once(bus: MessageBus, t_scan: float = 3.0):
                 rssi = changed.get("RSSI", 0)
                 addr = msg.path.split("/")[-1].replace("_", ":")
                 results[addr] = (x, y, sigma, rssi)
-        except Exception as e:
-            print("[scan_once] handler error:", e)
+        except Exception:
+            pass
 
     bus.add_message_handler(handler)
 
-    # enable discovery on adapter
     introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
-    mgr = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
-    adapter_iface = mgr.get_interface("org.bluez.Adapter1")
+    adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
+    adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
-    # 🔧 ensure we request LE manufacturer data
+    # 🔧 enable active scanning with manufacturer data
     try:
-        await adapter_iface.call_set_discovery_filter({"Transport": Variant("s", "le")})
-        print("[hybrid] discovery filter set to LE mode")
+        await adapter_iface.call_set_discovery_filter(
+            {
+                "DuplicateData": Variant("b", True),
+                "Transport": Variant("s", "le"),
+                "RSSI": Variant("n", -127),
+            }
+        )
     except Exception as e:
-        print("[hybrid] could not set discovery filter:", e)
+        print(f"[hybrid] warning: could not set discovery filter ({e})")
 
     await adapter_iface.call_start_discovery()
     print("[hybrid] discovery started")
