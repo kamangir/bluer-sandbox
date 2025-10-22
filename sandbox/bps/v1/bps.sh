@@ -93,8 +93,9 @@ function runme() {
         sudo systemctl start bluetooth
         sudo systemctl status --no-pager bluetooth
 
-        sudo hciconfig hci0 up
-        hciconfig
+        sudo bluetoothctl power on
+        bluer_ai_eval - \
+            sudo bluetoothctl show
     fi
 
     bluer_ai_log "starting $what ..."
