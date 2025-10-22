@@ -87,7 +87,7 @@ function runme() {
         fi
 
         bluer_ai_eval - \
-            sudo busctl --system introspect $N /org/example/Hello
+            sudo busctl --system introspect $N /org/example/Hello --no-pager
 
         bluer_ai_eval - \
             sudo busctl --system call $N /org/example/Hello org.example.Hello Ping
