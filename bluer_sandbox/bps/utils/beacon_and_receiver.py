@@ -79,7 +79,7 @@ class Advertisement(ServiceInterface):
         logger.info(f"{NAME}: BlueZ requested Release()")
 
 
-async def register_advertisement(bus: MessageBus):
+async def register_advertisement(bus: MessageBus) -> Advertisement:
     adv = Advertisement(abcli_hostname, x=1.0, y=2.0, sigma=0.5)
     bus.export(AD_OBJECT_PATH, adv)
     await asyncio.sleep(0.5)
@@ -98,15 +98,26 @@ async def register_advertisement(bus: MessageBus):
 
 
 async def unregister_advertisement(bus: MessageBus):
-    msg = Message(
-        destination=BUS_NAME,
-        path=ADAPTER_PATH,
-        interface=ADVERTISING_MGR_IFACE,
-        member="UnregisterAdvertisement",
-        signature="o",
-        body=[AD_OBJECT_PATH],
-    )
-    await bus.call(msg)
+    """Safely unregister and unexport advertisement."""
+    try:
+        msg = Message(
+            destination=BUS_NAME,
+            path=ADAPTER_PATH,
+            interface=ADVERTISING_MGR_IFACE,
+            member="UnregisterAdvertisement",
+            signature="o",
+            body=[AD_OBJECT_PATH],
+        )
+        await bus.call(msg)
+    except Exception as e:
+        logger.warning(f"{NAME}: unregister_advertisement failed: {e}")
+
+    try:
+        bus.unexport(AD_OBJECT_PATH, AD_IFACE)
+    except Exception:
+        pass
+
+    await asyncio.sleep(0.5)  # let BlueZ settle
 
 
 async def advertise_once(bus: MessageBus, duration: float = 2.0):
@@ -137,12 +148,16 @@ async def scan_once(duration: float = 8.0):
                 proc.terminate()
             except ProcessLookupError:
                 pass
-        await asyncio.create_subprocess_exec("bluetoothctl", "scan", "off")
+        try:
+            await asyncio.create_subprocess_exec("bluetoothctl", "scan", "off")
+        except Exception:
+            pass
 
     out, _ = await proc.communicate()
     for line in out.decode(errors="ignore").splitlines():
         if "Device" in line:
             logger.info(f"{NAME}: found {line.strip()}")
+    await asyncio.sleep(0.5)  # settle time
 
 
 async def main():
@@ -167,10 +182,7 @@ async def main():
             await advertise_once(bus, duration=2.0)
             await scan_once(duration=8.0)
     finally:
-        try:
-            await unregister_advertisement(bus)
-        except Exception:
-            pass
+        await unregister_advertisement(bus)
         logger.info(f"{NAME}: exiting cleanly.")
 
 
