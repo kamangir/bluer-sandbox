@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 """
-Hybrid BLE Beacon & Receiver (time-division)
---------------------------------------------
+Hybrid BLE Beacon + Receiver
+----------------------------
 Each node alternates between:
-  • Advertising its (x, y, σ) via BLE manufacturer data (0xFFFF)
-  • Scanning for other beacons’ advertisements
+  • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
+  • Scanning for nearby nodes' beacons
 
-Optimized for Raspberry Pi controllers that need a pause between
-advertise ↔ scan transitions (BlueZ 5.55+ with --experimental).
+Requires:
+  - BlueZ >= 5.55 started with `--experimental`
+  - D-Bus access to org.bluez (system bus)
 """
 
 import asyncio
 import struct
+import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
-from dbus_next import Variant, BusType, Message, constants
+from dbus_next import Variant, BusType, constants
 
 from bluer_options.env import abcli_hostname
+
 
 AD_IFACE = "org.bluez.LEAdvertisement1"
 AD_PATH = "/org/bluez/example/advertisement0"
@@ -24,7 +27,7 @@ MFG_ID = 0xFFFF
 
 
 # -------------------------------------------------------------------
-# Advertisement object
+# Advertisement object (registered via LEAdvertisingManager1)
 # -------------------------------------------------------------------
 class Advertisement(ServiceInterface):
     def __init__(self, node_id, payload):
@@ -79,9 +82,10 @@ class Advertisement(ServiceInterface):
 
 
 # -------------------------------------------------------------------
-# Receiver helper (passive scan using D-Bus signals)
+# Receiver helper
 # -------------------------------------------------------------------
 def parse_mdata(mdata_variant):
+    """Decode manufacturer data Variant if Company ID 0xFFFF is present."""
     try:
         payload = mdata_variant[MFG_ID].value
         if len(payload) >= 12:
@@ -92,7 +96,7 @@ def parse_mdata(mdata_variant):
 
 
 async def scan_once(bus, t_scan=3.0):
-    """Listen for PropertiesChanged signals carrying ManufacturerData."""
+    """Listen for PropertiesChanged signals with ManufacturerData."""
     results = {}
 
     def handler(msg):
@@ -121,11 +125,12 @@ async def scan_once(bus, t_scan=3.0):
 
     bus.add_message_handler(handler)
 
-    # Set active scan filter
+    # Access adapter
     introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
+    # Enable active scanning
     try:
         await adapter_iface.call_set_discovery_filter(
             {
@@ -136,6 +141,18 @@ async def scan_once(bus, t_scan=3.0):
     except Exception as e:
         print(f"[hybrid] warning: could not set discovery filter: {e}")
 
+    # 🧩 Prime the device cache — ensures PropertiesChanged signals are delivered
+    try:
+        obj_mgr = bus.get_proxy_object(
+            "org.bluez", "/", await bus.introspect("org.bluez", "/")
+        )
+        mgr_iface = obj_mgr.get_interface("org.freedesktop.DBus.ObjectManager")
+        devices = await mgr_iface.call_get_managed_objects()
+        print(f"[hybrid] cached {len(devices)} existing device entries")
+    except Exception as e:
+        print(f"[hybrid] could not get managed objects: {e}")
+
+    # Begin scanning
     await adapter_iface.call_start_discovery()
     print("[hybrid] discovery started")
 
@@ -149,7 +166,7 @@ async def scan_once(bus, t_scan=3.0):
 
 
 # -------------------------------------------------------------------
-# Main hybrid node
+# Main hybrid loop
 # -------------------------------------------------------------------
 async def main():
     node_id = abcli_hostname
@@ -169,13 +186,6 @@ async def main():
         # --- Advertise ---
         payload = struct.pack("<fff", x, y, sigma)
         adv = Advertisement(node_id, payload)
-
-        # 🔧 unexport any previous instance
-        try:
-            bus.unexport(AD_PATH)
-        except Exception:
-            pass
-
         bus.export(AD_PATH, adv)
         try:
             await leman.call_register_advertisement(AD_PATH, {})
@@ -188,9 +198,8 @@ async def main():
                 await leman.call_unregister_advertisement(AD_PATH)
             except Exception:
                 pass
-
-        print("[hybrid] pause before scanning …")
-        await asyncio.sleep(2.0)
+            bus.unexport(AD_PATH)
+            print("[hybrid] pause before scanning …")
 
         # --- Scan ---
         print("[hybrid] scanning ...")
@@ -198,8 +207,7 @@ async def main():
         if peers:
             for name, (px, py, ps, rssi) in peers.items():
                 print(
-                    f"[peer] {name:>10}  RSSI={rssi:>4} dB  "
-                    f"pos=({px:.2f},{py:.2f}) σ={ps:.2f}"
+                    f"[peer] {name:>10} RSSI={rssi:>4} pos=({px:.2f},{py:.2f}) σ={ps:.2f}"
                 )
         else:
             print("[hybrid] no peers detected")
@@ -207,6 +215,9 @@ async def main():
         await asyncio.sleep(0.5)
 
 
+# -------------------------------------------------------------------
+# Entry point
+# -------------------------------------------------------------------
 if __name__ == "__main__":
     try:
         asyncio.run(main())
