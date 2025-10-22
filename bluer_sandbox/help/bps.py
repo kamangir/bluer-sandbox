@@ -32,7 +32,7 @@ def help_beacon_and_receiver(
             "beacon_and_receiver",
             f"[{options}]",
         ],
-        "start beacon and receiver.",
+        "start beacon and/or receiver.",
         mono=mono,
     )
 
@@ -79,7 +79,7 @@ def help_receiver(
 ) -> str:
     options = xtra("~start_bluetooth", mono=mono)
 
-    return show_usage(
+    usage_1 = show_usage(
         [
             "@bps",
             "receiver",
@@ -87,6 +87,26 @@ def help_receiver(
         ],
         "start receiver.",
         mono=mono,
+    )
+
+    # ---
+    options = xtra("~python,~start_bluetooth", mono=mono)
+
+    usage_2 = show_usage(
+        [
+            "@bps",
+            "receiver",
+            f"[{options}]",
+        ],
+        "start receiver.",
+        mono=mono,
+    )
+
+    return "\n".join(
+        [
+            usage_1,
+            usage_2,
+        ]
     )
 
 

@@ -4,13 +4,18 @@
 
 import asyncio
 import struct
-import time
 import signal
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method, dbus_property
 from dbus_next import Variant, BusType, Message, MessageType
 
+from blueness import module
+from bluer_options.env import abcli_hostname
+
+from bluer_sandbox import NAME
 from bluer_sandbox.logger import logger
+
+NAME = module.name(__file__, NAME)
 
 # ---- BlueZ constants
 BUS_NAME = "org.bluez"
@@ -84,12 +89,17 @@ class Advertisement(ServiceInterface):
     # ---- Optional method BlueZ may call when it drops the ad
     @method()
     def Release(self):
-        logger.info("[beacon] BlueZ requested Release() — advertisement unregistered.")
+        logger.info(f"{NAME}: blueZ requested Release() — advertisement unregistered.")
 
 
 async def register_advertisement(bus: MessageBus):
     # Export our advertisement object on the system bus
-    adv = Advertisement(name="TEST-PI", x=1.2, y=2.3, sigma=0.8)
+    adv = Advertisement(
+        name=abcli_hostname,
+        x=1.2,
+        y=2.3,
+        sigma=0.8,
+    )
     bus.export(AD_OBJECT_PATH, adv)
 
     # Give dbus-next a moment to publish before BlueZ introspects it
@@ -127,17 +137,18 @@ async def main():
     # Connect to the SYSTEM bus (the one BlueZ uses)
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
-    logger.info(f"[beacon] Connected to system bus as {bus.unique_name}")
+    logger.info(f"{NAME}: connected to system bus as {bus.unique_name}")
 
     # Register with BlueZ
     try:
         await register_advertisement(bus)
     except Exception as e:
-        logger.info(f"[beacon] Failed to start advertising: {e}")
+        logger.info(f"{NAME}: failed to start advertising: {e}")
         return
 
-    logger.info("[beacon] Advertising started as 'TEST-PI' (manuf 0xFFFF: <x,y,sigma>)")
-    logger.info("         Press Ctrl+C to stop.")
+    logger.info(
+        f"{NAME}: advertising as '{abcli_hostname}' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop."
+    )
 
     # Handle Ctrl+C to cleanly unregister
     stop = asyncio.Event()
@@ -160,9 +171,9 @@ async def main():
     finally:
         try:
             await unregister_advertisement(bus)
-            logger.info("[beacon] Unregistered advertisement.")
+            logger.info(f"{NAME}: unregistered advertisement.")
         except Exception as e:
-            logger.info(f"[beacon] Unregister failed (ignored): {e}")
+            logger.info(f"{NAME}: cannot unregister: {e}")
 
 
 if __name__ == "__main__":

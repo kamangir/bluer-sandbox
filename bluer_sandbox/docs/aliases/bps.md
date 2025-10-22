@@ -8,7 +8,7 @@
 @bps \
 	beacon_and_receiver \
 	[~start_bluetooth]
- . start beacon and receiver.
+ . start beacon and/or receiver.
 @bps \
 	install
  . install bps.
@@ -19,6 +19,10 @@
 @bps \
 	receiver \
 	[~start_bluetooth]
+ . start receiver.
+@bps \
+	receiver \
+	[~python,~start_bluetooth]
  . start receiver.
 @bps \
 	start_bluetooth
