@@ -1,5 +1,7 @@
 import asyncio
-from bleak import BleakScanner, BleakAdvertisementData, BLEDevice
+from bleak import BleakScanner
+from bleak.backends.device import BLEDevice
+from bleak.backends.scanner import AdvertisementData
 import argparse
 
 from blueness import module
@@ -16,7 +18,7 @@ async def main(
 ):
     logger.info(f"{NAME}: LE Scan ...")
 
-    def cb(
+    def callback(
         device: BLEDevice,
         advertisement_data: BleakAdvertisementData,
     ):
@@ -31,7 +33,10 @@ async def main(
 
         hr(width=30)
 
-    await BleakScanner.discover(timeout=10.0, detection_callback=cb)
+    await BleakScanner.discover(
+        timeout=timeout,
+        detection_callback=callback,
+    )
 
 
 if __name__ == "__main__":
