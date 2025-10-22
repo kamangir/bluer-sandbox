@@ -5,8 +5,6 @@ Hybrid BLE Beacon + Receiver (D-Bus advertise + Bleak scan)
 Each node alternates between:
   • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
   • Scanning for nearby nodes’ beacons using Bleak
-
-Tested on Raspberry Pi OS / BlueZ 5.75 / Bleak ≥ 0.22.
 """
 
 import asyncio
@@ -81,23 +79,23 @@ class Advertisement(ServiceInterface):
 # Bleak scanner helper
 # -------------------------------------------------------------------
 async def scan_once_bleak(t_scan=5.0):
-    """Perform a BLE scan using Bleak and parse manufacturer data."""
     results = {}
     print(f"[hybrid] bleak scanning for {t_scan:.1f}s …")
 
+    scanner = BleakScanner(adapter="hci0")
+    # allow duplicate packets (important for quick toggling)
     try:
-        devices = await BleakScanner.discover(timeout=t_scan)
-    except Exception as e:
-        print(f"[hybrid] scan error: {e}")
-        return results
+        if hasattr(scanner, "_backend") and hasattr(scanner._backend, "_scanner_args"):
+            scanner._backend._scanner_args["--duplicates"] = True
+    except Exception:
+        pass
+
+    devices = await scanner.discover(timeout=t_scan)
 
     for d in devices:
-        # Compatible with Bleak ≥0.22 (advertisement_data) and older versions (metadata)
         adv = getattr(d, "advertisement_data", None)
         mdata = getattr(adv, "manufacturer_data", None)
-
         if mdata is None:
-            # fallback for older Bleak
             mdata = getattr(d, "metadata", {}).get("manufacturer_data", {})
 
         if not isinstance(mdata, dict) or MFG_ID not in mdata:
@@ -156,8 +154,6 @@ async def main():
 
         # --- Scan phase ---
         await scan_once_bleak(t_scan)
-
-        # --- Adapter cooldown ---
         await asyncio.sleep(1.0)
 
 
