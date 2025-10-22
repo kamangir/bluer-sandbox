@@ -17,7 +17,8 @@ import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
 from dbus_next import Variant, BusType, constants
-from bluezero import adapter
+
+from bluer_options.env import abcli_hostname
 
 AD_IFACE = "org.bluez.LEAdvertisement1"
 AD_PATH = "/org/bluez/example/advertisement0"
@@ -129,9 +130,7 @@ async def scan_once(bus, t_scan=3.0):
 # Main hybrid node: advertise, then scan, repeatedly
 # -------------------------------------------------------------------
 async def main():
-    ble_adapter = adapter.Adapter()
-    mac_suffix = ble_adapter.address[-5:].replace(":", "")
-    node_id = f"UGV-{mac_suffix}"
+    node_id = abcli_hostname
 
     x, y, sigma = 1.0, 2.0, 0.5
     t_adv, t_scan = 1.0, 4.0  # seconds
@@ -152,7 +151,7 @@ async def main():
         bus.export(AD_PATH, adv)
         try:
             await leman.call_register_advertisement(AD_PATH, {})
-            print(f"[hybrid] advertising {node_id} …")
+            print(f"[hybrid] advertising {node_id} ...")
             await asyncio.sleep(t_adv)
         except Exception as e:
             print(f"[hybrid] advertise error: {e}")
@@ -163,7 +162,7 @@ async def main():
                 pass
 
         # --- Scan ---
-        print("[hybrid] scanning …")
+        print("[hybrid] scanning ...")
         peers = await scan_once(bus, t_scan)
         if peers:
             for name, (px, py, ps, rssi) in peers.items():
