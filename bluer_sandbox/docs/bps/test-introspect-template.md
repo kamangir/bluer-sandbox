@@ -17,7 +17,7 @@ title:::
 in another terminal,
 
 ```bash
-"@bps introspect unique_bus_name=:1.20
+@bps introspect unique_bus_name=:1.20
 ```
 
 ```text
