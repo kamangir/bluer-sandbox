@@ -6,9 +6,7 @@ Each node alternates between:
   • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
   • Scanning for nearby nodes’ beacons
 
-Requires:
-  • BlueZ ≥ 5.55 started with --experimental
-  • D-Bus access to org.bluez (system bus)
+Tested on Raspberry Pi OS with BlueZ 5.75 (no discovery filter support).
 """
 
 import asyncio
@@ -92,7 +90,7 @@ def parse_mdata(mdata_variant):
 
 
 async def scan_once(bus, t_scan=3.0):
-    """Listen for BlueZ signals carrying ManufacturerData."""
+    """Passive scan for advertisements with ManufacturerData."""
     results = {}
 
     def handler(msg):
@@ -113,7 +111,6 @@ async def scan_once(bus, t_scan=3.0):
                     return
             else:
                 return
-
             if not changed or "ManufacturerData" not in changed:
                 return
             mdata = changed["ManufacturerData"]
@@ -136,20 +133,8 @@ async def scan_once(bus, t_scan=3.0):
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
-    # Portable discovery filter (no Pattern)
-    try:
-        await adapter_iface.call_set_discovery_filter(
-            {
-                "DuplicateData": Variant("b", True),
-                "Transport": Variant("s", "le"),
-                "UUIDs": Variant("as", []),
-                "RSSI": Variant("n", -127),
-                "Pathloss": Variant("q", 0),
-            }
-        )
-        print("[hybrid] discovery filter set (portable keys)")
-    except Exception as e:
-        print(f"[hybrid] warning: could not set discovery filter: {e}")
+    # --- no discovery filter at all ---
+    print("[hybrid] using default discovery mode (no filter)")
 
     # Cached devices
     try:
