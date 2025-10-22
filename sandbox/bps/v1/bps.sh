@@ -29,7 +29,7 @@ function runme() {
     fi
 
     if [[ "$do_start" == 1 ]]; then
-        bluer_ai_log "starting ..."
+        bluer_ai_log "starting bluetooth..."
 
         sudo systemctl start bluetooth
         sudo systemctl status --no-pager bluetooth
@@ -38,6 +38,7 @@ function runme() {
         hciconfig
     fi
 
+    bluer_ai_log "starting beacon + receiver ..."
     python3 bps.py
 }
 
