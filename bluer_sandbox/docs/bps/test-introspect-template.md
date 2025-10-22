@@ -26,7 +26,7 @@ in another terminal,
 🔥
 ```
 
-then, in the first window,
+validate in the first window,
 
 ```text
 🔥

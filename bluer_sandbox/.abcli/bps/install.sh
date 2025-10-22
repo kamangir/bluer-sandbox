@@ -3,6 +3,9 @@
 function bluer_sandbox_bps_install() {
     bluer_ai_log "installing bps ..."
 
+    local asset_path=$(python3 -m bluer_sandbox locate)/assets/bps
+    bluer_ai_log "asset path: $asset_path"
+
     sudo apt update
     sudo apt install -y \
         bluez \
@@ -28,7 +31,7 @@ function bluer_sandbox_bps_install() {
     sudo mkdir -pv /etc/systemd/system/bluetooth.service.d
 
     sudo cp -v \
-        ./override.conf \
+        $asset_path/override.conf \
         /etc/systemd/system/bluetooth.service.d/override.conf
 
     sudo systemctl daemon-reexec
@@ -39,6 +42,6 @@ function bluer_sandbox_bps_install() {
     ps -eo args | grep [b]luetoothd
 
     sudo install -m 644 \
-        ./org.example.Hello.conf \
+        $asset_path/org.example.Hello.conf \
         /etc/dbus-1/system.d/org.example.Hello.conf
 }
