@@ -93,18 +93,26 @@ class Receiver:
         print("[Receiver] BLE scanner stopped")
 
     async def _scan_once(self):
-        devices = await BleakScanner.discover(timeout=self.scan_window_s)
+        # discover() now returns a dict: {BLEDevice: AdvertisementData}
+        devices = await BleakScanner.discover(
+            timeout=self.scan_window_s,
+            return_adv=True,
+        )
         t = time.time()
-        for d in devices:
-            if not d.name:
+
+        for device, adv_data in devices.items():
+            name = adv_data.local_name or device.name
+            if not name:
                 continue
-            # parse manufacturer data if present
-            md = d.metadata.get("manufacturer_data", {})
+
+            # manufacturer data is now a dict: {company_id: bytes}
+            md = adv_data.manufacturer_data or {}
+
             if 0xFFFF in md and len(md[0xFFFF]) >= 12:
                 x, y, sigma = struct.unpack("<fff", md[0xFFFF][:12])
-                self.latest[d.name] = (x, y, sigma, d.rssi, t)
+                self.latest[name] = (x, y, sigma, device.rssi, t)
                 print(
-                    f"[Receiver] {d.name} → RSSI={d.rssi}  pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
+                    f"[Receiver] {name} → RSSI={device.rssi}  pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
                 )
 
     def _loop(self):
