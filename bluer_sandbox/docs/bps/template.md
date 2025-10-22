@@ -10,3 +10,5 @@ items:::
 - [literature](./literature.md)
 - [sandbox](../../../sandbox/bps)
 - [bluer_sandbox.bps](../../bps)
+- [test & introspect](./test-introspect.md)
+- [beacon & receiver](./beacon-receiver.md)

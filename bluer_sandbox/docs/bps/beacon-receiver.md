@@ -1,4 +1,4 @@
-title:::
+# bps: beacon-receiver
 
 > ℹ️ only works on rpi.
 
