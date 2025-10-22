@@ -74,17 +74,17 @@ async def main():
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
 
-    # Request a well-known name so the interface is visible to BlueZ
-    await bus.request_name("org.bluez")
+    # Own a unique name (not org.bluez!)
+    await bus.request_name("org.bluez.beacon")
 
     adv = Advertisement("TEST-PI", x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJ_PATH, adv)
 
-    # Give the bus time to register the interface before BlueZ introspects it
+    # Give D-Bus a moment to register the object before BlueZ introspects it
     await asyncio.sleep(1.0)
 
     msg = Message(
-        destination=BUS_NAME,
+        destination=BUS_NAME,  # still talk *to* org.bluez
         path=ADAPTER_PATH,
         interface=AD_IFACE,
         member="RegisterAdvertisement",
