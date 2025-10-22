@@ -1,4 +1,5 @@
 import asyncio
+import socket
 import struct
 import threading
 import time
@@ -13,19 +14,25 @@ class Beacon:
     # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
-        node_id: str,
+        node_id: str | None = None,
         x: float = 0.0,
         y: float = 0.0,
         sigma: float = 1.0,
         interval_ms: int = 500,
     ):
         """
-        node_id: short identifier (e.g., 'AZ-0111')
+        node_id: optional short identifier; if None, auto-generate from MAC/hostname.
         x, y: current position estimate (m)
         sigma: position uncertainty (m)
         interval_ms: advertising interval in milliseconds
         """
+        ble_adapter = adapter.Adapter()
+        if node_id is None:
+            # derive unique name from MAC or hostname suffix
+            mac_suffix = ble_adapter.address[-5:].replace(":", "")
+            node_id = f"UGV-{mac_suffix}"
         self.node_id = node_id
+
         self.x, self.y, self.sigma = x, y, sigma
         self.interval_ms = interval_ms
         self._adv = None
@@ -38,9 +45,7 @@ class Beacon:
             return
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
-        print(
-            f"[Beacon] {self.node_id} started advertising every {self.interval_ms} ms"
-        )
+        print(f"[Beacon] {self.node_id} advertising every {self.interval_ms} ms")
 
     def stop(self):
         """Stop advertising."""
@@ -58,16 +63,16 @@ class Beacon:
         self._adv.appearance = 0
         self._adv.local_name = self.node_id
 
-        # Pack simple manufacturer payload: x, y, sigma
+        # Manufacturer payload: 3 floats (x, y, σ)
         payload = struct.pack("<fff", self.x, self.y, self.sigma)
         self._adv.manufacturer_data = {0xFFFF: payload}
 
         self._adv.start()
-
-        # Loop keeps advertisement alive until stop() called
-        while not self._stop.is_set():
-            time.sleep(self.interval_ms / 1000.0)
-        self._adv.stop()
+        try:
+            while not self._stop.is_set():
+                time.sleep(self.interval_ms / 1000.0)
+        finally:
+            self._adv.stop()
 
 
 # ---------------------------------------------------------------
@@ -99,11 +104,10 @@ class Receiver:
         )
         t = time.time()
 
-        # case 1: dict form
+        # handle dict / tuple / plain-device variants
         if isinstance(devices, dict):
             iterable = devices.items()
         else:
-            # case 2: list of tuples or list of plain devices
             first = devices[0] if devices else None
             if isinstance(first, tuple):
                 iterable = devices
@@ -113,20 +117,19 @@ class Receiver:
                 ]
 
         for device, adv_data in iterable:
-            # get name safely
             name = getattr(adv_data, "local_name", None) or getattr(
                 device, "name", None
             )
             if not name:
                 continue
 
-            # manufacturer data safely
             md = getattr(adv_data, "manufacturer_data", None) or {}
             if 0xFFFF in md and len(md[0xFFFF]) >= 12:
                 x, y, sigma = struct.unpack("<fff", md[0xFFFF][:12])
                 self.latest[name] = (x, y, sigma, getattr(device, "rssi", 0), t)
                 print(
-                    f"[Receiver] {name} → RSSI={device.rssi}  pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
+                    f"[Receiver] {name} → RSSI={device.rssi:>4} dB  "
+                    f"pos=({x:.2f},{y:.2f})  σ={sigma:.2f}"
                 )
 
     def _loop(self):
@@ -140,7 +143,8 @@ class Receiver:
 # Example usage
 # ---------------------------------------------------------------
 if __name__ == "__main__":
-    beacon = Beacon("AZ-0111", x=1.2, y=2.3, sigma=0.8)
+    # auto-generate unique name per Pi
+    beacon = Beacon()
     receiver = Receiver(scan_window_s=3.0)
 
     try:
@@ -148,7 +152,8 @@ if __name__ == "__main__":
         receiver.start()
         while True:
             time.sleep(5)
-            print(f"Known peers: {list(receiver.latest.keys())}")
+            peers = list(receiver.latest.keys())
+            print(f"Known peers: {peers if peers else '[]'}")
     except KeyboardInterrupt:
         print("Shutting down…")
     finally:
