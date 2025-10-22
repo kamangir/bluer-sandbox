@@ -5,5 +5,5 @@ function bluer_sandbox_bps_beacon() {
         sudo -E \
         $(which python3) -m \
         bluer_sandbox.bps.utils.beacon \
-        "$@"
+        "${@:2}"
 }
