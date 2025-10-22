@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# beacon_and_receiver.py — alternate BLE advertise/scan cycles (no bluezero/bleak)
+# beacon_and_receiver.py — alternate BLE advertise/scan cycles using pure BlueZ D-Bus
 # Requires: dbus-next, bluetoothd --experimental, adapter powered on.
 
 import asyncio
@@ -19,6 +19,7 @@ NAME = module.name(__file__, NAME)
 BUS_NAME = "org.bluez"
 ADAPTER_PATH = "/org/bluez/hci0"
 ADVERTISING_MGR_IFACE = "org.bluez.LEAdvertisingManager1"
+ADAPTER_IFACE = "org.bluez.Adapter1"
 AD_OBJECT_PATH = "/org/bluez/example/advertisement0"
 AD_IFACE = "org.bluez.LEAdvertisement1"
 
@@ -98,7 +99,6 @@ async def register_advertisement(bus: MessageBus) -> Advertisement:
 
 
 async def unregister_advertisement(bus: MessageBus):
-    """Safely unregister and unexport advertisement."""
     try:
         msg = Message(
             destination=BUS_NAME,
@@ -111,13 +111,11 @@ async def unregister_advertisement(bus: MessageBus):
         await bus.call(msg)
     except Exception as e:
         logger.warning(f"{NAME}: unregister_advertisement failed: {e}")
-
     try:
         bus.unexport(AD_OBJECT_PATH, AD_IFACE)
     except Exception:
         pass
-
-    await asyncio.sleep(0.5)  # let BlueZ settle
+    await asyncio.sleep(0.5)
 
 
 async def advertise_once(bus: MessageBus, duration: float = 2.0):
@@ -129,35 +127,59 @@ async def advertise_once(bus: MessageBus, duration: float = 2.0):
     logger.info(f"{NAME}: stopped advertisement.")
 
 
-async def scan_once(duration: float = 8.0):
-    """Run a short passive scan using bluetoothctl."""
-    logger.info(f"{NAME}: scanning for {duration:.1f}s...")
-    proc = await asyncio.create_subprocess_exec(
-        "bluetoothctl",
-        "scan",
-        "on",
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+async def start_discovery(bus: MessageBus):
+    """Start scanning via org.bluez.Adapter1.StartDiscovery()"""
+    msg = Message(
+        destination=BUS_NAME,
+        path=ADAPTER_PATH,
+        interface=ADAPTER_IFACE,
+        member="StartDiscovery",
     )
+    reply = await bus.call(msg)
+    if reply.message_type == MessageType.ERROR:
+        logger.warning(f"{NAME}: StartDiscovery failed: {reply.error_name}")
 
-    try:
-        await asyncio.sleep(duration)
-    finally:
-        if proc.returncode is None:
-            try:
-                proc.terminate()
-            except ProcessLookupError:
-                pass
-        try:
-            await asyncio.create_subprocess_exec("bluetoothctl", "scan", "off")
-        except Exception:
-            pass
 
-    out, _ = await proc.communicate()
-    for line in out.decode(errors="ignore").splitlines():
-        if "Device" in line:
-            logger.info(f"{NAME}: found {line.strip()}")
-    await asyncio.sleep(0.5)  # settle time
+async def stop_discovery(bus: MessageBus):
+    """Stop scanning via org.bluez.Adapter1.StopDiscovery()"""
+    msg = Message(
+        destination=BUS_NAME,
+        path=ADAPTER_PATH,
+        interface=ADAPTER_IFACE,
+        member="StopDiscovery",
+    )
+    reply = await bus.call(msg)
+    if reply.message_type == MessageType.ERROR:
+        logger.warning(f"{NAME}: StopDiscovery failed: {reply.error_name}")
+
+
+async def scan_once(bus: MessageBus, duration: float = 8.0):
+    """Scan for nearby BLE devices via D-Bus."""
+    logger.info(f"{NAME}: scanning for {duration:.1f}s...")
+    devices = {}
+
+    def handle_signal(msg: Message):
+        if msg.member != "InterfacesAdded":
+            return
+        if not msg.body or len(msg.body) < 2:
+            return
+        path, interfaces = msg.body
+        dev_info = interfaces.get("org.bluez.Device1")
+        if not dev_info:
+            return
+        addr = dev_info.get("Address")
+        name = dev_info.get("Name") or dev_info.get("Alias")
+        if addr and addr not in devices:
+            devices[addr] = name or "(unknown)"
+            logger.info(f"{NAME}: found {addr} {devices[addr]}")
+
+    bus.add_message_handler(handle_signal)
+    await start_discovery(bus)
+    await asyncio.sleep(duration)
+    await stop_discovery(bus)
+    bus.remove_message_handler(handle_signal)
+    logger.info(f"{NAME}: found {len(devices)} device(s).")
+    await asyncio.sleep(0.5)
 
 
 async def main():
@@ -180,7 +202,7 @@ async def main():
     try:
         while not stop.is_set():
             await advertise_once(bus, duration=2.0)
-            await scan_once(duration=8.0)
+            await scan_once(bus, duration=8.0)
     finally:
         await unregister_advertisement(bus)
         logger.info(f"{NAME}: exiting cleanly.")
