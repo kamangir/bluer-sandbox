@@ -172,6 +172,11 @@ async def main():
                 await leman.call_unregister_advertisement(AD_PATH)
             except Exception:
                 pass
+            # always unexport to avoid duplicate registration next cycle
+            try:
+                bus.unexport(AD_PATH)
+            except Exception:
+                pass
 
         # --- Scan ---
         print("[hybrid] scanning ...")
