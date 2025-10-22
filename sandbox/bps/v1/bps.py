@@ -10,6 +10,7 @@ from bleak import BleakScanner
 # Beacon: broadcasts BLE advertisement packets (pure Python)
 # ---------------------------------------------------------------
 class Beacon:
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         node_id: str,
