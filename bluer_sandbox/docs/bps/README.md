@@ -8,7 +8,6 @@ bluer-positioning system.
 | --- | --- | --- |
 | [![image](https://github.com/kamangir/assets2/raw/main/bps/01.png?raw=true)](https://github.com/kamangir/assets2/raw/main/bps/01.png?raw=true) | [![image](https://github.com/kamangir/assets2/raw/main/bps/02.png?raw=true)](https://github.com/kamangir/assets2/raw/main/bps/02.png?raw=true) | [![image](https://github.com/kamangir/assets2/raw/main/bps/03.png?raw=true)](https://github.com/kamangir/assets2/raw/main/bps/03.png?raw=true) |
 
-[AI convo](https://chatgpt.com/c/68e79d65-e938-8327-b1e1-2536f7b6fb41)
-
+- [AI convo](https://chatgpt.com/c/68e79d65-e938-8327-b1e1-2536f7b6fb41)
 - [literature](./literature.md)
 - [sandbox](../../../sandbox/bps)

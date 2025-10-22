@@ -6,7 +6,6 @@ bluer-positioning system.
 
 items:::
 
-[AI convo](https://chatgpt.com/c/68e79d65-e938-8327-b1e1-2536f7b6fb41)
-
+- [AI convo](https://chatgpt.com/c/68e79d65-e938-8327-b1e1-2536f7b6fb41)
 - [literature](./literature.md)
 - [sandbox](../../../sandbox/bps)
