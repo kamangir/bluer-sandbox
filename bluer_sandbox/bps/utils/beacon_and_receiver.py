@@ -14,9 +14,9 @@ Requires BlueZ ≥ 5.55 started with `--experimental`.
 import asyncio
 import struct
 import time
+from dbus_next import Message, Variant, BusType, constants
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
-from dbus_next import Variant, BusType, constants
 
 from bluer_options.env import abcli_hostname
 
@@ -98,8 +98,20 @@ def parse_mdata(mdata_variant):
 
 async def scan_once(bus, t_scan=3.0):
     """Listen for advertisement signals for t_scan seconds."""
-    match = "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded'"
-    await bus.call_add_match(match)
+    match_rule = "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded'"
+
+    # subscribe to ObjectManager signal via direct D-Bus call
+    await bus.call(
+        Message(
+            destination="org.freedesktop.DBus",
+            path="/org/freedesktop/DBus",
+            interface="org.freedesktop.DBus",
+            member="AddMatch",
+            signature="s",
+            body=[match_rule],
+        )
+    )
+
     results = {}
 
     def handler(msg):
