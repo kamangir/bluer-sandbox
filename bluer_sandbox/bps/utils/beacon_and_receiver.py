@@ -121,7 +121,7 @@ async def unregister_advertisement(bus: MessageBus):
 async def advertise_once(bus: MessageBus, duration: float = 2.0):
     """Advertise for a short duration."""
     logger.info(f"{NAME}: starting advertisement...")
-    adv = await register_advertisement(bus)
+    await register_advertisement(bus)
     await asyncio.sleep(duration)
     await unregister_advertisement(bus)
     logger.info(f"{NAME}: stopped advertisement.")
@@ -163,7 +163,7 @@ async def scan_once(bus: MessageBus, duration: float = 8.0):
             return
         if not msg.body or len(msg.body) < 2:
             return
-        path, interfaces = msg.body
+        _, interfaces = msg.body
         dev_info = interfaces.get("org.bluez.Device1")
         if not dev_info:
             return
