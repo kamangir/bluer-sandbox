@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """
-Hybrid BLE Beacon + Receiver
-----------------------------
+Hybrid BLE Beacon + Receiver (D-Bus advertise + Bleak scan)
+-----------------------------------------------------------
 Each node alternates between:
   • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
-  • Scanning for nearby nodes’ beacons
+  • Scanning for nearby nodes’ beacons using Bleak
 
-Works on Raspberry Pi OS with BlueZ 5.75 (no discovery filter support).
+Compatible with Raspberry Pi OS / BlueZ 5.75.
 """
 
 import asyncio
 import struct
+import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
-from dbus_next import Variant, BusType, constants
+from dbus_next import Variant, BusType
+from bleak import BleakScanner
 from bluer_options.env import abcli_hostname
 
 AD_IFACE = "org.bluez.LEAdvertisement1"
@@ -77,90 +79,23 @@ class Advertisement(ServiceInterface):
 
 
 # -------------------------------------------------------------------
-# Receiver helpers
+# Bleak scanner helper
 # -------------------------------------------------------------------
-def parse_mdata(mdata_variant):
-    """Decode manufacturer data Variant if Company ID 0xFFFF is present."""
-    try:
-        payload = mdata_variant[MFG_ID].value
-        if len(payload) >= 12:
-            return struct.unpack("<fff", bytes(payload[:12]))
-    except Exception:
-        pass
-    return None
-
-
-async def scan_once(bus, t_scan=3.0):
-    """Passive scan for advertisements with ManufacturerData."""
+async def scan_once_bleak(t_scan=5.0):
+    """Perform a BLE scan using Bleak and parse manufacturer data."""
     results = {}
-
-    def handler(msg):
-        if msg.message_type != constants.MessageType.SIGNAL:
-            return
-        if msg.interface not in [
-            "org.freedesktop.DBus.Properties",
-            "org.freedesktop.DBus.ObjectManager",
-        ]:
-            return
-        try:
-            if msg.member == "InterfacesAdded":
-                iface_data = msg.body[1].get("org.bluez.Device1")
-                changed = iface_data
-            elif msg.member == "PropertiesChanged":
-                iface, changed, _ = msg.body
-                if iface != "org.bluez.Device1":
-                    return
-            else:
-                return
-
-            if not changed or "ManufacturerData" not in changed:
-                return
-            mdata = changed["ManufacturerData"]
-            parsed = parse_mdata(mdata)
-            if parsed:
-                x, y, sigma = parsed
-                rssi = changed.get("RSSI", 0)
-                addr = msg.path.split("/")[-1].replace("_", ":")
-                results[addr] = (x, y, sigma, rssi)
-                print(
-                    f"[peer] {addr} RSSI={rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
-                )
-        except Exception as e:
-            print(f"[hybrid] handler error: {e}")
-
-    bus.add_message_handler(handler)
-
-    # Adapter
-    introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
-    adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
-    adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
-
-    # Remove cached devices to force rediscovery
-    try:
-        obj_mgr = bus.get_proxy_object(
-            "org.bluez", "/", await bus.introspect("org.bluez", "/")
-        )
-        mgr_iface = obj_mgr.get_interface("org.freedesktop.DBus.ObjectManager")
-        devices = await mgr_iface.call_get_managed_objects()
-        count = 0
-        for path in list(devices.keys()):
-            if "/org/bluez/hci0/dev_" in path:
-                try:
-                    await adapter_iface.call_remove_device(path)
-                    count += 1
-                except Exception:
-                    pass
-        print(f"[hybrid] cleared {count} cached device entries")
-    except Exception as e:
-        print(f"[hybrid] could not clear cache: {e}")
-
-    await adapter_iface.call_start_discovery()
-    print("[hybrid] discovery started")
-    await asyncio.sleep(t_scan)
-    await adapter_iface.call_stop_discovery()
-    print("[hybrid] discovery stopped")
-
-    bus.remove_message_handler(handler)
+    print(f"[hybrid] bleak scanning for {t_scan:.1f}s …")
+    devices = await BleakScanner.discover(timeout=t_scan)
+    for d in devices:
+        mdata = d.metadata.get("manufacturer_data", {})
+        if MFG_ID in mdata and len(mdata[MFG_ID]) >= 12:
+            x, y, sigma = struct.unpack("<fff", bytes(mdata[MFG_ID][:12]))
+            results[d.address] = (x, y, sigma, d.rssi)
+            print(
+                f"[peer] {d.address} RSSI={d.rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
+            )
+    if not results:
+        print("[hybrid] no peers detected")
     return results
 
 
@@ -182,7 +117,7 @@ async def main():
     print(f"[hybrid] node {node_id} ready (advertise {t_adv}s / scan {t_scan}s)")
 
     while True:
-        # Advertise
+        # --- Advertise phase ---
         payload = struct.pack("<fff", x, y, sigma)
         adv = Advertisement(node_id, payload)
         bus.export(AD_PATH, adv)
@@ -200,18 +135,10 @@ async def main():
             bus.unexport(AD_PATH)
             print("[hybrid] pause before scanning …")
 
-        # Scan
-        print("[hybrid] scanning …")
-        peers = await scan_once(bus, t_scan)
-        if peers:
-            for name, (px, py, ps, rssi) in peers.items():
-                print(
-                    f"[peer] {name:>10} RSSI={rssi:>4} pos=({px:.2f},{py:.2f}) σ={ps:.2f}"
-                )
-        else:
-            print("[hybrid] no peers detected")
+        # --- Scan phase ---
+        await scan_once_bleak(t_scan)
 
-        # Give the adapter a short break between roles
+        # --- Adapter cooldown ---
         await asyncio.sleep(1.0)
 
 
