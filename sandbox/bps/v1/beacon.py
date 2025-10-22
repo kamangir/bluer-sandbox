@@ -23,38 +23,27 @@ class Advertisement(ServiceInterface):
         self.type = "peripheral"
         self.include_tx_power = True
 
-    # ---- BlueZ-expected D-Bus properties ----
+    # ---- minimal read-only properties BlueZ expects ----
     @dbus_property()
     def Type(self) -> "s":
         return self.type
-
-    Type.__dbus_property__["writable"] = False
 
     @dbus_property()
     def LocalName(self) -> "s":
         return self.name
 
-    LocalName.__dbus_property__["writable"] = False
-
     @dbus_property()
     def ServiceUUIDs(self) -> "as":
         return self.service_uuids
-
-    ServiceUUIDs.__dbus_property__["writable"] = False
 
     @dbus_property()
     def IncludeTxPower(self) -> "b":
         return self.include_tx_power
 
-    IncludeTxPower.__dbus_property__["writable"] = False
-
     @dbus_property()
     def ManufacturerData(self) -> "a{qv}":
         return {0xFFFF: Variant("ay", self.manufacturer_data[0xFFFF])}
 
-    ManufacturerData.__dbus_property__["writable"] = False
-
-    # ---- Called by BlueZ when it unregisters ----
     @method()
     def Release(self):
         print("[Beacon] Advertisement released by BlueZ")
@@ -67,7 +56,7 @@ async def main():
     adv = Advertisement("TEST-PI", x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJ_PATH, adv)
 
-    # Register the advertisement with BlueZ
+    # Register advertisement with BlueZ
     msg = Message(
         destination=BUS_NAME,
         path=ADAPTER_PATH,
@@ -87,7 +76,6 @@ async def main():
             time.sleep(1)
             print("advertising...")
     except KeyboardInterrupt:
-        # Unregister before exit
         msg = Message(
             destination=BUS_NAME,
             path=ADAPTER_PATH,
