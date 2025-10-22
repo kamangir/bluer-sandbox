@@ -10,6 +10,8 @@ from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method, dbus_property
 from dbus_next import Variant, BusType, Message, MessageType
 
+from bluer_options.env import abcli_hostname
+
 from bluer_sandbox.logger import logger
 
 # ---- BlueZ constants
@@ -89,7 +91,12 @@ class Advertisement(ServiceInterface):
 
 async def register_advertisement(bus: MessageBus):
     # Export our advertisement object on the system bus
-    adv = Advertisement(name="TEST-PI", x=1.2, y=2.3, sigma=0.8)
+    adv = Advertisement(
+        name=abcli_hostname,
+        x=1.2,
+        y=2.3,
+        sigma=0.8,
+    )
     bus.export(AD_OBJECT_PATH, adv)
 
     # Give dbus-next a moment to publish before BlueZ introspects it
@@ -136,8 +143,9 @@ async def main():
         logger.info(f"[beacon] Failed to start advertising: {e}")
         return
 
-    logger.info("[beacon] Advertising started as 'TEST-PI' (manuf 0xFFFF: <x,y,sigma>)")
-    logger.info("         Press Ctrl+C to stop.")
+    logger.info(
+        f"advertising as '{abcli_hostname}' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop."
+    )
 
     # Handle Ctrl+C to cleanly unregister
     stop = asyncio.Event()
