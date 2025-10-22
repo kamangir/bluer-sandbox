@@ -15,7 +15,6 @@ from bleak import BleakScanner
 import argparse
 
 from blueness import module
-
 from bluer_sandbox import NAME
 from bluer_sandbox.logger import logger
 
@@ -59,7 +58,9 @@ class Beacon:
         """Stop advertising."""
         self._stop.set()
         if self._thread:
-            self._thread.join()
+            self._thread.join(timeout=2.0)
+            if self._thread.is_alive():
+                logger.warning("[beacon] thread did not exit cleanly")
         logger.info(f"[beacon] {self.node_id} stopped")
 
     # ---- Internal -----------------------------------------------------------
@@ -79,8 +80,15 @@ class Beacon:
             self._adv.start()
             while not self._stop.is_set():
                 time.sleep(self.interval_ms / 1000)
+        except Exception as e:
+            logger.warning(f"[beacon] exception in _run: {e}")
         finally:
-            self._adv.stop()
+            try:
+                if self._adv:
+                    logger.debug("[beacon] stopping advertisement …")
+                    self._adv.stop()
+            except Exception as e:
+                logger.warning(f"[beacon] stop() failed: {e}")
 
 
 # ---------------------------------------------------------------
@@ -103,7 +111,10 @@ class Receiver:
 
     def stop(self):
         self._stop.set()
-        self._thread.join()
+        if self._thread:
+            self._thread.join(timeout=2.0)
+            if self._thread.is_alive():
+                logger.warning("[receiver] thread did not exit cleanly")
         logger.info("[receiver] BLE scanner stopped")
 
     # ---- Internal -----------------------------------------------------------
@@ -147,9 +158,16 @@ class Receiver:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         while not self._stop.is_set():
-            loop.run_until_complete(self._scan_once())
+            try:
+                loop.run_until_complete(self._scan_once())
+            except Exception as e:
+                logger.warning(f"[receiver] scan loop error: {e}")
+                time.sleep(1)
 
 
+# ---------------------------------------------------------------
+# Entrypoint
+# ---------------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(NAME)
     parser.add_argument(
@@ -164,7 +182,6 @@ if __name__ == "__main__":
     do_receiver = args.role in ["receiver", "both"]
 
     beacon = Beacon() if do_beacon else None
-
     receiver = Receiver(scan_window_s=3.0) if do_receiver else None
 
     try:
@@ -179,11 +196,12 @@ if __name__ == "__main__":
             if do_receiver:
                 peers = list(receiver.latest)
                 logger.info(f"[bps] known peers: {peers or '[]'}")
+
     except KeyboardInterrupt:
-        logger.info("[bps] shutting down ...")
+        logger.info("[bps] SIGINT received, shutting down …")
     finally:
         if do_beacon:
             beacon.stop()
-
         if do_receiver:
             receiver.stop()
+        logger.info("[bps] exit complete ✅")
