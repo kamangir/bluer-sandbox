@@ -80,17 +80,17 @@ function runme() {
             $(which python3) \
             test.py
     elif [[ "$task" == "introspect" ]]; then
-        local N=$(bluer_ai_option_int "$options" N)
+        local N=$(bluer_ai_option "$options" N)
         if [[ -z "$N" ]]; then
             bluer_ai_log "N not found.".
             return 1
         fi
 
         bluer_ai_eval - \
-            sudo busctl --system introspect :1.$N /org/example/Hello
+            sudo busctl --system introspect $N /org/example/Hello
 
         bluer_ai_eval - \
-            sudo busctl --system call :1.$N /org/example/Hello org.example.Hello Ping
+            sudo busctl --system call $N /org/example/Hello org.example.Hello Ping
     elif [[ "$what" == "beacon+receiver" ]]; then
         python3 bps.py
     else
