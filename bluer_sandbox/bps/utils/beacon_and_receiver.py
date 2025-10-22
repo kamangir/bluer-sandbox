@@ -1,158 +1,115 @@
 #!/usr/bin/env python3
 """
-Hybrid BLE Beacon + Receiver (D-Bus advertise + Bleak scan)
------------------------------------------------------------
+Raw-HCI hybrid beacon
+---------------------
 Each node alternates between:
-  • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
-  • Scanning for nearby nodes’ beacons using Bleak
+  • sending a manufacturer-specific BLE advertisement (company ID 0xFFFF)
+  • scanning for others' advertisements via Bleak
+
+Works even when BlueZ strips ManufacturerData.
+Requires: sudo python3 this_file.py
 """
 
-import asyncio
-import struct
-from dbus_next.aio import MessageBus
-from dbus_next.service import ServiceInterface, dbus_property, method
-from dbus_next import Variant, BusType
+import asyncio, struct, time, socket, os
 from bleak import BleakScanner
-from bluer_options.env import abcli_hostname
 
-AD_IFACE = "org.bluez.LEAdvertisement1"
-AD_PATH = "/org/bluez/example/advertisement0"
-MFG_ID = 0xFFFF
-DUMMY_UUID = "0000180a-0000-1000-8000-00805f9b34fb"  # Device Information
+# --- Advertising constants ---
+HCI_LE_SET_ADVERTISING_DATA = 0x0008
+HCI_COMMAND_PKT = 0x01
+HCI_LE_SET_ADVERTISE_ENABLE = 0x000A
+HCI_LE_SET_ADVERTISING_PARAMETERS = 0x0006
 
+HCI_TYPE_LE = 0x08
+OGF_LE_CTL = 0x08
 
-# -------------------------------------------------------------------
-# Advertisement object
-# -------------------------------------------------------------------
-class Advertisement(ServiceInterface):
-    def __init__(self, node_id, payload):
-        super().__init__(AD_IFACE)
-        self.node_id = node_id
-        self.payload = payload
-        self._service_uuids = [DUMMY_UUID]  # 👈 Add this line
+HCI_FILTER = struct.pack("IIIh2x", 0x00000020, 0x00000020, 0, 0)
 
-    @dbus_property()
-    def Type(self) -> "s":
-        return "peripheral"
-
-    @Type.setter
-    def Type(self, _):
-        pass
-
-    @dbus_property()
-    def LocalName(self) -> "s":
-        return self.node_id
-
-    @LocalName.setter
-    def LocalName(self, _):
-        pass
-
-    @dbus_property()
-    def ManufacturerData(self) -> "a{qv}":
-        return {MFG_ID: Variant("ay", self.payload)}
-
-    @ManufacturerData.setter
-    def ManufacturerData(self, _):
-        pass
-
-    @dbus_property()
-    def IncludeTxPower(self) -> "b":
-        return True
-
-    @IncludeTxPower.setter
-    def IncludeTxPower(self, _):
-        pass
-
-    @dbus_property()
-    def ServiceUUIDs(self) -> "as":
-        return self._service_uuids
-
-    @ServiceUUIDs.setter
-    def ServiceUUIDs(self, _):
-        pass
-
-    @method()
-    def Release(self):
-        print(f"[{self.node_id}] advertisement released")
+COMPANY_ID = 0xFFFF
 
 
-# -------------------------------------------------------------------
-# Bleak scanner helper
-# -------------------------------------------------------------------
+def hci_send_cmd(sock, ogf, ocf, data=b""):
+    opcode = (ogf << 10) | ocf
+    plen = len(data)
+    sock.send(struct.pack("<BHB", HCI_COMMAND_PKT, opcode, plen) + data)
+
+
+def advertise_once(sock, node_name="PI", x=1.0, y=2.0, sigma=0.5, duration=2.0):
+    # manufacturer data (0xFF)
+    payload = struct.pack("<fff", x, y, sigma)
+    mdata = (
+        bytes([len(payload) + 3, 0xFF, COMPANY_ID & 0xFF, COMPANY_ID >> 8]) + payload
+    )
+    name_bytes = node_name.encode()
+    name = bytes([len(name_bytes) + 1, 0x09]) + name_bytes
+    adv_data = mdata + name
+    if len(adv_data) > 31:
+        adv_data = adv_data[:31]
+    hci_send_cmd(
+        sock,
+        OGF_LE_CTL,
+        HCI_LE_SET_ADVERTISING_PARAMETERS,
+        struct.pack(
+            "<HHBBB6sBHHBBBB",
+            0x00A0,
+            0x00A0,
+            0x00,
+            0x00,
+            0x00,
+            b"\x00" * 6,
+            0x00,
+            0x07,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+        ),
+    )
+    hci_send_cmd(
+        sock,
+        OGF_LE_CTL,
+        HCI_LE_SET_ADVERTISING_DATA,
+        bytes([len(adv_data)]) + adv_data + bytes(31 - len(adv_data)),
+    )
+    hci_send_cmd(sock, OGF_LE_CTL, HCI_LE_SET_ADVERTISE_ENABLE, b"\x01")
+    time.sleep(duration)
+    hci_send_cmd(sock, OGF_LE_CTL, HCI_LE_SET_ADVERTISE_ENABLE, b"\x00")
+
+
 async def scan_once_bleak(t_scan=5.0):
-    results = {}
     print(f"[hybrid] bleak scanning for {t_scan:.1f}s …")
-
-    scanner = BleakScanner(adapter="hci0")
-    try:
-        if hasattr(scanner, "_backend") and hasattr(scanner._backend, "_scanner_args"):
-            scanner._backend._scanner_args["--duplicates"] = True
-    except Exception:
-        pass
-
-    devices = await scanner.discover(timeout=t_scan)
-
-    for d in devices:
-        adv = getattr(d, "advertisement_data", None)
-        mdata = getattr(adv, "manufacturer_data", None)
-        if mdata is None:
-            mdata = getattr(d, "metadata", {}).get("manufacturer_data", {})
-
-        if not isinstance(mdata, dict) or MFG_ID not in mdata:
+    devices = await BleakScanner.discover(timeout=t_scan, return_adv=True)
+    peers = {}
+    for d, adv in (
+        devices.items()
+        if isinstance(devices, dict)
+        else [(d, getattr(d, "advertisement_data", None)) for d in devices]
+    ):
+        if not adv:
             continue
-
-        data = mdata[MFG_ID]
-        if len(data) < 12:
-            continue
-
-        x, y, sigma = struct.unpack("<fff", bytes(data[:12]))
-        results[d.address] = (x, y, sigma, d.rssi)
-        print(
-            f"[peer] {d.address} RSSI={d.rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
-        )
-
-    if not results:
+        md = getattr(adv, "manufacturer_data", {})
+        if COMPANY_ID in md and len(md[COMPANY_ID]) >= 12:
+            x, y, sigma = struct.unpack("<fff", md[COMPANY_ID][:12])
+            peers[d.address] = (x, y, sigma, d.rssi)
+            print(
+                f"[peer] {d.address:>17} RSSI={d.rssi:>4}  pos=({x:.1f},{y:.1f}) σ={sigma:.2f}"
+            )
+    if not peers:
         print("[hybrid] no peers detected")
-    return results
+    return peers
 
 
-# -------------------------------------------------------------------
-# Main hybrid loop
-# -------------------------------------------------------------------
 async def main():
-    node_id = abcli_hostname
-    x, y, sigma = 1.0, 2.0, 0.5
+    node = os.uname().nodename
+    x, y, s = 1.0, 2.0, 0.5
     t_adv, t_scan = 2.0, 8.0
-
-    bus = MessageBus(bus_type=BusType.SYSTEM)
-    await bus.connect()
-
-    introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
-    mgr = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
-    leman = mgr.get_interface("org.bluez.LEAdvertisingManager1")
-
-    print(f"[hybrid] node {node_id} ready (advertise {t_adv}s / scan {t_scan}s)")
-
+    sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_RAW, socket.BTPROTO_HCI)
+    sock.bind((0,))
+    print(f"[hybrid] node {node} ready (advertise {t_adv}s / scan {t_scan}s)")
     while True:
-        payload = struct.pack("<fff", x, y, sigma)
-        adv = Advertisement(node_id, payload)
-        bus.export(AD_PATH, adv)
-        try:
-            await leman.call_register_advertisement(AD_PATH, {})
-            print(f"[hybrid] advertising {node_id} …")
-            await asyncio.sleep(t_adv)
-        except Exception as e:
-            print(f"[hybrid] advertise error: {e}")
-        finally:
-            try:
-                await leman.call_unregister_advertisement(AD_PATH)
-            except Exception:
-                pass
-            bus.unexport(AD_PATH)
-            print("[hybrid] pause before scanning …")
-
+        advertise_once(sock, node_name=node, x=x, y=y, sigma=s, duration=t_adv)
+        await asyncio.sleep(0.5)
         await scan_once_bleak(t_scan)
-        await asyncio.sleep(1.0)
+        await asyncio.sleep(0.5)
 
 
 if __name__ == "__main__":
