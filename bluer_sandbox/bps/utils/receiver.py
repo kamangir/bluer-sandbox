@@ -22,12 +22,12 @@ async def main(
         device: BLEDevice,
         advertisement_data: AdvertisementData,
     ):
-        logger("device info:")
+        logger.info("device info:")
         for key, value in vars(device).items():
-            logger(f" - {key}: {value}")
+            logger.info(f" - {key}: {value}")
 
         if advertisement_data:
-            logger("advertisement data:")
+            logger.info("advertisement data:")
             for key, value in vars(advertisement_data).items():
                 logger.info(f" - {key}: {value}")
 
