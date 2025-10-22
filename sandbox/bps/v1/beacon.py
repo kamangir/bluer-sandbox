@@ -4,6 +4,7 @@ import struct
 import time
 from dbus_next.aio import MessageBus
 from dbus_next import Message, MessageType, Variant
+from dbus_next import BusType
 
 BUS_NAME = "org.bluez"
 ADAPTER_PATH = "/org/bluez/hci0"
@@ -39,7 +40,8 @@ class Advertisement:
 
 
 async def main():
-    bus = await MessageBus(system=True).connect()
+    bus = MessageBus(bus_type=BusType.SYSTEM)
+    await bus.connect()
 
     # register advertisement object on D-Bus
     adv = Advertisement("TEST-PI")

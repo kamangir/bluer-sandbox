@@ -26,9 +26,8 @@ function runme() {
             cmake
 
         pip3 install bluezero
-        pip install dbus-next
-
-        pip install bleak
+        pip3 install dbus-next
+        pip3 install bleak
 
         # ----
         bluer_ai_log "installing bluez ..."
