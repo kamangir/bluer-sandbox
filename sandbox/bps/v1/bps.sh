@@ -26,6 +26,7 @@ function runme() {
             cmake
 
         pip3 install bluezero
+        pip install dbus-next
 
         pip install bleak
 
