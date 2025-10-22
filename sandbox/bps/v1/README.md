@@ -4,8 +4,9 @@ only works on rpi.
 
 ```bash
 @git @sandbox
+git pull
 cd sandbox/bps/v1
-source bps.sh test
+source bps.sh install,test
 ```
 
 ```text
@@ -21,7 +22,7 @@ in another terminal,
 ```bash
 @git @sandbox
 cd sandbox/bps/v1
-source bps.sh introspect,N=:1.84
+source bps.sh introspect,N=<N> # as printed by ^ command
 ```
 
 ```text
