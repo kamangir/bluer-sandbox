@@ -74,9 +74,6 @@ async def main():
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
 
-    # Own a unique name (not org.bluez!)
-    await bus.request_name("org.pi.beacon")
-
     adv = Advertisement("TEST-PI", x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJ_PATH, adv)
 
