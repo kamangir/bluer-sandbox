@@ -53,6 +53,7 @@ class Beacon:
 
     def _run(self):
         ble_adapter = adapter.Adapter()
+        print(f"ble_adapter.address: {ble_adapter.address}")
         self._adv = advertisement.Advertisement(ble_adapter.address, 1)
         self._adv.include_tx_power = True
         self._adv.appearance = 0
