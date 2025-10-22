@@ -25,18 +25,23 @@ def to_dict(obj):
         return {"repr": repr(obj)}
 
 
-async def main(timeout: float = 10.0):
+async def main(
+    grep: str = "",
+    timeout: float = 10.0,
+):
     logger.info(f"{NAME}: LE Scan ...")
 
     def callback(
         device: BLEDevice,
         advertisement_data: AdvertisementData,
     ):
+        if grep not in device.name:
+            return
+
         logger.info(f"device name: {device.name}")
         logger.info(f"device address: {device.address}")
 
         if advertisement_data:
-            logger.info("advertisement data:")
             logger.info(advertisement_data)
 
         logger.info(hr(width=30))
@@ -50,6 +55,11 @@ async def main(timeout: float = 10.0):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(NAME)
     parser.add_argument(
+        "--grep",
+        type=str,
+        default="",
+    )
+    parser.add_argument(
         "--timeout",
         type=float,
         default=10.0,
@@ -57,4 +67,9 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(main(timeout=args.timeout))
+    asyncio.run(
+        main(
+            grep=args.grep,
+            timeout=args.timeout,
+        )
+    )
