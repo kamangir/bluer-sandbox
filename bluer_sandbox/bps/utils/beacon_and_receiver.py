@@ -1,207 +1,139 @@
 #!/usr/bin/env python3
 """
-BLE Beacon + Receiver
----------------------
-Broadcasts position data (x, y, σ) via BLE advertisements and
-scans for other beacons broadcasting on manufacturer ID 0xFFFF.
+Beacon-Exchange (time-division)
+Each node alternates between:
+  • advertising (x, y, σ) for ~1 s
+  • scanning for peers for ~T_scan s
+All communication happens via BLE manufacturer data (0xFFFF).
 """
 
-import asyncio
-import struct
-import threading
-import time
-from bluezero import adapter, advertisement
-from bleak import BleakScanner
-import argparse
+import asyncio, struct, time
+from dbus_next.aio import MessageBus
+from dbus_next.service import ServiceInterface, dbus_property, method
+from dbus_next import Variant, BusType, constants
 
-from blueness import module
-from bluer_sandbox import NAME
-from bluer_sandbox.logger import logger
+from bluer_options.env import abcli_hostname
 
-NAME = module.name(__file__, NAME)
+AD_IFACE = "org.bluez.LEAdvertisement1"
+AD_PATH = "/org/bluez/example/advertisement0"
+MFG_ID = 0xFFFF
 
 
-# ---------------------------------------------------------------
-# Beacon: broadcasts BLE advertisement packets
-# ---------------------------------------------------------------
-class Beacon:
-    """Advertises (x, y, σ) via BLE manufacturer data."""
+# ----- Advertisement object ---------------------------------------------------
+class Advertisement(ServiceInterface):
+    def __init__(self, node_id, payload):
+        super().__init__(AD_IFACE)
+        self.node_id = node_id
+        self.payload = payload
 
-    def __init__(
-        self,
-        node_id: str | None = None,
-        x: float = 0.0,
-        y: float = 0.0,
-        sigma: float = 1.0,
-        interval_ms: int = 500,
-    ):
-        ble_adapter = adapter.Adapter()
-        self.node_id = node_id or f"UGV-{ble_adapter.address[-5:].replace(':', '')}"
-        self.x, self.y, self.sigma = x, y, sigma
-        self.interval_ms = interval_ms
-        self._stop = threading.Event()
-        self._thread: threading.Thread | None = None
-        self._adv: advertisement.Advertisement | None = None
+    @dbus_property()
+    def Type(self) -> "s":
+        return "peripheral"
 
-    # ---- Lifecycle ----------------------------------------------------------
+    @dbus_property()
+    def LocalName(self) -> "s":
+        return self.node_id
 
-    def start(self):
-        """Start BLE advertising in a background thread."""
-        if self._thread and self._thread.is_alive():
-            logger.debug(f"[beacon] {self.node_id} already running")
+    @dbus_property()
+    def ManufacturerData(self) -> "a{qv}":
+        return {MFG_ID: Variant("ay", self.payload)}
+
+    @dbus_property()
+    def IncludeTxPower(self) -> "b":
+        return True
+
+    @method()
+    def Release(self):
+        pass
+
+
+# ----- Receiver handler -------------------------------------------------------
+def parse_mdata(mdata_variant):
+    try:
+        payload = mdata_variant[MFG_ID].value
+        if len(payload) >= 12:
+            return struct.unpack("<fff", bytes(payload[:12]))
+    except Exception:
+        return None
+
+
+async def scan_once(bus, t_scan=3.0):
+    """Listen for advertisement signals for t_scan seconds."""
+    match = "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded'"
+    await bus.call_add_match(match)
+    results = {}
+
+    def handler(msg):
+        if msg.message_type != constants.MessageType.SIGNAL:
             return
-        self._thread = threading.Thread(target=self._run, daemon=True)
-        self._thread.start()
-        logger.info(f"[beacon] {self.node_id} advertising every {self.interval_ms} ms")
-
-    def stop(self):
-        """Stop advertising."""
-        self._stop.set()
-        if self._thread:
-            self._thread.join(timeout=2.0)
-            if self._thread.is_alive():
-                logger.warning("[beacon] thread did not exit cleanly")
-        logger.info(f"[beacon] {self.node_id} stopped")
-
-    # ---- Internal -----------------------------------------------------------
-
-    def _run(self):
-        """Worker thread that runs BLE advertisement loop."""
-        ble_adapter = adapter.Adapter()
-        self._adv = advertisement.Advertisement(1, ble_adapter.address)
-        self._adv.include_tx_power = True
-        self._adv.appearance = 0
-        self._adv.local_name = self.node_id
-        self._adv.manufacturer_data = {
-            0xFFFF: struct.pack("<fff", self.x, self.y, self.sigma)
-        }
-
         try:
-            self._adv.start()
-            while not self._stop.is_set():
-                time.sleep(self.interval_ms / 1000)
+            iface_data = msg.body[1]
+            props = iface_data.get("org.bluez.Device1")
+            if not props or "ManufacturerData" not in props:
+                return
+            name = props.get("Name", "<unknown>")
+            rssi = props.get("RSSI", 0)
+            mdata = props["ManufacturerData"]
+            parsed = parse_mdata(mdata)
+            if parsed:
+                x, y, sigma = parsed
+                results[name] = (x, y, sigma, rssi)
+        except Exception:
+            pass
+
+    bus.add_message_handler(handler)
+    await asyncio.sleep(t_scan)
+    bus.remove_message_handler(handler)
+    return results
+
+
+# ----- Main loop --------------------------------------------------------------
+async def main():
+    node_id = abcli_hostname
+    x, y, sigma = 1.0, 2.0, 0.5
+    t_adv, t_scan = 1.0, 4.0  # seconds
+
+    bus = MessageBus(bus_type=BusType.SYSTEM)
+    await bus.connect()
+
+    introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
+    mgr = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
+    leman = mgr.get_interface("org.bluez.LEAdvertisingManager1")
+
+    print(f"[hybrid] node {node_id} ready (advertise {t_adv}s / scan {t_scan}s)")
+
+    while True:
+        # --- Advertise ---
+        payload = struct.pack("<fff", x, y, sigma)
+        adv = Advertisement(node_id, payload)
+        bus.export(AD_PATH, adv)
+        try:
+            await leman.call_register_advertisement(AD_PATH, {})
+            print(f"[hybrid] advertising {node_id} …")
+            await asyncio.sleep(t_adv)
         except Exception as e:
-            logger.warning(f"[beacon] exception in _run: {e}")
+            print(f"[hybrid] advertise error: {e}")
         finally:
             try:
-                if self._adv:
-                    logger.debug("[beacon] stopping advertisement …")
-                    self._adv.stop()
-            except Exception as e:
-                logger.warning(f"[beacon] stop() failed: {e}")
+                await leman.call_unregister_advertisement(AD_PATH)
+            except Exception:
+                pass
+
+        # --- Scan ---
+        print("[hybrid] scanning …")
+        peers = await scan_once(bus, t_scan)
+        if peers:
+            for name, (px, py, ps, rssi) in peers.items():
+                print(
+                    f"[peer] {name:>10} RSSI={rssi:>4} pos=({px:.2f},{py:.2f}) σ={ps:.2f}"
+                )
+        else:
+            print("[hybrid] no peers detected")
+        await asyncio.sleep(0.2)  # small idle gap
 
 
-# ---------------------------------------------------------------
-# Receiver: scans BLE advertisements asynchronously (Bleak)
-# ---------------------------------------------------------------
-class Receiver:
-    """Scans for BLE beacons broadcasting manufacturer data (0xFFFF)."""
-
-    def __init__(self, scan_window_s: float = 2.0):
-        self.scan_window_s = scan_window_s
-        self._stop = threading.Event()
-        self._thread = threading.Thread(target=self._loop, daemon=True)
-        self.latest: dict[str, tuple[float, float, float, int, float]] = {}
-
-    # ---- Lifecycle ----------------------------------------------------------
-
-    def start(self):
-        logger.info("[receiver] BLE scanner starting…")
-        self._thread.start()
-
-    def stop(self):
-        self._stop.set()
-        if self._thread:
-            self._thread.join(timeout=2.0)
-            if self._thread.is_alive():
-                logger.warning("[receiver] thread did not exit cleanly")
-        logger.info("[receiver] BLE scanner stopped")
-
-    # ---- Internal -----------------------------------------------------------
-
-    async def _scan_once(self):
-        """Perform one BLE scan iteration and record visible beacons."""
-        devices = await BleakScanner.discover(
-            timeout=self.scan_window_s, return_adv=True
-        )
-        timestamp = time.time()
-
-        iterable = (
-            devices.items()
-            if isinstance(devices, dict)
-            else (
-                devices
-                if devices and isinstance(devices[0], tuple)
-                else [(d, getattr(d, "advertisement_data", None)) for d in devices]
-            )
-        )
-
-        for device, adv in iterable:
-            name = getattr(adv, "local_name", None) or getattr(device, "name", None)
-            if not name:
-                continue
-
-            md = getattr(adv, "manufacturer_data", None) or {}
-            data = md.get(0xFFFF)
-            if not data or len(data) < 12:
-                continue
-
-            x, y, sigma = struct.unpack("<fff", data[:12])
-            self.latest[name] = (x, y, sigma, getattr(device, "rssi", 0), timestamp)
-            logger.info(
-                f"[receiver] {name} → RSSI={device.rssi:>4} dB  "
-                f"pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
-            )
-
-    def _loop(self):
-        """Main scanning loop."""
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        while not self._stop.is_set():
-            try:
-                loop.run_until_complete(self._scan_once())
-            except Exception as e:
-                logger.warning(f"[receiver] scan loop error: {e}")
-                time.sleep(1)
-
-
-# ---------------------------------------------------------------
-# Entrypoint
-# ---------------------------------------------------------------
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(NAME)
-    parser.add_argument(
-        "--role",
-        type=str,
-        default="beacon",
-        help="beacon | receiver | both",
-    )
-    args = parser.parse_args()
-
-    do_beacon = args.role in ["beacon", "both"]
-    do_receiver = args.role in ["receiver", "both"]
-
-    beacon = Beacon() if do_beacon else None
-    receiver = Receiver(scan_window_s=3.0) if do_receiver else None
-
     try:
-        if do_beacon:
-            beacon.start()
-
-        if do_receiver:
-            receiver.start()
-
-        while True:
-            time.sleep(5)
-            if do_receiver:
-                peers = list(receiver.latest)
-                logger.info(f"[bps] known peers: {peers or '[]'}")
-
+        asyncio.run(main())
     except KeyboardInterrupt:
-        logger.info("[bps] SIGINT received, shutting down …")
-    finally:
-        if do_beacon:
-            beacon.stop()
-        if do_receiver:
-            receiver.stop()
-        logger.info("[bps] exit complete ✅")
+        print("\n[hybrid] stopped")

@@ -4,7 +4,6 @@
 
 import asyncio
 import struct
-import time
 import signal
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method, dbus_property
