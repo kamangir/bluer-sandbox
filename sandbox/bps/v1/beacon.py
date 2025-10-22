@@ -3,7 +3,7 @@ import asyncio
 import struct
 import time
 from dbus_next.aio import MessageBus
-from dbus_next.service import ServiceInterface, method
+from dbus_next.service import ServiceInterface, method, dbus_property
 from dbus_next import Variant, BusType, Message, MessageType
 
 BUS_NAME = "org.bluez"
@@ -23,42 +23,47 @@ class Advertisement(ServiceInterface):
         self.type = "peripheral"
         self.include_tx_power = True
 
-    def get_properties(self):
-        return {
-            ADVERT_IFACE: {
-                "Type": Variant("s", self.type),
-                "LocalName": Variant("s", self.name),
-                "ServiceUUIDs": Variant("as", self.service_uuids),
-                "ManufacturerData": Variant(
-                    "a{qv}", {0xFFFF: Variant("ay", self.manufacturer_data[0xFFFF])}
-                ),
-                "IncludeTxPower": Variant("b", self.include_tx_power),
-            }
-        }
+    # ---- D-Bus properties that BlueZ expects ----
+    @dbus_property()
+    def Type(self) -> "s":
+        return self.type
 
+    @dbus_property()
+    def LocalName(self) -> "s":
+        return self.name
+
+    @dbus_property()
+    def ServiceUUIDs(self) -> "as":
+        return self.service_uuids
+
+    @dbus_property()
+    def IncludeTxPower(self) -> "b":
+        return self.include_tx_power
+
+    @dbus_property()
+    def ManufacturerData(self) -> "a{qv}":
+        return {0xFFFF: Variant("ay", self.manufacturer_data[0xFFFF])}
+
+    # ---- D-Bus method BlueZ calls when it unregisters the ad ----
     @method()
     def Release(self):
         print("[Beacon] Advertisement released by BlueZ")
-
-    def get_path(self):
-        return AD_OBJ_PATH
 
 
 async def main():
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
 
-    adv = Advertisement("TEST-PI")
-    bus.export(adv.get_path(), adv)
+    adv = Advertisement("TEST-PI", x=1.2, y=2.3, sigma=0.8)
+    bus.export(AD_OBJ_PATH, adv)
 
-    # Register advertisement
     msg = Message(
         destination=BUS_NAME,
         path=ADAPTER_PATH,
         interface=AD_IFACE,
         member="RegisterAdvertisement",
         signature="oa{sv}",
-        body=[adv.get_path(), {}],
+        body=[AD_OBJ_PATH, {}],
     )
     reply = await bus.call(msg)
     if reply.message_type == MessageType.ERROR:
@@ -71,14 +76,13 @@ async def main():
             time.sleep(1)
             print("advertising...")
     except KeyboardInterrupt:
-        # Unregister
         msg = Message(
             destination=BUS_NAME,
             path=ADAPTER_PATH,
             interface=AD_IFACE,
             member="UnregisterAdvertisement",
             signature="o",
-            body=[adv.get_path()],
+            body=[AD_OBJ_PATH],
         )
         await bus.call(msg)
         print("\n[Beacon] Advertisement stopped.")
