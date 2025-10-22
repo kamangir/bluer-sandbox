@@ -13,11 +13,9 @@ Requires:
 
 import asyncio
 import struct
-import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
 from dbus_next import Variant, BusType, constants
-
 from bluer_options.env import abcli_hostname
 
 AD_IFACE = "org.bluez.LEAdvertisement1"
@@ -84,7 +82,6 @@ class Advertisement(ServiceInterface):
 # Receiver helpers
 # -------------------------------------------------------------------
 def parse_mdata(mdata_variant):
-    """Decode manufacturer data Variant if company ID 0xFFFF is present."""
     try:
         payload = mdata_variant[MFG_ID].value
         if len(payload) >= 12:
@@ -109,8 +106,6 @@ async def scan_once(bus, t_scan=3.0):
         try:
             if msg.member == "InterfacesAdded":
                 iface_data = msg.body[1].get("org.bluez.Device1")
-                if not iface_data:
-                    return
                 changed = iface_data
             elif msg.member == "PropertiesChanged":
                 iface, changed, _ = msg.body
@@ -119,7 +114,7 @@ async def scan_once(bus, t_scan=3.0):
             else:
                 return
 
-            if "ManufacturerData" not in changed:
+            if not changed or "ManufacturerData" not in changed:
                 return
             mdata = changed["ManufacturerData"]
             parsed = parse_mdata(mdata)
@@ -136,45 +131,27 @@ async def scan_once(bus, t_scan=3.0):
 
     bus.add_message_handler(handler)
 
-    # Access adapter
+    # Adapter
     introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
-    # Enable active scanning with full advertisement payloads (adaptive fallback)
+    # Portable discovery filter (no Pattern)
     try:
-        try:
-            # Newer BlueZ (≥5.75)
-            await adapter_iface.call_set_discovery_filter(
-                {
-                    "DuplicateData": Variant("b", True),
-                    "Transport": Variant("s", "le"),
-                    "UUIDs": Variant("as", []),
-                    "RSSI": Variant("n", -127),
-                    "Pathloss": Variant("q", 0),
-                    "Pattern": Variant("a{sv}", {}),
-                }
-            )
-            print("[hybrid] discovery filter set (new Pattern key enabled)")
-        except Exception as e:
-            if "Invalid arguments" in str(e):
-                # Fallback for stripped builds
-                await adapter_iface.call_set_discovery_filter(
-                    {
-                        "DuplicateData": Variant("b", True),
-                        "Transport": Variant("s", "le"),
-                        "UUIDs": Variant("as", []),
-                        "RSSI": Variant("n", -127),
-                        "Pathloss": Variant("q", 0),
-                    }
-                )
-                print("[hybrid] discovery filter set (fallback, legacy keys only)")
-            else:
-                raise
+        await adapter_iface.call_set_discovery_filter(
+            {
+                "DuplicateData": Variant("b", True),
+                "Transport": Variant("s", "le"),
+                "UUIDs": Variant("as", []),
+                "RSSI": Variant("n", -127),
+                "Pathloss": Variant("q", 0),
+            }
+        )
+        print("[hybrid] discovery filter set (portable keys)")
     except Exception as e:
         print(f"[hybrid] warning: could not set discovery filter: {e}")
 
-    # Prime device cache
+    # Cached devices
     try:
         obj_mgr = bus.get_proxy_object(
             "org.bluez", "/", await bus.introspect("org.bluez", "/")
@@ -185,12 +162,9 @@ async def scan_once(bus, t_scan=3.0):
     except Exception as e:
         print(f"[hybrid] could not get managed objects: {e}")
 
-    # Start discovery
     await adapter_iface.call_start_discovery()
     print("[hybrid] discovery started")
-
     await asyncio.sleep(t_scan)
-
     await adapter_iface.call_stop_discovery()
     print("[hybrid] discovery stopped")
 
@@ -204,7 +178,7 @@ async def scan_once(bus, t_scan=3.0):
 async def main():
     node_id = abcli_hostname
     x, y, sigma = 1.0, 2.0, 0.5
-    t_adv, t_scan = 2.0, 8.0  # seconds
+    t_adv, t_scan = 2.0, 8.0
 
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
@@ -216,7 +190,7 @@ async def main():
     print(f"[hybrid] node {node_id} ready (advertise {t_adv}s / scan {t_scan}s)")
 
     while True:
-        # Advertise phase
+        # Advertise
         payload = struct.pack("<fff", x, y, sigma)
         adv = Advertisement(node_id, payload)
         bus.export(AD_PATH, adv)
@@ -234,7 +208,7 @@ async def main():
             bus.unexport(AD_PATH)
             print("[hybrid] pause before scanning …")
 
-        # Scan phase
+        # Scan
         print("[hybrid] scanning …")
         peers = await scan_once(bus, t_scan)
         if peers:
@@ -248,9 +222,6 @@ async def main():
         await asyncio.sleep(0.5)
 
 
-# -------------------------------------------------------------------
-# Entry point
-# -------------------------------------------------------------------
 if __name__ == "__main__":
     try:
         asyncio.run(main())
