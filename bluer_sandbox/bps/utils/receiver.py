@@ -12,4 +12,5 @@ async def main():
     await BleakScanner.discover(timeout=10.0, detection_callback=cb)
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
