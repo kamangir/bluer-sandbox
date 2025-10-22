@@ -49,7 +49,7 @@ function runme() {
 
         ps -eo args | grep [b]luetoothd
 
-        sudo cp -v \
+        sudo install -m 644 \
             ./org.example.Hello.conf \
             /etc/dbus-1/system.d/org.example.Hello.conf
     fi
