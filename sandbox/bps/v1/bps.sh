@@ -9,7 +9,7 @@ function runme() {
     local options=$1
     local do_install=$(bluer_ai_option_int "$options" install 0)
     local do_start=$(bluer_ai_option_int "$options" start 1)
-    local what=$(bluer_ai_option_choice "$options" beacon,receiver,beacon+receiver beacon+receiver)
+    local what=$(bluer_ai_option_choice "$options" beacon,receiver,beacon+receiver,test beacon+receiver)
     local verbose=$(bluer_ai_option_int "$options" verbose 1)
 
     if [[ "$do_install" == 1 ]]; then
@@ -70,6 +70,11 @@ function runme() {
             beacon.py
     elif [[ "$what" == "receiver" ]]; then
         sudo hcitool lescan
+    if [[ "$what" == "test" ]]; then
+        bluer_ai_eval - \
+            sudo -E \
+            $(which python3) \
+            test.py
     elif [[ "$what" == "beacon+receiver" ]]; then
         python3 bps.py
     else
