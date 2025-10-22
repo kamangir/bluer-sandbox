@@ -4,6 +4,7 @@ from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 import argparse
 import dataclasses
+import signal
 
 from blueness import module
 from bluer_options.terminal.functions import hr
@@ -29,7 +30,7 @@ async def main(
     grep: str = "",
     timeout: float = 10.0,
 ):
-    logger.info(f"{NAME}: LE Scan ...")
+    logger.info(f"{NAME}: LE Scan for {timeout:.1f}s (Ctrl+C to stop) ...")
 
     def callback(
         device: BLEDevice,
@@ -39,17 +40,33 @@ async def main(
             return
 
         logger.info(hr(width=30))
-
         logger.info(f"device name: {device.name}")
         logger.info(f"device address: {device.address}")
 
         if advertisement_data:
             logger.info(advertisement_data)
 
-    await BleakScanner.discover(
-        timeout=timeout,
-        detection_callback=callback,
-    )
+    scanner = BleakScanner(detection_callback=callback)
+    await scanner.start()
+    logger.info("scanning started...")
+
+    stop_event = asyncio.Event()
+
+    def handle_sigint():
+        logger.info("Ctrl+C detected, stopping scan ...")
+        stop_event.set()
+
+    loop = asyncio.get_event_loop()
+    loop.add_signal_handler(signal.SIGINT, handle_sigint)
+
+    try:
+        # wait either for timeout or Ctrl+C
+        await asyncio.wait_for(stop_event.wait(), timeout=timeout)
+    except asyncio.TimeoutError:
+        logger.info(f"timeout reached after {timeout:.1f}s.")
+
+    await scanner.stop()
+    logger.info("scan stopped.")
 
 
 if __name__ == "__main__":
@@ -67,9 +84,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(
-        main(
-            grep=args.grep,
-            timeout=args.timeout,
-        )
-    )
+    asyncio.run(main(grep=args.grep, timeout=args.timeout))
