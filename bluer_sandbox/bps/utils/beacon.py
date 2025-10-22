@@ -166,7 +166,7 @@ async def main():
     # Heartbeat
     try:
         while not stop.is_set():
-            logger.info("... advertising ...")
+            logger.info(f"advertising {abcli_hostname} ...")
             await asyncio.sleep(2.0)
     finally:
         try:
