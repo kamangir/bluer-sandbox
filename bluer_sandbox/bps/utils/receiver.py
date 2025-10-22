@@ -38,13 +38,13 @@ async def main(
         if grep and (device.name is None or grep not in device.name):
             return
 
+        logger.info(hr(width=30))
+
         logger.info(f"device name: {device.name}")
         logger.info(f"device address: {device.address}")
 
         if advertisement_data:
             logger.info(advertisement_data)
-
-        logger.info(hr(width=30))
 
     await BleakScanner.discover(
         timeout=timeout,
