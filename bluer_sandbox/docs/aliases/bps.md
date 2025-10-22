@@ -21,6 +21,10 @@
 	[~start_bluetooth]
  . start receiver.
 @bps \
+	receiver \
+	[python,~start_bluetooth]
+ . start receiver.
+@bps \
 	start_bluetooth
  . start bluetooth.
 @bps \
