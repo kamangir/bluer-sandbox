@@ -4,9 +4,18 @@ from bluer_sandbox.README.consts import bps_assets2
 
 docs = [
     {
-        "path": "../docs/bps.md",
+        "path": "../docs/bps",
         "items": ImageItems(
             {f"{bps_assets2}/{index+1:02}.png": "" for index in range(3)}
         ),
+    },
+    {
+        "path": "../docs/bps/literature.md",
+    },
+    {
+        "path": "../../sandbox/bps",
+    },
+    {
+        "path": "../../sandbox/bps/v1",
     },
 ]
