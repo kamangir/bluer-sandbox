@@ -93,19 +93,18 @@ class Receiver:
         print("[Receiver] BLE scanner stopped")
 
     async def _scan_once(self):
-        # discover() now returns a dict: {BLEDevice: AdvertisementData}
+        # Bleak 1.1.x returns a list of (device, adv_data) tuples
         devices = await BleakScanner.discover(
             timeout=self.scan_window_s,
             return_adv=True,
         )
         t = time.time()
 
-        for device, adv_data in devices.items():
+        for device, adv_data in devices:
             name = adv_data.local_name or device.name
             if not name:
                 continue
 
-            # manufacturer data is now a dict: {company_id: bytes}
             md = adv_data.manufacturer_data or {}
 
             if 0xFFFF in md and len(md[0xFFFF]) >= 12:
