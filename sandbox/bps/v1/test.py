@@ -5,7 +5,6 @@ from dbus_next.service import ServiceInterface, method
 from dbus_next import BusType
 
 
-# A simple D-Bus service with one Ping() method.
 class Hello(ServiceInterface):
     def __init__(self):
         super().__init__("org.example.Hello")
@@ -17,26 +16,23 @@ class Hello(ServiceInterface):
 
 
 async def main():
-    # Connect explicitly to the SYSTEM bus (the one BlueZ uses)
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
 
-    # Export our Hello interface on the object path below
+    # 🔹 print our unique connection name (:1.<N>)
+    print(f"[Python] Connected to system bus with unique name: {bus.unique_name}")
+
     obj_path = "/org/example/Hello"
     bus.export(obj_path, Hello())
 
-    print(f"exported org.example.Hello at {obj_path}")
-    print("keep this running and use another terminal to introspect:")
+    print(f"[Python] Exported org.example.Hello at {obj_path}")
+    print("[Python] You can now run (in another terminal):")
+    print(f"    sudo busctl --system introspect {bus.unique_name} /org/example/Hello")
     print(
-        'run "sudo busctl --system list | grep python" to see an output like ":1.211" then <N> is 211.'
-    )
-    print(" - sudo busctl --system introspect :1.<N> /org/example/Hello")
-    print(
-        " - sudo busctl --system call :1.<N> /org/example/Hello org.example.Hello Ping"
+        f"    sudo busctl --system call {bus.unique_name} /org/example/Hello org.example.Hello Ping"
     )
     print("---------------------------------------------------------")
 
-    # Keep process alive forever
     while True:
         await asyncio.sleep(1)
 
