@@ -1,11 +1,14 @@
 only works on rpi.
 
-## test & introspect
-
 ```bash
 @git @sandbox
 git pull
 cd sandbox/bps/v1
+```
+
+## test & introspect
+
+```bash
 source bps.sh install,test
 ```
 
@@ -20,8 +23,6 @@ run in another terminal: "source bps.sh introspect,N=:1.84"
 in another terminal,
 
 ```bash
-@git @sandbox
-cd sandbox/bps/v1
 source bps.sh introspect,N=<N> # as printed by ^ command
 ```
 
@@ -54,4 +55,42 @@ then, in the first window,
 ```text
 [Python] Ping() called by busctl
 [Python] Ping() called by busctl
+```
+
+## beacon & receiver
+
+```bash
+source bps.sh beacon
+```
+
+```text
+starting beacon ...
+⚙️  sudo -E /home/pi/venv/bluer_ai/bin/python3 beacon.py
+[Beacon] Connected to system bus as :1.126
+[Beacon] Advertising started as 'TEST-PI' (manuf 0xFFFF: <x,y,sigma>)
+         Press Ctrl+C to stop.
+…advertising…
+```
+
+on another pi,
+
+```bash
+source bps.sh receiver
+```
+
+```text
+starting receiver ...
+LE Scan ...
+5C:D0:82:22:02:1E (unknown)
+63:B6:02:5F:1C:6E (unknown)
+78:55:8C:68:23:99 (unknown)
+7C:B4:E2:9A:EB:E2 (unknown)
+77:35:A3:E1:F0:F4 (unknown)
+C8:46:5E:98:9E:64 (unknown)
+7C:B4:E2:9A:EB:E2 (unknown)
+63:B6:02:5F:1C:6E (unknown)
+5C:D0:82:22:02:1E (unknown)
+77:35:A3:E1:F0:F4 (unknown)
+B8:27:EB:57:B6:DA (unknown)
+B8:27:EB:57:B6:DA TEST-PI
 ```
