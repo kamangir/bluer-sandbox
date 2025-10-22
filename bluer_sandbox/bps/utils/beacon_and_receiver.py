@@ -1,19 +1,26 @@
+#!/usr/bin/env python3
+"""
+BLE Beacon + Receiver
+---------------------
+Broadcasts position data (x, y, σ) via BLE advertisements and
+scans for other beacons broadcasting on manufacturer ID 0xFFFF.
+"""
+
 import asyncio
-import socket
 import struct
 import threading
 import time
 from bluezero import adapter, advertisement
 from bleak import BleakScanner
-
 from bluer_sandbox.logger import logger
 
 
 # ---------------------------------------------------------------
-# Beacon: broadcasts BLE advertisement packets (pure Python)
+# Beacon: broadcasts BLE advertisement packets
 # ---------------------------------------------------------------
 class Beacon:
-    # pylint: disable=too-many-positional-arguments
+    """Advertises (x, y, σ) via BLE manufacturer data."""
+
     def __init__(
         self,
         node_id: str | None = None,
@@ -22,28 +29,20 @@ class Beacon:
         sigma: float = 1.0,
         interval_ms: int = 500,
     ):
-        """
-        node_id: optional short identifier; if None, auto-generate from MAC/hostname.
-        x, y: current position estimate (m)
-        sigma: position uncertainty (m)
-        interval_ms: advertising interval in milliseconds
-        """
         ble_adapter = adapter.Adapter()
-        if node_id is None:
-            # derive unique name from MAC or hostname suffix
-            mac_suffix = ble_adapter.address[-5:].replace(":", "")
-            node_id = f"UGV-{mac_suffix}"
-        self.node_id = node_id
-
+        self.node_id = node_id or f"UGV-{ble_adapter.address[-5:].replace(':', '')}"
         self.x, self.y, self.sigma = x, y, sigma
         self.interval_ms = interval_ms
-        self._adv = None
-        self._thread = None
         self._stop = threading.Event()
+        self._thread: threading.Thread | None = None
+        self._adv: advertisement.Advertisement | None = None
+
+    # ---- Lifecycle ----------------------------------------------------------
 
     def start(self):
         """Start BLE advertising in a background thread."""
         if self._thread and self._thread.is_alive():
+            logger.debug(f"[beacon] {self.node_id} already running")
             return
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
@@ -52,27 +51,27 @@ class Beacon:
     def stop(self):
         """Stop advertising."""
         self._stop.set()
-        if self._adv:
-            self._adv.stop()
         if self._thread:
             self._thread.join()
         logger.info(f"[beacon] {self.node_id} stopped")
 
+    # ---- Internal -----------------------------------------------------------
+
     def _run(self):
+        """Worker thread that runs BLE advertisement loop."""
         ble_adapter = adapter.Adapter()
         self._adv = advertisement.Advertisement(1, ble_adapter.address)
         self._adv.include_tx_power = True
         self._adv.appearance = 0
         self._adv.local_name = self.node_id
+        self._adv.manufacturer_data = {
+            0xFFFF: struct.pack("<fff", self.x, self.y, self.sigma)
+        }
 
-        # Manufacturer payload: 3 floats (x, y, σ)
-        payload = struct.pack("<fff", self.x, self.y, self.sigma)
-        self._adv.manufacturer_data = {0xFFFF: payload}
-
-        self._adv.start()
         try:
+            self._adv.start()
             while not self._stop.is_set():
-                time.sleep(self.interval_ms / 1000.0)
+                time.sleep(self.interval_ms / 1000)
         finally:
             self._adv.stop()
 
@@ -81,14 +80,15 @@ class Beacon:
 # Receiver: scans BLE advertisements asynchronously (Bleak)
 # ---------------------------------------------------------------
 class Receiver:
+    """Scans for BLE beacons broadcasting manufacturer data (0xFFFF)."""
+
     def __init__(self, scan_window_s: float = 2.0):
-        """
-        scan_window_s: duration of each scan iteration
-        """
         self.scan_window_s = scan_window_s
-        self._thread = threading.Thread(target=self._loop, daemon=True)
         self._stop = threading.Event()
-        self.latest = {}  # {node_id: (x, y, sigma, rssi, timestamp)}
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+        self.latest: dict[str, tuple[float, float, float, int, float]] = {}
+
+    # ---- Lifecycle ----------------------------------------------------------
 
     def start(self):
         logger.info("[receiver] BLE scanner starting…")
@@ -99,42 +99,44 @@ class Receiver:
         self._thread.join()
         logger.info("[receiver] BLE scanner stopped")
 
+    # ---- Internal -----------------------------------------------------------
+
     async def _scan_once(self):
+        """Perform one BLE scan iteration and record visible beacons."""
         devices = await BleakScanner.discover(
-            timeout=self.scan_window_s,
-            return_adv=True,
+            timeout=self.scan_window_s, return_adv=True
         )
-        t = time.time()
+        timestamp = time.time()
 
-        # handle dict / tuple / plain-device variants
-        if isinstance(devices, dict):
-            iterable = devices.items()
-        else:
-            first = devices[0] if devices else None
-            if isinstance(first, tuple):
-                iterable = devices
-            else:
-                iterable = [
-                    (d, getattr(d, "advertisement_data", None)) for d in devices
-                ]
-
-        for device, adv_data in iterable:
-            name = getattr(adv_data, "local_name", None) or getattr(
-                device, "name", None
+        iterable = (
+            devices.items()
+            if isinstance(devices, dict)
+            else (
+                devices
+                if devices and isinstance(devices[0], tuple)
+                else [(d, getattr(d, "advertisement_data", None)) for d in devices]
             )
+        )
+
+        for device, adv in iterable:
+            name = getattr(adv, "local_name", None) or getattr(device, "name", None)
             if not name:
                 continue
 
-            md = getattr(adv_data, "manufacturer_data", None) or {}
-            if 0xFFFF in md and len(md[0xFFFF]) >= 12:
-                x, y, sigma = struct.unpack("<fff", md[0xFFFF][:12])
-                self.latest[name] = (x, y, sigma, getattr(device, "rssi", 0), t)
-                logger.info(
-                    f"[receiver] {name} → RSSI={device.rssi:>4} dB  "
-                    f"pos=({x:.2f},{y:.2f})  σ={sigma:.2f}"
-                )
+            md = getattr(adv, "manufacturer_data", None) or {}
+            data = md.get(0xFFFF)
+            if not data or len(data) < 12:
+                continue
+
+            x, y, sigma = struct.unpack("<fff", data[:12])
+            self.latest[name] = (x, y, sigma, getattr(device, "rssi", 0), timestamp)
+            logger.info(
+                f"[receiver] {name} → RSSI={device.rssi:>4} dB  "
+                f"pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
+            )
 
     def _loop(self):
+        """Main scanning loop."""
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         while not self._stop.is_set():
@@ -145,7 +147,6 @@ class Receiver:
 # Example usage
 # ---------------------------------------------------------------
 if __name__ == "__main__":
-    # auto-generate unique name per Pi
     beacon = Beacon()
     receiver = Receiver(scan_window_s=3.0)
 
@@ -154,10 +155,10 @@ if __name__ == "__main__":
         receiver.start()
         while True:
             time.sleep(5)
-            peers = list(receiver.latest.keys())
-            logger.info(f"known peers: {peers if peers else '[]'}")
+            peers = list(receiver.latest)
+            logger.info(f"[bps] known peers: {peers or '[]'}")
     except KeyboardInterrupt:
-        logger.info("shutting down…")
+        logger.info("[bps] shutting down…")
     finally:
         beacon.stop()
         receiver.stop()
