@@ -92,29 +92,32 @@ def parse_mdata(mdata_variant):
 
 
 async def scan_once(bus, t_scan=3.0):
-    """Capture any ManufacturerData signals appearing on the system bus."""
+    """Listen for any D-Bus signal that includes ManufacturerData."""
     results = {}
 
     def handler(msg):
+        # Dump everything we get, so we can see what BlueZ is actually sending.
         if msg.message_type != constants.MessageType.SIGNAL:
             return
-        if "ManufacturerData" not in str(msg.body):
+        if "org.bluez" not in msg.sender:
             return
+
+        print(f"\n--- SIGNAL ---")
+        print(f"Path: {msg.path}")
+        print(f"Interface: {msg.interface}")
+        print(f"Member: {msg.member}")
+        print(f"Body: {msg.body}")
+
         try:
-            # Extract address (device path)
-            path = getattr(msg, "path", "")
-            if not path or "/dev_" not in path:
-                return
-            addr = path.split("/")[-1].replace("_", ":")
-            # Try to extract the payload if available
-            body = msg.body
-            if len(body) >= 2:
-                changed = body[1]
-                if "ManufacturerData" in changed:
+            # Try to extract ManufacturerData if present
+            if len(msg.body) >= 2:
+                changed = msg.body[1]
+                if isinstance(changed, dict) and "ManufacturerData" in changed:
                     parsed = parse_mdata(changed["ManufacturerData"])
                     if parsed:
                         x, y, sigma = parsed
                         rssi = changed.get("RSSI", 0)
+                        addr = msg.path.split("/")[-1].replace("_", ":")
                         results[addr] = (x, y, sigma, rssi)
                         print(
                             f"[peer] {addr} RSSI={rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
@@ -124,7 +127,7 @@ async def scan_once(bus, t_scan=3.0):
 
     bus.add_message_handler(handler)
 
-    # Enable discovery with LE transport
+    # Ensure LE discovery filter is active
     introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
