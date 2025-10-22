@@ -7,10 +7,14 @@ function runme() {
     fi
 
     local options=$1
-    local do_install=$(bluer_ai_option_int "$options" install 0)
+    local do_install=$(bluer_ai_option_int "$options" install 1)
 
     if [[ "$do_install" == 1 ]]; then
-        sudo apt install -y python3-bluezero
+        sudo apt update
+        sudo apt install -y bluez python3-gi python3-dbus libglib2.0-dev
+        pip3 install bluezero
+        python3 -c "import bluezero; print(bluezero.__version__)"
+
         pip install bleak
     fi
 
