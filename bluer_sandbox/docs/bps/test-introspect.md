@@ -1,12 +1,8 @@
 # bps: test-introspect
 
-> ℹ️ only works on rpi.
-
 ```bash
 @bps install
 ```
-
----
 
 ```bash
 @bps test

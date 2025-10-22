@@ -1,7 +1,5 @@
 # bps: beacon-receiver
 
-> ℹ️ only works on rpi.
-
 ```bash
 @bps beacon
 ```

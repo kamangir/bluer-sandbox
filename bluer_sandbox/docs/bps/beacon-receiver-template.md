@@ -1,7 +1,5 @@
 title:::
 
-> ℹ️ only works on rpi.
-
 ```bash
 @bps beacon
 ```
