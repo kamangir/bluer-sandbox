@@ -70,7 +70,7 @@ function runme() {
             beacon.py
     elif [[ "$what" == "receiver" ]]; then
         sudo hcitool lescan
-    if [[ "$what" == "test" ]]; then
+    elif [[ "$what" == "test" ]]; then
         bluer_ai_eval - \
             sudo -E \
             $(which python3) \
