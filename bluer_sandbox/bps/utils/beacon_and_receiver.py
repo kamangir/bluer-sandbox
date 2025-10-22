@@ -6,7 +6,7 @@ Each node alternates between:
   • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
   • Scanning for nearby nodes’ beacons
 
-Tested on Raspberry Pi OS with BlueZ 5.75 (no discovery filter support).
+Works on Raspberry Pi OS with BlueZ 5.75 (no discovery filter support).
 """
 
 import asyncio
@@ -80,6 +80,7 @@ class Advertisement(ServiceInterface):
 # Receiver helpers
 # -------------------------------------------------------------------
 def parse_mdata(mdata_variant):
+    """Decode manufacturer data Variant if Company ID 0xFFFF is present."""
     try:
         payload = mdata_variant[MFG_ID].value
         if len(payload) >= 12:
@@ -111,6 +112,7 @@ async def scan_once(bus, t_scan=3.0):
                     return
             else:
                 return
+
             if not changed or "ManufacturerData" not in changed:
                 return
             mdata = changed["ManufacturerData"]
@@ -133,19 +135,24 @@ async def scan_once(bus, t_scan=3.0):
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
-    # --- no discovery filter at all ---
-    print("[hybrid] using default discovery mode (no filter)")
-
-    # Cached devices
+    # Remove cached devices to force rediscovery
     try:
         obj_mgr = bus.get_proxy_object(
             "org.bluez", "/", await bus.introspect("org.bluez", "/")
         )
         mgr_iface = obj_mgr.get_interface("org.freedesktop.DBus.ObjectManager")
         devices = await mgr_iface.call_get_managed_objects()
-        print(f"[hybrid] cached {len(devices)} existing device entries")
+        count = 0
+        for path in list(devices.keys()):
+            if "/org/bluez/hci0/dev_" in path:
+                try:
+                    await adapter_iface.call_remove_device(path)
+                    count += 1
+                except Exception:
+                    pass
+        print(f"[hybrid] cleared {count} cached device entries")
     except Exception as e:
-        print(f"[hybrid] could not get managed objects: {e}")
+        print(f"[hybrid] could not clear cache: {e}")
 
     await adapter_iface.call_start_discovery()
     print("[hybrid] discovery started")
@@ -204,7 +211,8 @@ async def main():
         else:
             print("[hybrid] no peers detected")
 
-        await asyncio.sleep(0.5)
+        # Give the adapter a short break between roles
+        await asyncio.sleep(1.0)
 
 
 if __name__ == "__main__":
