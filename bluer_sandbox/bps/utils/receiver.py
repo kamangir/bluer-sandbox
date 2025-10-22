@@ -20,7 +20,7 @@ async def main(
 
     def callback(
         device: BLEDevice,
-        advertisement_data: BleakAdvertisementData,
+        advertisement_data: AdvertisementData,
     ):
         logger("device info:")
         for key, value in vars(device).items():
