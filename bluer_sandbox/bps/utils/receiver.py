@@ -9,7 +9,7 @@ async def main():
         name = d.name or ""
         print(f"{d.address} {name}".strip())
 
-    await BleakScanner.discover(timeout=1.0, detection_callback=cb)
+    await BleakScanner.discover(timeout=10.0, detection_callback=cb)
 
 
 asyncio.run(main())
