@@ -12,7 +12,14 @@ import threading
 import time
 from bluezero import adapter, advertisement
 from bleak import BleakScanner
+import argparse
+
+from blueness import module
+
+from bluer_sandbox import NAME
 from bluer_sandbox.logger import logger
+
+NAME = module.name(__file__, NAME)
 
 
 # ---------------------------------------------------------------
@@ -143,20 +150,34 @@ class Receiver:
             loop.run_until_complete(self._scan_once())
 
 
-# ---------------------------------------------------------------
-# Example usage
-# ---------------------------------------------------------------
 if __name__ == "__main__":
-    beacon = Beacon()
-    receiver = Receiver(scan_window_s=3.0)
+    parser = argparse.ArgumentParser(NAME)
+    parser.add_argument(
+        "--role",
+        type=str,
+        default="beacon",
+        help="beacon | receiver | both",
+    )
+    args = parser.parse_args()
+
+    do_beacon = args.role in ["beacon", "both"]
+    do_receiver = args.role in ["receiver", "both"]
+
+    beacon = Beacon() if do_beacon else None
+
+    receiver = Receiver(scan_window_s=3.0) if do_receiver else None
 
     try:
-        beacon.start()
-        receiver.start()
+        if do_beacon:
+            beacon.start()
+
+        if do_receiver:
+            receiver.start()
         while True:
             time.sleep(5)
-            peers = list(receiver.latest)
-            logger.info(f"[bps] known peers: {peers or '[]'}")
+            if do_receiver:
+                peers = list(receiver.latest)
+                logger.info(f"[bps] known peers: {peers or '[]'}")
     except KeyboardInterrupt:
         logger.info("[bps] shutting down…")
     finally:

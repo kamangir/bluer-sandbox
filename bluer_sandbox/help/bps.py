@@ -24,6 +24,10 @@ def help_beacon_and_receiver(
     tokens: List[str],
     mono: bool,
 ) -> str:
+    args = [
+        "[--role beacon | receiver | both]",
+    ]
+
     options = xtra("~start_bluetooth", mono=mono)
 
     return show_usage(
@@ -31,8 +35,9 @@ def help_beacon_and_receiver(
             "@bps",
             "beacon_and_receiver",
             f"[{options}]",
-        ],
-        "start beacon and receiver.",
+        ]
+        + args,
+        "start beacon and/or receiver.",
         mono=mono,
     )
 

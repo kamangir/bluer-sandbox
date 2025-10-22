@@ -7,8 +7,9 @@
  . start beacon.
 @bps \
 	beacon_and_receiver \
-	[~start_bluetooth]
- . start beacon and receiver.
+	[~start_bluetooth] \
+	[--role beacon | receiver | both]
+ . start beacon and/or receiver.
 @bps \
 	install
  . install bps.
