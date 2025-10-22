@@ -10,6 +10,7 @@ function runme() {
     local do_install=$(bluer_ai_option_int "$options" install 0)
     local do_start=$(bluer_ai_option_int "$options" start 1)
     local what=$(bluer_ai_option_choice "$options" beacon,receiver,beacon+receiver beacon+receiver)
+    local verbose=$(bluer_ai_option_int "$options" verbose 1)
 
     if [[ "$do_install" == 1 ]]; then
         bluer_ai_log "installing ..."
@@ -32,10 +33,9 @@ function runme() {
             sudo \
             replace \
             /etc/systemd/system/dbus-org.bluez.service \
-            sudo \
             --this "ExecStart=/usr/libexec/bluetooth/bluetoothd" \
             --that "ExecStart=/usr/libexec/bluetooth/bluetoothd --experimental" \
-            --cat 1 \
+            --cat $verbose \
             --save 1 \
             --whole_line 1
 
