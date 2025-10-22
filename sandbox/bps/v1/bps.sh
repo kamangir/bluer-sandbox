@@ -9,7 +9,7 @@ function runme() {
     local options=$1
     local do_install=$(bluer_ai_option_int "$options" install 0)
     local do_start=$(bluer_ai_option_int "$options" start 1)
-    local what=$(bluer_ai_option_choice "$options" beacon,receiver,beacon+receiver,test beacon+receiver)
+    local task=$(bluer_ai_option_choice "$options" beacon,receiver,beacon+receiver,test,introspect beacon+receiver)
     local verbose=$(bluer_ai_option_int "$options" verbose 1)
 
     if [[ "$do_install" == 1 ]]; then
@@ -66,19 +66,31 @@ function runme() {
             sudo bluetoothctl show
     fi
 
-    bluer_ai_log "starting $what ..."
-    if [[ "$what" == "beacon" ]]; then
+    bluer_ai_log "starting $task ..."
+    if [[ "$task" == "beacon" ]]; then
         bluer_ai_eval - \
             sudo -E \
             $(which python3) \
             beacon.py
-    elif [[ "$what" == "receiver" ]]; then
+    elif [[ "$task" == "receiver" ]]; then
         sudo hcitool lescan
-    elif [[ "$what" == "test" ]]; then
+    elif [[ "$task" == "test" ]]; then
         bluer_ai_eval - \
             sudo -E \
             $(which python3) \
             test.py
+    elif [[ "$task" == "introspect" ]]; then
+        local N=$(bluer_ai_option_int "$options" N)
+        if [[ -z "$N" ]]; then
+            bluer_ai_log "N not found.".
+            return 1
+        fi
+
+        bluer_ai_eval - \
+            sudo busctl --system introspect :1.$N /org/example/Hello
+
+        bluer_ai_eval - \
+            sudo busctl --system call :1.$N /org/example/Hello org.example.Hello Ping
     elif [[ "$what" == "beacon+receiver" ]]; then
         python3 bps.py
     else

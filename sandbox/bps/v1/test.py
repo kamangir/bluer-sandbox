@@ -25,13 +25,8 @@ async def main():
     obj_path = "/org/example/Hello"
     bus.export(obj_path, Hello())
 
-    print(f"[Python] Exported org.example.Hello at {obj_path}")
-    print("[Python] You can now run (in another terminal):")
-    print(f"    sudo busctl --system introspect {bus.unique_name} /org/example/Hello")
-    print(
-        f"    sudo busctl --system call {bus.unique_name} /org/example/Hello org.example.Hello Ping"
-    )
-    print("---------------------------------------------------------")
+    print(f"exported org.example.Hello at {obj_path}")
+    print('run  in another terminal: "source bps.sh introspect,N={bus.unique_name}"')
 
     while True:
         await asyncio.sleep(1)
