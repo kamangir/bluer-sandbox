@@ -4,11 +4,11 @@ Hybrid BLE Beacon + Receiver
 ----------------------------
 Each node alternates between:
   • Advertising (x, y, σ) via BLE manufacturer data (0xFFFF)
-  • Scanning for nearby nodes' beacons
+  • Scanning for nearby nodes’ beacons
 
 Requires:
-  - BlueZ >= 5.55 started with `--experimental`
-  - D-Bus access to org.bluez (system bus)
+  • BlueZ ≥ 5.55 started with --experimental
+  • D-Bus access to org.bluez (system bus)
 """
 
 import asyncio
@@ -20,14 +20,13 @@ from dbus_next import Variant, BusType, constants
 
 from bluer_options.env import abcli_hostname
 
-
 AD_IFACE = "org.bluez.LEAdvertisement1"
 AD_PATH = "/org/bluez/example/advertisement0"
 MFG_ID = 0xFFFF
 
 
 # -------------------------------------------------------------------
-# Advertisement object (registered via LEAdvertisingManager1)
+# Advertisement object
 # -------------------------------------------------------------------
 class Advertisement(ServiceInterface):
     def __init__(self, node_id, payload):
@@ -41,7 +40,7 @@ class Advertisement(ServiceInterface):
         return "peripheral"
 
     @Type.setter
-    def Type(self, _value: "s"):
+    def Type(self, _):
         pass
 
     @dbus_property()
@@ -49,7 +48,7 @@ class Advertisement(ServiceInterface):
         return self.node_id
 
     @LocalName.setter
-    def LocalName(self, _value: "s"):
+    def LocalName(self, _):
         pass
 
     @dbus_property()
@@ -57,7 +56,7 @@ class Advertisement(ServiceInterface):
         return {MFG_ID: Variant("ay", self.payload)}
 
     @ManufacturerData.setter
-    def ManufacturerData(self, _value: "a{qv}"):
+    def ManufacturerData(self, _):
         pass
 
     @dbus_property()
@@ -65,7 +64,7 @@ class Advertisement(ServiceInterface):
         return True
 
     @IncludeTxPower.setter
-    def IncludeTxPower(self, _value: "b"):
+    def IncludeTxPower(self, _):
         pass
 
     @dbus_property()
@@ -73,7 +72,7 @@ class Advertisement(ServiceInterface):
         return self._service_uuids
 
     @ServiceUUIDs.setter
-    def ServiceUUIDs(self, _value: "as"):
+    def ServiceUUIDs(self, _):
         pass
 
     @method()
@@ -82,10 +81,10 @@ class Advertisement(ServiceInterface):
 
 
 # -------------------------------------------------------------------
-# Receiver helper
+# Receiver helpers
 # -------------------------------------------------------------------
 def parse_mdata(mdata_variant):
-    """Decode manufacturer data Variant if Company ID 0xFFFF is present."""
+    """Decode manufacturer data Variant if company ID 0xFFFF is present."""
     try:
         payload = mdata_variant[MFG_ID].value
         if len(payload) >= 12:
@@ -96,18 +95,32 @@ def parse_mdata(mdata_variant):
 
 
 async def scan_once(bus, t_scan=3.0):
-    """Listen for PropertiesChanged signals with ManufacturerData."""
+    """Listen for BlueZ signals carrying ManufacturerData."""
     results = {}
 
     def handler(msg):
         if msg.message_type != constants.MessageType.SIGNAL:
             return
-        if msg.interface != "org.freedesktop.DBus.Properties":
+        if msg.interface not in [
+            "org.freedesktop.DBus.Properties",
+            "org.freedesktop.DBus.ObjectManager",
+        ]:
             return
         try:
-            iface, changed, _ = msg.body
-            if iface != "org.bluez.Device1":
+            # handle InterfacesAdded
+            if msg.member == "InterfacesAdded":
+                iface_data = msg.body[1].get("org.bluez.Device1")
+                if not iface_data:
+                    return
+                changed = iface_data
+            # handle PropertiesChanged
+            elif msg.member == "PropertiesChanged":
+                iface, changed, _ = msg.body
+                if iface != "org.bluez.Device1":
+                    return
+            else:
                 return
+
             if "ManufacturerData" not in changed:
                 return
             mdata = changed["ManufacturerData"]
@@ -130,18 +143,23 @@ async def scan_once(bus, t_scan=3.0):
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
-    # Enable active scanning
+    # Enable active scanning with full advertisement payloads
     try:
         await adapter_iface.call_set_discovery_filter(
             {
                 "DuplicateData": Variant("b", True),
                 "Transport": Variant("s", "le"),
+                "UUIDs": Variant("as", []),
+                "RSSI": Variant("n", -127),
+                "Pathloss": Variant("q", 0),
+                "Pattern": Variant("a{sv}", {}),
             }
         )
+        print("[hybrid] discovery filter set (active scan, all data)")
     except Exception as e:
         print(f"[hybrid] warning: could not set discovery filter: {e}")
 
-    # 🧩 Prime the device cache — ensures PropertiesChanged signals are delivered
+    # Prime device cache to receive events
     try:
         obj_mgr = bus.get_proxy_object(
             "org.bluez", "/", await bus.introspect("org.bluez", "/")
@@ -152,7 +170,7 @@ async def scan_once(bus, t_scan=3.0):
     except Exception as e:
         print(f"[hybrid] could not get managed objects: {e}")
 
-    # Begin scanning
+    # Start discovery
     await adapter_iface.call_start_discovery()
     print("[hybrid] discovery started")
 
@@ -183,13 +201,13 @@ async def main():
     print(f"[hybrid] node {node_id} ready (advertise {t_adv}s / scan {t_scan}s)")
 
     while True:
-        # --- Advertise ---
+        # Advertise phase
         payload = struct.pack("<fff", x, y, sigma)
         adv = Advertisement(node_id, payload)
         bus.export(AD_PATH, adv)
         try:
             await leman.call_register_advertisement(AD_PATH, {})
-            print(f"[hybrid] advertising {node_id} ...")
+            print(f"[hybrid] advertising {node_id} …")
             await asyncio.sleep(t_adv)
         except Exception as e:
             print(f"[hybrid] advertise error: {e}")
@@ -201,8 +219,8 @@ async def main():
             bus.unexport(AD_PATH)
             print("[hybrid] pause before scanning …")
 
-        # --- Scan ---
-        print("[hybrid] scanning ...")
+        # Scan phase
+        print("[hybrid] scanning …")
         peers = await scan_once(bus, t_scan)
         if peers:
             for name, (px, py, ps, rssi) in peers.items():
