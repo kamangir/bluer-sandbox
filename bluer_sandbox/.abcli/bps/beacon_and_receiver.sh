@@ -1,14 +1,10 @@
 #! /usr/bin/env bash
 
 function bluer_sandbox_bps_beacon_and_receiver() {
-    sudo systemctl restart bluetooth
-
-    sudo btmgmt le on
-    sudo btmgmt power off
-    sudo btmgmt power on
-    sudo btmgmt advertising on
-
-    sudo btmgmt info
+    sudo btmgmt --index 0 le on
+    sudo btmgmt --index 0 connectable on
+    sudo btmgmt --index 0 advertising on
+    sudo btmgmt --index 0 scanning on
 
     bluer_ai_eval ,$1 \
         sudo -E \

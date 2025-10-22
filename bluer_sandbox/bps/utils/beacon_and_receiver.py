@@ -201,8 +201,8 @@ async def main():
 
     try:
         while not stop.is_set():
-            await advertise_once(bus, duration=2.0)
-            await scan_once(bus, duration=8.0)
+            await advertise_once(bus, duration=1.0)
+            await scan_once(bus, duration=10.0)
     finally:
         await unregister_advertisement(bus)
         logger.info(f"{NAME}: exiting cleanly.")
