@@ -12,10 +12,9 @@ advertise ↔ scan transitions (BlueZ 5.55+ with --experimental).
 
 import asyncio
 import struct
-import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
-from dbus_next import Variant, BusType, constants
+from dbus_next import Variant, BusType, Message, constants
 
 from bluer_options.env import abcli_hostname
 
@@ -25,7 +24,7 @@ MFG_ID = 0xFFFF
 
 
 # -------------------------------------------------------------------
-# Advertisement object (registered via LEAdvertisingManager1)
+# Advertisement object
 # -------------------------------------------------------------------
 class Advertisement(ServiceInterface):
     def __init__(self, node_id, payload):
@@ -33,8 +32,6 @@ class Advertisement(ServiceInterface):
         self.node_id = node_id
         self.payload = payload
         self._service_uuids = []
-
-    # --- Required properties ---
 
     @dbus_property()
     def Type(self) -> "s":
@@ -85,7 +82,6 @@ class Advertisement(ServiceInterface):
 # Receiver helper (passive scan using D-Bus signals)
 # -------------------------------------------------------------------
 def parse_mdata(mdata_variant):
-    """Decode manufacturer data Variant if Company ID 0xFFFF is present."""
     try:
         payload = mdata_variant[MFG_ID].value
         if len(payload) >= 12:
@@ -95,23 +91,21 @@ def parse_mdata(mdata_variant):
     return None
 
 
-async def scan_once(bus, t_scan=3.0):
+async def scan_once(bus: MessageBus, t_scan: float = 3.0):
     """Listen for advertisement signals for t_scan seconds."""
-    match = (
-        "type='signal',"
-        "interface='org.freedesktop.DBus.ObjectManager',"
-        "member='InterfacesAdded'"
+    # subscribe to InterfacesAdded events
+    add_match_msg = Message(
+        destination="org.freedesktop.DBus",
+        path="/org/freedesktop/DBus",
+        interface="org.freedesktop.DBus",
+        member="AddMatch",
+        signature="s",
+        body=[
+            "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded'"
+        ],
     )
-    await bus.call(
-        message=bus._message(
-            destination="org.freedesktop.DBus",
-            path="/org/freedesktop/DBus",
-            interface="org.freedesktop.DBus",
-            member="AddMatch",
-            signature="s",
-            body=[match],
-        )
-    )
+    await bus.call(add_match_msg)
+
     results = {}
 
     def handler(msg):
@@ -124,8 +118,7 @@ async def scan_once(bus, t_scan=3.0):
                 return
             name = props.get("Name", "<unknown>")
             rssi = props.get("RSSI", 0)
-            mdata = props["ManufacturerData"]
-            parsed = parse_mdata(mdata)
+            parsed = parse_mdata(props["ManufacturerData"])
             if parsed:
                 x, y, sigma = parsed
                 results[name] = (x, y, sigma, rssi)
@@ -144,8 +137,6 @@ async def scan_once(bus, t_scan=3.0):
 async def main():
     node_id = abcli_hostname
     x, y, sigma = 1.0, 2.0, 0.5
-
-    # tuned timing
     t_adv, t_scan = 2.0, 8.0  # seconds
 
     bus = MessageBus(bus_type=BusType.SYSTEM)
@@ -174,9 +165,8 @@ async def main():
             except Exception:
                 pass
 
-        # ---- pause between roles ----
         print("[hybrid] pause before scanning …")
-        await asyncio.sleep(2.0)  # let the controller settle
+        await asyncio.sleep(2.0)
 
         # --- Scan ---
         print("[hybrid] scanning ...")
@@ -190,7 +180,7 @@ async def main():
         else:
             print("[hybrid] no peers detected")
 
-        await asyncio.sleep(0.5)  # short idle before next advertise cycle
+        await asyncio.sleep(0.5)
 
 
 if __name__ == "__main__":
