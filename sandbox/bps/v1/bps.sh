@@ -49,7 +49,7 @@ function runme() {
 
         ps -eo args | grep [b]luetoothd
 
-        cp -v \
+        sudo cp -v \
             ./org.example.Hello.conf \
             /etc/dbus-1/system.d/org.example.Hello.conf
     fi
