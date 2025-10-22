@@ -13,6 +13,9 @@ docs = [
         "path": "../docs/bps/literature.md",
     },
     {
+        "path": "../../sandbox/bps",
+    },
+    {
         "path": "../../sandbox/bps/v1",
     },
 ]

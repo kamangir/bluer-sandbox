@@ -34,6 +34,9 @@ def build():
             {
                 "path": "../docs",
             },
+            {
+                "path": "../../sandbox",
+            },
         ]
         + [
             {
