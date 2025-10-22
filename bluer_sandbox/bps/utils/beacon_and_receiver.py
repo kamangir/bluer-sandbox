@@ -92,43 +92,52 @@ def parse_mdata(mdata_variant):
 
 
 async def scan_once(bus, t_scan=3.0):
-    """Perform active scan and listen for ManufacturerData packets."""
+    """Capture any ManufacturerData signals appearing on the system bus."""
     results = {}
 
     def handler(msg):
         if msg.message_type != constants.MessageType.SIGNAL:
             return
+        if "ManufacturerData" not in str(msg.body):
+            return
         try:
-            iface, changed, _ = msg.body
-            if "ManufacturerData" not in changed:
+            # Extract address (device path)
+            path = getattr(msg, "path", "")
+            if not path or "/dev_" not in path:
                 return
-            mdata = changed["ManufacturerData"]
-            parsed = parse_mdata(mdata)
-            if parsed:
-                x, y, sigma = parsed
-                rssi = changed.get("RSSI", 0)
-                addr = msg.path.split("/")[-1].replace("_", ":")
-                results[addr] = (x, y, sigma, rssi)
-        except Exception:
-            pass
+            addr = path.split("/")[-1].replace("_", ":")
+            # Try to extract the payload if available
+            body = msg.body
+            if len(body) >= 2:
+                changed = body[1]
+                if "ManufacturerData" in changed:
+                    parsed = parse_mdata(changed["ManufacturerData"])
+                    if parsed:
+                        x, y, sigma = parsed
+                        rssi = changed.get("RSSI", 0)
+                        results[addr] = (x, y, sigma, rssi)
+                        print(
+                            f"[peer] {addr} RSSI={rssi:>4} pos=({x:.2f},{y:.2f}) σ={sigma:.2f}"
+                        )
+        except Exception as e:
+            print(f"[hybrid] handler error: {e}")
 
     bus.add_message_handler(handler)
 
+    # Enable discovery with LE transport
     introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
-    # 🔧 enable active scanning with manufacturer data
     try:
         await adapter_iface.call_set_discovery_filter(
             {
                 "DuplicateData": Variant("b", True),
                 "Transport": Variant("s", "le"),
-                "RSSI": Variant("n", -127),
             }
         )
     except Exception as e:
-        print(f"[hybrid] warning: could not set discovery filter ({e})")
+        print(f"[hybrid] warning: could not set discovery filter: {e}")
 
     await adapter_iface.call_start_discovery()
     print("[hybrid] discovery started")
