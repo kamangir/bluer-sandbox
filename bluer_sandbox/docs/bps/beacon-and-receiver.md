@@ -1,7 +1,7 @@
 # bps: beacon-and-receiver
 
 ```bash
-@bps beacon_and_receiver \
+@bps beacon_and_receiver - \
     --role beacon
 ```
 
@@ -12,7 +12,7 @@
 on another pi,
 
 ```bash
-@bps beacon_and_receiver \
+@bps beacon_and_receiver - \
     --role receiver
 ```
 

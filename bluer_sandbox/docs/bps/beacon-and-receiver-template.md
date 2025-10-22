@@ -1,7 +1,7 @@
 title:::
 
 ```bash
-@bps beacon_and_receiver \
+@bps beacon_and_receiver - \
     --role beacon
 ```
 
@@ -12,7 +12,7 @@ title:::
 on another pi,
 
 ```bash
-@bps beacon_and_receiver \
+@bps beacon_and_receiver - \
     --role receiver
 ```
 

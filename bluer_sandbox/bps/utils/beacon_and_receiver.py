@@ -173,13 +173,17 @@ if __name__ == "__main__":
 
         if do_receiver:
             receiver.start()
+
         while True:
             time.sleep(5)
             if do_receiver:
                 peers = list(receiver.latest)
                 logger.info(f"[bps] known peers: {peers or '[]'}")
     except KeyboardInterrupt:
-        logger.info("[bps] shutting down…")
+        logger.info("[bps] shutting down ...")
     finally:
-        beacon.stop()
-        receiver.stop()
+        if do_beacon:
+            beacon.stop()
+
+        if do_receiver:
+            receiver.stop()
