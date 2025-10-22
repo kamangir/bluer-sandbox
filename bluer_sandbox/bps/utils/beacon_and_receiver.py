@@ -152,6 +152,13 @@ async def main():
         # --- Advertise ---
         payload = struct.pack("<fff", x, y, sigma)
         adv = Advertisement(node_id, payload)
+
+        # 🔧 unexport any previous instance
+        try:
+            bus.unexport(AD_PATH)
+        except Exception:
+            pass
+
         bus.export(AD_PATH, adv)
         try:
             await leman.call_register_advertisement(AD_PATH, {})
