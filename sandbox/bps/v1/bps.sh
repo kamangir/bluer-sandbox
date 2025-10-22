@@ -9,6 +9,7 @@ function runme() {
     local options=$1
     local do_install=$(bluer_ai_option_int "$options" install 0)
     local do_start=$(bluer_ai_option_int "$options" start 1)
+    local what=$(bluer_ai_option_choice "$options" beacon,receiver,beacon+receiver beacon+receiver)
 
     if [[ "$do_install" == 1 ]]; then
         bluer_ai_log "installing ..."
@@ -26,6 +27,23 @@ function runme() {
         pip3 install bluezero
 
         pip install bleak
+
+        bluer_objects_file \
+            replace \
+            /etc/systemd/system/dbus-org.bluez.service \
+            --this "ExecStart=/usr/lib/bluetooth/bluetoothd" \
+            --that "ExecStart=/usr/lib/bluetooth/bluetoothd --experimental" \
+            --cat 1 \
+            --save 0 \
+            --whole_line 1
+
+        sudo systemctl daemon-reexec
+        sudo systemctl daemon-reload
+        sudo systemctl restart bluetooth
+
+        bluer_ai_log "expecting: /usr/lib/bluetooth/bluetoothd --experimental"
+        ps aux | grep bluetoothd
+
     fi
 
     if [[ "$do_start" == 1 ]]; then
@@ -38,8 +56,16 @@ function runme() {
         hciconfig
     fi
 
-    bluer_ai_log "starting beacon + receiver ..."
-    python3 bps.py
+    bluer_ai_log "starting $what ..."
+    if [[ "$what" == "beacon" ]]; then
+        python3 beacon.py
+    elif [[ "$what" == "receiver" ]]; then
+        sudo hcitool lescan
+    elif [[ "$what" == "beacon+receiver" ]]; then
+        python3 bps.py
+    else
+        bluer_ai_log_error "cannot start $what."
+    fi
 }
 
 runme "$@"
