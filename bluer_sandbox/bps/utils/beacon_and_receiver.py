@@ -191,7 +191,7 @@ async def scan_once(bus, t_scan=3.0):
 async def main():
     node_id = abcli_hostname
     x, y, sigma = 1.0, 2.0, 0.5
-    t_adv, t_scan = 1.0, 4.0  # seconds
+    t_adv, t_scan = 4.0, 4.0  # seconds
 
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
