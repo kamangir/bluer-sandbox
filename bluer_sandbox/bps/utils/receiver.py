@@ -35,7 +35,7 @@ async def main(
         device: BLEDevice,
         advertisement_data: AdvertisementData,
     ):
-        if grep not in device.name:
+        if device.name and (device.name is None or grep not in device.name):
             return
 
         logger.info(f"device name: {device.name}")
