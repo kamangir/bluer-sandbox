@@ -25,9 +25,11 @@ async def main():
     obj_path = "/org/example/Hello"
     bus.export(obj_path, Hello())
 
-    print(f"[Python] Exported org.example.Hello at {obj_path}")
-    print("[Python] Keep this running and use another terminal to introspect:")
-    print("    sudo busctl --system list")
+    print(f"exported org.example.Hello at {obj_path}")
+    print("keep this running and use another terminal to introspect:")
+    print(
+        'run "sudo busctl --system list | grep python" to see an output like ":1.211" then <N> is 211.'
+    )
     print("    sudo busctl --system introspect :1.<N> /org/example/Hello")
     print(
         "    sudo busctl --system call :1.<N> /org/example/Hello org.example.Hello Ping"
