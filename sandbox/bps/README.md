@@ -1,3 +1,3 @@
-# bluer-sandbox: README: ..: ..: sandbox: bps
+# bps
 
 - [v1](./v1)

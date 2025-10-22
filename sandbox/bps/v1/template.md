@@ -1,4 +1,4 @@
-title:::bluer-sandbox
+title::sandbox
 
 only works on rpi.
 

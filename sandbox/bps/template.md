@@ -1,3 +1,3 @@
-title:::bluer-sandbox
+title:::sandbox
 
 - [v1](./v1)
