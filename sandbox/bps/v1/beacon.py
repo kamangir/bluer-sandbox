@@ -24,23 +24,23 @@ class Advertisement(ServiceInterface):
         self.include_tx_power = True
 
     # ---- D-Bus properties that BlueZ expects ----
-    @dbus_property()
+    @dbus_property(readable=True, writable=False)
     def Type(self) -> "s":
         return self.type
 
-    @dbus_property()
+    @dbus_property(readable=True, writable=False)
     def LocalName(self) -> "s":
         return self.name
 
-    @dbus_property()
+    @dbus_property(readable=True, writable=False)
     def ServiceUUIDs(self) -> "as":
         return self.service_uuids
 
-    @dbus_property()
+    @dbus_property(readable=True, writable=False)
     def IncludeTxPower(self) -> "b":
         return self.include_tx_power
 
-    @dbus_property()
+    @dbus_property(readable=True, writable=False)
     def ManufacturerData(self) -> "a{qv}":
         return {0xFFFF: Variant("ay", self.manufacturer_data[0xFFFF])}
 
