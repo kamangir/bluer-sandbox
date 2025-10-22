@@ -53,7 +53,10 @@ class Beacon:
 
     def _run(self):
         ble_adapter = adapter.Adapter()
-        self._adv = advertisement.Advertisement(1, ble_adapter.address)
+        self._adv = advertisement.Advertisement(
+            advert_id=1,
+            adapter_addr=ble_adapter.address,
+        )
         self._adv.include_tx_power = True
         self._adv.appearance = 0
         self._adv.local_name = self.node_id
