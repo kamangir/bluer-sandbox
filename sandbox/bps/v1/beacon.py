@@ -29,7 +29,8 @@ class Advertisement:
                 "LocalName": Variant("s", self.name),
                 "ServiceUUIDs": Variant("as", self.service_uuids),
                 "ManufacturerData": Variant(
-                    "a{qv}", {0xFFFF: Variant("ay", self.manufacturer_data[0xFFFF])}
+                    "a{qv}",
+                    {0xFFFF: Variant("ay", bytes(self.manufacturer_data[0xFFFF]))},
                 ),
                 "IncludeTxPower": Variant("b", self.include_tx_power),
             }
