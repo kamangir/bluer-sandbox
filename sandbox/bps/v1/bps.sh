@@ -94,6 +94,7 @@ function runme() {
         sudo systemctl status --no-pager bluetooth
 
         sudo bluetoothctl power on
+        sudo bluetoothctl discoverable on
         bluer_ai_eval - \
             sudo bluetoothctl show
     fi
