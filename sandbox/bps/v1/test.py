@@ -30,9 +30,9 @@ async def main():
     print(
         'run "sudo busctl --system list | grep python" to see an output like ":1.211" then <N> is 211.'
     )
-    print("    sudo busctl --system introspect :1.<N> /org/example/Hello")
+    print(" - sudo busctl --system introspect :1.<N> /org/example/Hello")
     print(
-        "    sudo busctl --system call :1.<N> /org/example/Hello org.example.Hello Ping"
+        " - sudo busctl --system call :1.<N> /org/example/Hello org.example.Hello Ping"
     )
     print("---------------------------------------------------------")
 

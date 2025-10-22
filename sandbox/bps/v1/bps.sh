@@ -48,6 +48,10 @@ function runme() {
         sudo systemctl restart bluetooth
 
         ps -eo args | grep [b]luetoothd
+
+        cp -v \
+            ./org.example.Hello.conf \
+            /etc/dbus-1/system.d/org.example.Hello.conf
     fi
 
     if [[ "$do_start" == 1 ]]; then
