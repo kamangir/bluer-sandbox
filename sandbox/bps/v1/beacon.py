@@ -74,13 +74,15 @@ async def main():
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
 
+    # Request a well-known name so the interface is visible to BlueZ
+    await bus.request_name("org.bluez")
+
     adv = Advertisement("TEST-PI", x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJ_PATH, adv)
 
-    # Give dbus-next a moment to publish the object
-    await asyncio.sleep(0.5)
+    # Give the bus time to register the interface before BlueZ introspects it
+    await asyncio.sleep(1.0)
 
-    # Now safely register with BlueZ
     msg = Message(
         destination=BUS_NAME,
         path=ADAPTER_PATH,
