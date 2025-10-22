@@ -18,6 +18,7 @@ from bluer_options.env import abcli_hostname
 AD_IFACE = "org.bluez.LEAdvertisement1"
 AD_PATH = "/org/bluez/example/advertisement0"
 MFG_ID = 0xFFFF
+DUMMY_UUID = "0000180a-0000-1000-8000-00805f9b34fb"  # Device Information
 
 
 # -------------------------------------------------------------------
@@ -28,7 +29,7 @@ class Advertisement(ServiceInterface):
         super().__init__(AD_IFACE)
         self.node_id = node_id
         self.payload = payload
-        self._service_uuids = []
+        self._service_uuids = [DUMMY_UUID]  # 👈 Add this line
 
     @dbus_property()
     def Type(self) -> "s":
@@ -83,7 +84,6 @@ async def scan_once_bleak(t_scan=5.0):
     print(f"[hybrid] bleak scanning for {t_scan:.1f}s …")
 
     scanner = BleakScanner(adapter="hci0")
-    # allow duplicate packets (important for quick toggling)
     try:
         if hasattr(scanner, "_backend") and hasattr(scanner._backend, "_scanner_args"):
             scanner._backend._scanner_args["--duplicates"] = True
@@ -134,7 +134,6 @@ async def main():
     print(f"[hybrid] node {node_id} ready (advertise {t_adv}s / scan {t_scan}s)")
 
     while True:
-        # --- Advertise phase ---
         payload = struct.pack("<fff", x, y, sigma)
         adv = Advertisement(node_id, payload)
         bus.export(AD_PATH, adv)
@@ -152,7 +151,6 @@ async def main():
             bus.unexport(AD_PATH)
             print("[hybrid] pause before scanning …")
 
-        # --- Scan phase ---
         await scan_once_bleak(t_scan)
         await asyncio.sleep(1.0)
 
