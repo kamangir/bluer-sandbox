@@ -107,13 +107,11 @@ async def scan_once(bus, t_scan=3.0):
         ]:
             return
         try:
-            # handle InterfacesAdded
             if msg.member == "InterfacesAdded":
                 iface_data = msg.body[1].get("org.bluez.Device1")
                 if not iface_data:
                     return
                 changed = iface_data
-            # handle PropertiesChanged
             elif msg.member == "PropertiesChanged":
                 iface, changed, _ = msg.body
                 if iface != "org.bluez.Device1":
@@ -143,23 +141,40 @@ async def scan_once(bus, t_scan=3.0):
     adapter_obj = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     adapter_iface = adapter_obj.get_interface("org.bluez.Adapter1")
 
-    # Enable active scanning with full advertisement payloads
+    # Enable active scanning with full advertisement payloads (adaptive fallback)
     try:
-        await adapter_iface.call_set_discovery_filter(
-            {
-                "DuplicateData": Variant("b", True),
-                "Transport": Variant("s", "le"),
-                "UUIDs": Variant("as", []),
-                "RSSI": Variant("n", -127),
-                "Pathloss": Variant("q", 0),
-                "Pattern": Variant("a{sv}", {}),
-            }
-        )
-        print("[hybrid] discovery filter set (active scan, all data)")
+        try:
+            # Newer BlueZ (≥5.75)
+            await adapter_iface.call_set_discovery_filter(
+                {
+                    "DuplicateData": Variant("b", True),
+                    "Transport": Variant("s", "le"),
+                    "UUIDs": Variant("as", []),
+                    "RSSI": Variant("n", -127),
+                    "Pathloss": Variant("q", 0),
+                    "Pattern": Variant("a{sv}", {}),
+                }
+            )
+            print("[hybrid] discovery filter set (new Pattern key enabled)")
+        except Exception as e:
+            if "Invalid arguments" in str(e):
+                # Fallback for stripped builds
+                await adapter_iface.call_set_discovery_filter(
+                    {
+                        "DuplicateData": Variant("b", True),
+                        "Transport": Variant("s", "le"),
+                        "UUIDs": Variant("as", []),
+                        "RSSI": Variant("n", -127),
+                        "Pathloss": Variant("q", 0),
+                    }
+                )
+                print("[hybrid] discovery filter set (fallback, legacy keys only)")
+            else:
+                raise
     except Exception as e:
         print(f"[hybrid] warning: could not set discovery filter: {e}")
 
-    # Prime device cache to receive events
+    # Prime device cache
     try:
         obj_mgr = bus.get_proxy_object(
             "org.bluez", "/", await bus.introspect("org.bluez", "/")
