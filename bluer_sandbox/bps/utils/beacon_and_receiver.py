@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 """
-Beacon-Exchange (time-division)
--------------------------------
+Beacon-Exchange (time-division hybrid)
+--------------------------------------
 Each node alternates between:
   • advertising (x, y, σ) for a short burst
   • scanning for peers for a few seconds
 
 All communication happens via BLE manufacturer data (0xFFFF).
 
-Requires BlueZ ≥ 5.55 started with `--experimental`.
+Requirements:
+  • BlueZ ≥ 5.55
+  • bluetoothd started with --experimental
 """
 
 import asyncio
 import struct
 import time
-from dbus_next import Message, Variant, BusType, constants
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
+from dbus_next import Variant, BusType, constants, Message
 
-from bluer_options.env import abcli_hostname
+from bluer_options.env import abcli_hostname  # your host alias utility
+
 
 AD_IFACE = "org.bluez.LEAdvertisement1"
 AD_PATH = "/org/bluez/example/advertisement0"
@@ -98,9 +101,12 @@ def parse_mdata(mdata_variant):
 
 async def scan_once(bus, t_scan=3.0):
     """Listen for advertisement signals for t_scan seconds."""
-    match_rule = "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded'"
+    match_rule = (
+        "type='signal',interface='org.freedesktop.DBus.ObjectManager',"
+        "member='InterfacesAdded'"
+    )
 
-    # subscribe to ObjectManager signal via direct D-Bus call
+    # subscribe to ObjectManager signals
     await bus.call(
         Message(
             destination="org.freedesktop.DBus",
@@ -144,15 +150,18 @@ async def scan_once(bus, t_scan=3.0):
 async def main():
     node_id = abcli_hostname
 
+    # simulated coordinates
     x, y, sigma = 1.0, 2.0, 0.5
     t_adv, t_scan = 1.0, 4.0  # seconds
 
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
 
+    # Get adapter + LE advertising manager
     introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
     mgr = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
     leman = mgr.get_interface("org.bluez.LEAdvertisingManager1")
+    adapter_iface = mgr.get_interface("org.bluez.Adapter1")
 
     print(f"[hybrid] node {node_id} ready (advertise {t_adv}s / scan {t_scan}s)")
 
@@ -172,23 +181,44 @@ async def main():
                 await leman.call_unregister_advertisement(AD_PATH)
             except Exception:
                 pass
-            # always unexport to avoid duplicate registration next cycle
             try:
                 bus.unexport(AD_PATH)
             except Exception:
                 pass
 
+        # brief gap to avoid overlap
+        await asyncio.sleep(0.3)
+
         # --- Scan ---
         print("[hybrid] scanning ...")
+
+        # enable discovery so BlueZ emits advertisement signals
+        try:
+            await adapter_iface.call_start_discovery()
+            print("[hybrid] discovery started")
+            await asyncio.sleep(0.5)  # allow population
+        except Exception as e:
+            print(f"[hybrid] start_discovery failed: {e}")
+
         peers = await scan_once(bus, t_scan)
+
+        # stop discovery
+        try:
+            await adapter_iface.call_stop_discovery()
+            print("[hybrid] discovery stopped")
+        except Exception as e:
+            print(f"[hybrid] stop_discovery failed: {e}")
+
         if peers:
             for name, (px, py, ps, rssi) in peers.items():
                 print(
-                    f"[peer] {name:>10} RSSI={rssi:>4} pos=({px:.2f},{py:.2f}) σ={ps:.2f}"
+                    f"[peer] {name:>12} RSSI={rssi:>4} dB  "
+                    f"pos=({px:.2f},{py:.2f}) σ={ps:.2f}"
                 )
         else:
             print("[hybrid] no peers detected")
-        await asyncio.sleep(0.2)
+
+        await asyncio.sleep(0.5)  # small idle before next cycle
 
 
 if __name__ == "__main__":
