@@ -28,15 +28,16 @@ def to_dict(obj):
 async def main(timeout: float = 10.0):
     logger.info(f"{NAME}: LE Scan ...")
 
-    def callback(device: BLEDevice, advertisement_data: AdvertisementData):
-        logger.info("device info:")
-        for key, value in to_dict(device).items():
-            logger.info(f" - {key}: {value}")
+    def callback(
+        device: BLEDevice,
+        advertisement_data: AdvertisementData,
+    ):
+        logger.info(f"device name: {device.name}")
+        logger.info(f"device address: {device.address}")
 
         if advertisement_data:
             logger.info("advertisement data:")
-            for key, value in to_dict(advertisement_data).items():
-                logger.info(f" - {key}: {value}")
+            logger.info(advertisement_data)
 
         logger.info(hr(width=30))
 
