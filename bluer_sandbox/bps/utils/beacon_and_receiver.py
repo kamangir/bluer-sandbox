@@ -1,60 +1,98 @@
 #!/usr/bin/env python3
 """
 Beacon-Exchange (time-division)
+-------------------------------
 Each node alternates between:
-  • advertising (x, y, σ) for ~1 s
-  • scanning for peers for ~T_scan s
+  • advertising (x, y, σ) for a short burst
+  • scanning for peers for a few seconds
+
 All communication happens via BLE manufacturer data (0xFFFF).
+
+Requires BlueZ ≥ 5.55 started with `--experimental`.
 """
 
-import asyncio, struct, time
+import asyncio
+import struct
+import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, dbus_property, method
 from dbus_next import Variant, BusType, constants
-
-from bluer_options.env import abcli_hostname
+from bluezero import adapter
 
 AD_IFACE = "org.bluez.LEAdvertisement1"
 AD_PATH = "/org/bluez/example/advertisement0"
 MFG_ID = 0xFFFF
 
 
-# ----- Advertisement object ---------------------------------------------------
+# -------------------------------------------------------------------
+# Advertisement object (registered via LEAdvertisingManager1)
+# -------------------------------------------------------------------
 class Advertisement(ServiceInterface):
     def __init__(self, node_id, payload):
         super().__init__(AD_IFACE)
         self.node_id = node_id
         self.payload = payload
+        self._service_uuids = []
+
+    # --- Required properties ---
 
     @dbus_property()
     def Type(self) -> "s":
         return "peripheral"
 
+    @Type.setter
+    def Type(self, _value: "s"):
+        pass
+
     @dbus_property()
     def LocalName(self) -> "s":
         return self.node_id
+
+    @LocalName.setter
+    def LocalName(self, _value: "s"):
+        pass
 
     @dbus_property()
     def ManufacturerData(self) -> "a{qv}":
         return {MFG_ID: Variant("ay", self.payload)}
 
+    @ManufacturerData.setter
+    def ManufacturerData(self, _value: "a{qv}"):
+        pass
+
     @dbus_property()
     def IncludeTxPower(self) -> "b":
         return True
 
-    @method()
-    def Release(self):
+    @IncludeTxPower.setter
+    def IncludeTxPower(self, _value: "b"):
         pass
 
+    @dbus_property()
+    def ServiceUUIDs(self) -> "as":
+        return self._service_uuids
 
-# ----- Receiver handler -------------------------------------------------------
+    @ServiceUUIDs.setter
+    def ServiceUUIDs(self, _value: "as"):
+        pass
+
+    @method()
+    def Release(self):
+        print(f"[{self.node_id}] advertisement released")
+
+
+# -------------------------------------------------------------------
+# Receiver helper (passive scan using D-Bus signals)
+# -------------------------------------------------------------------
 def parse_mdata(mdata_variant):
+    """Decode manufacturer data Variant if Company ID 0xFFFF is present."""
     try:
         payload = mdata_variant[MFG_ID].value
         if len(payload) >= 12:
             return struct.unpack("<fff", bytes(payload[:12]))
     except Exception:
-        return None
+        pass
+    return None
 
 
 async def scan_once(bus, t_scan=3.0):
@@ -87,9 +125,14 @@ async def scan_once(bus, t_scan=3.0):
     return results
 
 
-# ----- Main loop --------------------------------------------------------------
+# -------------------------------------------------------------------
+# Main hybrid node: advertise, then scan, repeatedly
+# -------------------------------------------------------------------
 async def main():
-    node_id = abcli_hostname
+    ble_adapter = adapter.Adapter()
+    mac_suffix = ble_adapter.address[-5:].replace(":", "")
+    node_id = f"UGV-{mac_suffix}"
+
     x, y, sigma = 1.0, 2.0, 0.5
     t_adv, t_scan = 1.0, 4.0  # seconds
 
@@ -129,7 +172,7 @@ async def main():
                 )
         else:
             print("[hybrid] no peers detected")
-        await asyncio.sleep(0.2)  # small idle gap
+        await asyncio.sleep(0.2)
 
 
 if __name__ == "__main__":
