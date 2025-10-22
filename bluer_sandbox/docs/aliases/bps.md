@@ -19,7 +19,8 @@
 @bps \
 	receiver \
 	[~start_bluetooth] \
-	[--timeout 10]
+	[--grep <sparrow>] \
+	[--timeout <10>]
  . start receiver.
 @bps \
 	receiver \

@@ -80,7 +80,8 @@ def help_receiver(
     options = xtra("~start_bluetooth", mono=mono)
 
     args = [
-        "[--timeout 10]",
+        "[--grep <sparrow>]",
+        "[--timeout <10>]",
     ]
 
     usage_1 = show_usage(

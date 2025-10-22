@@ -11,7 +11,8 @@
 on another pi,
 
 ```bash
-@bps receiver
+@bps receiver - \
+    --grep sparrow
 ```
 
 ```text
