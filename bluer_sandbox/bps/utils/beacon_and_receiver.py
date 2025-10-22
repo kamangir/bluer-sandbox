@@ -39,7 +39,6 @@ class Advertisement(ServiceInterface):
         self._service_uuids = []
 
     # --- Required properties ---
-
     @dbus_property()
     def Type(self) -> "s":
         return "peripheral"
@@ -86,7 +85,7 @@ class Advertisement(ServiceInterface):
 
 
 # -------------------------------------------------------------------
-# Receiver helper (passive scan using D-Bus signals)
+# Receiver helper (passive scan using D-Bus signals + fallback poll)
 # -------------------------------------------------------------------
 def parse_mdata(mdata_variant):
     """Decode manufacturer data Variant if Company ID 0xFFFF is present."""
@@ -99,14 +98,34 @@ def parse_mdata(mdata_variant):
     return None
 
 
+def _parse_device1_from_interfaces_added(msg):
+    """Return (name, rssi, mdata_variant) if msg is BlueZ Device1 InterfacesAdded."""
+    try:
+        iface_data = msg.body[1]
+        props = iface_data.get("org.bluez.Device1")
+        if not props:
+            return None
+        name = props.get("Name", "<unknown>")
+        rssi = props.get("RSSI", 0)
+        mdata = props.get("ManufacturerData")
+        return (name, rssi, mdata)
+    except Exception:
+        return None
+
+
 async def scan_once(bus, t_scan=3.0):
-    """Listen for advertisement signals for t_scan seconds."""
+    """
+    Listen for BlueZ's InterfacesAdded(Device1) during discovery and also
+    poll GetManagedObjects at the end as a fallback.
+    """
     match_rule = (
-        "type='signal',interface='org.freedesktop.DBus.ObjectManager',"
+        "type='signal',sender='org.bluez',"
+        "path_namespace='/org/bluez',"
+        "interface='org.freedesktop.DBus.ObjectManager',"
         "member='InterfacesAdded'"
     )
 
-    # subscribe to ObjectManager signals
+    # Subscribe to BlueZ signals
     await bus.call(
         Message(
             destination="org.freedesktop.DBus",
@@ -121,26 +140,48 @@ async def scan_once(bus, t_scan=3.0):
     results = {}
 
     def handler(msg):
-        if msg.message_type != constants.MessageType.SIGNAL:
+        parsed = _parse_device1_from_interfaces_added(msg)
+        if not parsed:
             return
-        try:
-            iface_data = msg.body[1]
-            props = iface_data.get("org.bluez.Device1")
-            if not props or "ManufacturerData" not in props:
-                return
-            name = props.get("Name", "<unknown>")
-            rssi = props.get("RSSI", 0)
-            mdata = props["ManufacturerData"]
-            parsed = parse_mdata(mdata)
-            if parsed:
-                x, y, sigma = parsed
-                results[name] = (x, y, sigma, rssi)
-        except Exception:
-            pass
+        name, rssi, mdata = parsed
+        if not mdata:
+            return
+        parsed_payload = parse_mdata(mdata)
+        if parsed_payload:
+            x, y, sigma = parsed_payload
+            results[name] = (x, y, sigma, rssi)
 
     bus.add_message_handler(handler)
-    await asyncio.sleep(t_scan)
-    bus.remove_message_handler(handler)
+    try:
+        await asyncio.sleep(t_scan)
+    finally:
+        bus.remove_message_handler(handler)
+
+    # ---- Poll fallback: scrape GetManagedObjects for any dev_* we missed ----
+    try:
+        om_introspect = await bus.introspect("org.bluez", "/")
+        root = bus.get_proxy_object("org.bluez", "/", om_introspect)
+        om = root.get_interface("org.freedesktop.DBus.ObjectManager")
+        objs = await om.call_get_managed_objects()
+        for path, ifaces in objs.items():
+            if not path.startswith("/org/bluez/hci0/dev_"):
+                continue
+            dev = ifaces.get("org.bluez.Device1")
+            if not dev:
+                continue
+            mdata = dev.get("ManufacturerData")
+            if not mdata:
+                continue
+            parsed_payload = parse_mdata(mdata)
+            if not parsed_payload:
+                continue
+            name = dev.get("Name", "<unknown>")
+            rssi = dev.get("RSSI", 0)
+            x, y, sigma = parsed_payload
+            results[name] = (x, y, sigma, rssi)
+    except Exception:
+        pass
+
     return results
 
 
@@ -149,8 +190,6 @@ async def scan_once(bus, t_scan=3.0):
 # -------------------------------------------------------------------
 async def main():
     node_id = abcli_hostname
-
-    # simulated coordinates
     x, y, sigma = 1.0, 2.0, 0.5
     t_adv, t_scan = 1.0, 4.0  # seconds
 
@@ -186,26 +225,23 @@ async def main():
             except Exception:
                 pass
 
-        # brief gap to avoid overlap
         await asyncio.sleep(0.3)
 
         # --- Scan ---
         print("[hybrid] scanning ...")
-
-        # enable discovery so BlueZ emits advertisement signals
         try:
             await adapter_iface.call_start_discovery()
             print("[hybrid] discovery started")
-            await asyncio.sleep(0.5)  # allow population
+            await asyncio.sleep(1.0)
         except Exception as e:
             print(f"[hybrid] start_discovery failed: {e}")
 
         peers = await scan_once(bus, t_scan)
 
-        # stop discovery
         try:
             await adapter_iface.call_stop_discovery()
             print("[hybrid] discovery stopped")
+            await asyncio.sleep(0.5)
         except Exception as e:
             print(f"[hybrid] stop_discovery failed: {e}")
 
@@ -218,7 +254,7 @@ async def main():
         else:
             print("[hybrid] no peers detected")
 
-        await asyncio.sleep(0.5)  # small idle before next cycle
+        await asyncio.sleep(0.5)
 
 
 if __name__ == "__main__":
