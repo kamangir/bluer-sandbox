@@ -90,12 +90,7 @@ def help_receiver(
     )
 
     # ---
-    options = "".join(
-        [
-            "python",
-            xtra(",~start_bluetooth", mono=mono),
-        ]
-    )
+    options = xtra("~python,~start_bluetooth", mono=mono)
 
     usage_2 = show_usage(
         [

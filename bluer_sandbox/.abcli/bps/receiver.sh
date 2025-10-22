@@ -2,7 +2,7 @@
 
 function bluer_sandbox_bps_receiver() {
     local options=$1
-    local use_python=$(bluer_ai_option_int "$options" python 0)
+    local use_python=$(bluer_ai_option_int "$options" python 1)
 
     if [[ "$use_python" == 1 ]]; then
         sudo -E \
