@@ -92,17 +92,19 @@ def parse_mdata(mdata_variant):
 
 
 async def scan_once(bus: MessageBus, t_scan: float = 3.0):
-    """Listen for advertisement signals for t_scan seconds."""
-    # subscribe to InterfacesAdded events
+    """Perform active scan using org.bluez.Adapter1 signals."""
+    match = (
+        "type='signal',interface='org.freedesktop.DBus.Properties',"
+        "member='PropertiesChanged',arg0='org.bluez.Device1'"
+    )
+
     add_match_msg = Message(
         destination="org.freedesktop.DBus",
         path="/org/freedesktop/DBus",
         interface="org.freedesktop.DBus",
         member="AddMatch",
         signature="s",
-        body=[
-            "type='signal',interface='org.freedesktop.DBus.ObjectManager',member='InterfacesAdded'"
-        ],
+        body=[match],
     )
     await bus.call(add_match_msg)
 
@@ -112,21 +114,35 @@ async def scan_once(bus: MessageBus, t_scan: float = 3.0):
         if msg.message_type != constants.MessageType.SIGNAL:
             return
         try:
-            iface_data = msg.body[1]
-            props = iface_data.get("org.bluez.Device1")
-            if not props or "ManufacturerData" not in props:
+            iface, changed, _ = msg.body
+            if "ManufacturerData" not in changed:
                 return
-            name = props.get("Name", "<unknown>")
-            rssi = props.get("RSSI", 0)
-            parsed = parse_mdata(props["ManufacturerData"])
+            mdata = changed["ManufacturerData"]
+            parsed = parse_mdata(mdata)
             if parsed:
                 x, y, sigma = parsed
-                results[name] = (x, y, sigma, rssi)
+                # RSSI usually included here
+                rssi = changed.get("RSSI", 0)
+                addr = msg.path.split("/")[-1].replace("_", ":")
+                results[addr] = (x, y, sigma, rssi)
         except Exception:
             pass
 
     bus.add_message_handler(handler)
+
+    # enable discovery
+    introspect = await bus.introspect("org.bluez", "/org/bluez/hci0")
+    mgr = bus.get_proxy_object("org.bluez", "/org/bluez/hci0", introspect)
+    adapter_iface = mgr.get_interface("org.bluez.Adapter1")
+
+    await adapter_iface.call_start_discovery()
+    print("[hybrid] discovery started")
+
     await asyncio.sleep(t_scan)
+
+    await adapter_iface.call_stop_discovery()
+    print("[hybrid] discovery stopped")
+
     bus.remove_message_handler(handler)
     return results
 
