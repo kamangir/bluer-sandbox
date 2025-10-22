@@ -11,6 +11,7 @@ setup(
     packages=[
         NAME,
         f"{NAME}.ai4k",
+        f"{NAME}.bps",
         f"{NAME}.help",
         f"{NAME}.help.offline_llm",
         f"{NAME}.interview",
@@ -25,7 +26,7 @@ setup(
         NAME: [
             "config.env",
             ".abcli/**/*.sh",
-            "assets/*",
+            "assets/**/*",
         ],
     },
     extras_require={
