@@ -54,9 +54,6 @@ class Beacon:
     def _run(self):
         ble_adapter = adapter.Adapter()
         self._adv = advertisement.Advertisement(ble_adapter.address, 1)
-        import ipdb
-
-        ipdb.set_trace()
         self._adv.include_tx_power = True
         self._adv.appearance = 0
         self._adv.local_name = self.node_id
