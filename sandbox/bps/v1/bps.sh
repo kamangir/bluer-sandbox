@@ -11,6 +11,8 @@ function runme() {
     local do_start=$(bluer_ai_option_int "$options" start 1)
 
     if [[ "$do_install" == 1 ]]; then
+        bluer_ai_log "installing ..."
+
         sudo apt update
         sudo apt install -y \
             bluez \
@@ -27,6 +29,8 @@ function runme() {
     fi
 
     if [[ "$do_start" == 1 ]]; then
+        bluer_ai_log "starting ..."
+
         sudo systemctl start bluetooth
         sudo systemctl status bluetooth
 
