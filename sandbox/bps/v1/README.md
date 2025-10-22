@@ -1,6 +1,6 @@
 only works on rpi.
 
-## test
+## test & introspect
 
 ```bash
 @git @sandbox

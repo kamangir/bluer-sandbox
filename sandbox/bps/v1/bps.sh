@@ -67,14 +67,7 @@ function runme() {
     fi
 
     bluer_ai_log "starting $task ..."
-    if [[ "$task" == "beacon" ]]; then
-        bluer_ai_eval - \
-            sudo -E \
-            $(which python3) \
-            beacon.py
-    elif [[ "$task" == "receiver" ]]; then
-        sudo hcitool lescan
-    elif [[ "$task" == "test" ]]; then
+    if [[ "$task" == "test" ]]; then
         bluer_ai_eval - \
             sudo -E \
             $(which python3) \
@@ -91,6 +84,13 @@ function runme() {
 
         bluer_ai_eval - \
             sudo busctl --system call $N /org/example/Hello org.example.Hello Ping
+    elif [[ "$task" == "beacon" ]]; then
+        bluer_ai_eval - \
+            sudo -E \
+            $(which python3) \
+            beacon.py
+    elif [[ "$task" == "receiver" ]]; then
+        sudo hcitool lescan
     elif [[ "$what" == "beacon+receiver" ]]; then
         python3 bps.py
     else
