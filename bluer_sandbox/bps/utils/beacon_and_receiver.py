@@ -1,123 +1,171 @@
 #!/usr/bin/env python3
-"""
-Raw-HCI hybrid beacon
----------------------
-Each node alternates between:
-  • sending a manufacturer-specific BLE advertisement (company ID 0xFFFF)
-  • scanning for others' advertisements via Bleak
+# beacon_and_receiver.py — alternate BLE advertise/scan cycles (no bluezero/bleak)
+# Requires: dbus-next, bluetoothd --experimental, adapter powered on.
 
-Works even when BlueZ strips ManufacturerData.
-Run with:  sudo python3 beacon_hybrid_raw.py
-"""
+import asyncio
+import struct
+import signal
+from dbus_next.aio import MessageBus
+from dbus_next.service import ServiceInterface, method, dbus_property
+from dbus_next import Variant, BusType, Message, MessageType
 
-import asyncio, struct, time, socket, os
-from bleak import BleakScanner
+from blueness import module
+from bluer_options.env import abcli_hostname
+from bluer_sandbox import NAME
+from bluer_sandbox.logger import logger
 
-# --- Advertising constants ---
-HCI_COMMAND_PKT = 0x01
-OGF_LE_CTL = 0x08
-OCF_LE_SET_ADVERTISING_PARAMETERS = 0x0006
-OCF_LE_SET_ADVERTISING_DATA = 0x0008
-OCF_LE_SET_ADVERTISE_ENABLE = 0x000A
+NAME = module.name(__file__, NAME)
 
-COMPANY_ID = 0xFFFF
-
-
-def hci_send_cmd(sock, ogf, ocf, data=b""):
-    opcode = (ogf << 10) | ocf
-    plen = len(data)
-    sock.send(struct.pack("<BHB", HCI_COMMAND_PKT, opcode, plen) + data)
+BUS_NAME = "org.bluez"
+ADAPTER_PATH = "/org/bluez/hci0"
+ADVERTISING_MGR_IFACE = "org.bluez.LEAdvertisingManager1"
+AD_OBJECT_PATH = "/org/bluez/example/advertisement0"
+AD_IFACE = "org.bluez.LEAdvertisement1"
 
 
-def advertise_once(sock, node_name="PI", x=1.0, y=2.0, sigma=0.5, duration=2.0):
-    """Broadcast a single BLE advertisement frame for a few seconds."""
-    payload = struct.pack("<fff", x, y, sigma)
-    mdata = (
-        bytes([len(payload) + 3, 0xFF, COMPANY_ID & 0xFF, COMPANY_ID >> 8]) + payload
+class Advertisement(ServiceInterface):
+    def __init__(self, name: str, x=0.0, y=0.0, sigma=1.0):
+        super().__init__(AD_IFACE)
+        self._name = name
+        self._type = "peripheral"
+        self._include_tx_power = True
+        self._service_uuids = []
+        self._mfg = {0xFFFF: struct.pack("<fff", x, y, sigma)}
+
+    @dbus_property()
+    def Type(self) -> "s":
+        return self._type
+
+    @Type.setter
+    def Type(self, _v):
+        pass
+
+    @dbus_property()
+    def LocalName(self) -> "s":
+        return self._name
+
+    @LocalName.setter
+    def LocalName(self, _v):
+        pass
+
+    @dbus_property()
+    def ServiceUUIDs(self) -> "as":
+        return self._service_uuids
+
+    @ServiceUUIDs.setter
+    def ServiceUUIDs(self, _v):
+        pass
+
+    @dbus_property()
+    def IncludeTxPower(self) -> "b":
+        return self._include_tx_power
+
+    @IncludeTxPower.setter
+    def IncludeTxPower(self, _v):
+        pass
+
+    @dbus_property()
+    def ManufacturerData(self) -> "a{qv}":
+        return {0xFFFF: Variant("ay", self._mfg[0xFFFF])}
+
+    @ManufacturerData.setter
+    def ManufacturerData(self, _v):
+        pass
+
+    @method()
+    def Release(self):
+        logger.info(f"{NAME}: BlueZ requested Release()")
+
+
+async def register_advertisement(bus: MessageBus):
+    adv = Advertisement(abcli_hostname, x=1.0, y=2.0, sigma=0.5)
+    bus.export(AD_OBJECT_PATH, adv)
+    await asyncio.sleep(0.5)
+    msg = Message(
+        destination=BUS_NAME,
+        path=ADAPTER_PATH,
+        interface=ADVERTISING_MGR_IFACE,
+        member="RegisterAdvertisement",
+        signature="oa{sv}",
+        body=[AD_OBJECT_PATH, {}],
     )
-    name_bytes = node_name.encode()
-    name = bytes([len(name_bytes) + 1, 0x09]) + name_bytes
-    adv_data = mdata + name
-    if len(adv_data) > 31:
-        adv_data = adv_data[:31]
+    reply = await bus.call(msg)
+    if reply.message_type == MessageType.ERROR:
+        raise RuntimeError(f"RegisterAdvertisement failed: {reply.error_name}")
+    return adv
 
-    # LE Set Advertising Parameters (9 fields on Broadcom)
-    hci_send_cmd(
-        sock,
-        OGF_LE_CTL,
-        OCF_LE_SET_ADVERTISING_PARAMETERS,
-        struct.pack(
-            "<HHBBB6sBHHB",
-            0x00A0,  # min interval (100 ms)
-            0x00A0,  # max interval
-            0x00,  # adv type (ADV_IND)
-            0x00,  # own addr type
-            0x00,  # direct addr type
-            b"\x00" * 6,  # direct addr
-            0x07,  # channel map (37,38,39)
-            0x00,  # filter policy
-            0x00,  # unused (for alignment)
-            0x00,  # unused
-        ),
+
+async def unregister_advertisement(bus: MessageBus):
+    msg = Message(
+        destination=BUS_NAME,
+        path=ADAPTER_PATH,
+        interface=ADVERTISING_MGR_IFACE,
+        member="UnregisterAdvertisement",
+        signature="o",
+        body=[AD_OBJECT_PATH],
     )
+    await bus.call(msg)
 
-    # Set Advertising Data
-    hci_send_cmd(
-        sock,
-        OGF_LE_CTL,
-        OCF_LE_SET_ADVERTISING_DATA,
-        bytes([len(adv_data)]) + adv_data + bytes(31 - len(adv_data)),
+
+async def scan_once(duration: float = 8.0):
+    """Run a short passive scan using bluetoothctl."""
+    logger.info(f"{NAME}: scanning for {duration:.1f}s...")
+    proc = await asyncio.create_subprocess_exec(
+        "bluetoothctl",
+        "scan",
+        "on",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
     )
+    try:
+        await asyncio.sleep(duration)
+    finally:
+        proc.terminate()
+        await asyncio.create_subprocess_exec("bluetoothctl", "scan", "off")
+    out, _ = await proc.communicate()
+    lines = out.decode(errors="ignore").splitlines()
+    for line in lines:
+        if "Device" in line:
+            logger.info(f"{NAME}: found {line.strip()}")
 
-    # Enable advertising
-    hci_send_cmd(sock, OGF_LE_CTL, OCF_LE_SET_ADVERTISE_ENABLE, b"\x01")
-    time.sleep(duration)
-    hci_send_cmd(sock, OGF_LE_CTL, OCF_LE_SET_ADVERTISE_ENABLE, b"\x00")
 
-
-async def scan_once_bleak(t_scan=5.0):
-    """Scan for other 0xFFFF manufacturer advertisements."""
-    print(f"[hybrid] bleak scanning for {t_scan:.1f}s …")
-    devices = await BleakScanner.discover(timeout=t_scan, return_adv=True)
-    peers = {}
-    for d, adv in (
-        devices.items()
-        if isinstance(devices, dict)
-        else [(d, getattr(d, "advertisement_data", None)) for d in devices]
-    ):
-        if not adv:
-            continue
-        md = getattr(adv, "manufacturer_data", {})
-        if COMPANY_ID in md and len(md[COMPANY_ID]) >= 12:
-            x, y, sigma = struct.unpack("<fff", md[COMPANY_ID][:12])
-            peers[d.address] = (x, y, sigma, d.rssi)
-            print(
-                f"[peer] {d.address:>17} RSSI={d.rssi:>4} "
-                f"pos=({x:.1f},{y:.1f}) σ={sigma:.2f}"
-            )
-    if not peers:
-        print("[hybrid] no peers detected")
-    return peers
+async def advertise_once(bus: MessageBus, duration: float = 2.0):
+    """Advertise for a short duration."""
+    logger.info(f"{NAME}: starting advertisement...")
+    adv = await register_advertisement(bus)
+    await asyncio.sleep(duration)
+    await unregister_advertisement(bus)
+    logger.info(f"{NAME}: stopped advertisement.")
 
 
 async def main():
-    node = os.uname().nodename
-    x, y, s = 1.0, 2.0, 0.5
-    t_adv, t_scan = 2.0, 8.0
+    bus = MessageBus(bus_type=BusType.SYSTEM)
+    await bus.connect()
+    logger.info(f"{NAME}: connected to system bus as {bus.unique_name}")
 
-    sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_RAW, socket.BTPROTO_HCI)
-    sock.bind((0,))
+    stop = asyncio.Event()
 
-    print(f"[hybrid] node {node} ready (advertise {t_adv}s / scan {t_scan}s)")
-    while True:
-        advertise_once(sock, node_name=node, x=x, y=y, sigma=s, duration=t_adv)
-        await asyncio.sleep(0.5)
-        await scan_once_bleak(t_scan)
-        await asyncio.sleep(0.5)
+    def _sigint(*_):
+        stop.set()
+
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        try:
+            loop.add_signal_handler(sig, _sigint)
+        except NotImplementedError:
+            pass
+
+    try:
+        while not stop.is_set():
+            await advertise_once(bus, duration=2.0)
+            await scan_once(duration=8.0)
+    finally:
+        try:
+            await unregister_advertisement(bus)
+        except Exception:
+            pass
+        logger.info(f"{NAME}: exiting cleanly.")
 
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("\n[hybrid] stopped")
+    asyncio.run(main())
