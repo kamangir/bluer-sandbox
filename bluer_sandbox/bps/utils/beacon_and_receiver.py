@@ -186,6 +186,9 @@ async def scan_for(timeout: float, grep: str = ""):
             x_, y_, sigma_ = struct.unpack("<fff", ad.manufacturer_data[0xFFFF])
             logger.info(f"x: {x_:.2f}, y: {y_:.2f}, sigma: {sigma_:.2f}")
         except Exception:
+            import ipdb
+
+            ipdb.set_trace()
             logger.info(ad)
 
     scanner = BleakScanner(detection_callback=callback)
