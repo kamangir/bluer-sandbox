@@ -42,9 +42,11 @@ async def get_adapter_tx_power(bus: MessageBus) -> float:
         reply = await bus.call(msg)
         if reply.message_type == MessageType.METHOD_RETURN:
             return float(reply.body[0].value)
-    except Exception:
+    except Exception as e:
+        logger.warning(f"cannot get tx_power: {e}")
         pass
-    return 0.0
+
+    return 12.0
 
 
 class Advertisement(ServiceInterface):
