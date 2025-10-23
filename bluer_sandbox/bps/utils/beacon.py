@@ -49,7 +49,7 @@ async def get_adapter_tx_power(bus: MessageBus) -> float:
         pass
 
     # Fallback for adapters that don’t expose TxPower (e.g., Raspberry Pi)
-    return 12.0
+    return -1.0
 
 
 class Advertisement(ServiceInterface):
