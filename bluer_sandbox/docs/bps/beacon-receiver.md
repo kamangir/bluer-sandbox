@@ -12,16 +12,23 @@
 ```
 
 ```text
+starting bluetooth...
+⚙️  sudo systemctl start bluetooth
+⚙️  sudo bluetoothctl power on
+Changing power on succeeded
+⚙️  sudo bluetoothctl discoverable on
+AdvertisementMonitor path registered
+⚙️  sudo -E /home/pi/venv/bluer_ai/bin/python3 -m bluer_sandbox.bps.utils.beacon --x 27.061946406295068 --y 39.12480033661038 --z 70.45884193445569 --sigma 70.31657557675341 --timeout 10
 🌀  bluer_sandbox.bps.utils.beacon: every 2 s for 10 s.
-🌀  connected to system bus as :1.41
+🌀  connected to system bus as :1.31
 ⚠️  🌀  unknown tx_power reply.message_type: MessageType.ERROR
 🌀  adapter TxPower=-1.0 dBm
-🌀  registering advertisement: x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.0 dBm
-🌀  advertising as 'sparrow3-back' (manuf 0xFFFF: <x,y,z,sigma,tx_power>) - ^C to stop.
-🌀  advertising sparrow3-back ...
-🌀  advertising sparrow3-back ...
-🌀  advertising sparrow3-back ...
-🌀  advertising sparrow3-back ...
+🌀  registering advertisement: x: 27.06, y: 39.12, z: 70.46, sigma: 70.32, tx_power: -1.0 dBm
+🌀  advertising as 'sparrow2' (manuf 0xFFFF: <x,y,z,sigma,tx_power>) - ^C to stop.
+🌀  advertising sparrow2 ...
+🌀  advertising sparrow2 ...
+🌀  advertising sparrow2 ...
+🌀  advertising sparrow2 ...
 🌀  unregistered advertisement.
 🌀  timeout (10 s) reached, stopping advertisement.
 ```
@@ -35,33 +42,29 @@ on another pi,
 ```
 
 ```text
+starting bluetooth...
+⚙️  sudo systemctl start bluetooth
+⚙️  sudo bluetoothctl power on
+Changing power on succeeded
+⚙️  sudo bluetoothctl discoverable on
+Changing discoverable on succeeded
 🌀  bluer_sandbox.bps.utils.receiver: LE Scan for 10 s (Ctrl+C to stop) ...
 🌀  scanning started...
 🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow3-back
-🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -67
-🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
+🌀  device name: sparrow2
+🌀  device address: B8:27:EB:41:BD:97
+🌀  rssi: -66
+🌀  x: 27.06, y: 39.12, z: 70.46, sigma: 70.32, tx_power: -1.00
 🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow3-back
-🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -51
-🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
-🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow3-back
-🌀  device address: B8:27:EB:57:B6:DA
+🌀  device name: sparrow2
+🌀  device address: B8:27:EB:41:BD:97
 🌀  rssi: -50
-🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
+🌀  x: 27.06, y: 39.12, z: 70.46, sigma: 70.32, tx_power: -1.00
 🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow3-back
-🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -49
-🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
-🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow3-back
-🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -49
-🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
+🌀  device name: sparrow2
+🌀  device address: B8:27:EB:41:BD:97
+🌀  rssi: -51
+🌀  x: 27.06, y: 39.12, z: 70.46, sigma: 70.32, tx_power: -1.00
 🌀  timeout (10 s) reached, stopping advertisement.
 🌀  scan stopped.
 ```
