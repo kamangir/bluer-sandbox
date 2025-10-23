@@ -11,13 +11,6 @@
 	[--timeout <10.0 | -1>]
  . start beacon.
 @bps \
-	beacon_and_receiver \
-	[~start_bluetooth] \
-	[--grep <sparrow>] \
-	[--t_advertisement <10 | -1>] \
-	[--t_scan <10 | -1>]
- . start beacon and/or receiver.
-@bps \
 	install
  . install bps.
 @bps \

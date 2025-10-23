@@ -18,7 +18,6 @@ docs = (
         for doc in [
             "literature",
             "beacon-receiver",
-            "beacon-and-receiver",
             "test-introspect",
         ]
     ]

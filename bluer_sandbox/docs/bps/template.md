@@ -15,4 +15,3 @@ items:::
 - [bluer_sandbox.bps](../../bps)
 - [test -> introspect](./test-introspect.md)
 - [beacon -> receiver](./beacon-receiver.md)
-- [beacon <-> receiver](./beacon-and-receiver.md)
