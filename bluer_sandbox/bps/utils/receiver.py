@@ -35,7 +35,7 @@ async def main(
     timeout: float = 10.0,
 ):
     logger.info(
-        "{}: LE Scan for {:.1f}s (Ctrl+C to stop) ...".format(
+        "{}: LE Scan for {} (Ctrl+C to stop) ...".format(
             NAME,
             string.pretty_duration(
                 timeout,
