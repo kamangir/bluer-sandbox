@@ -11,6 +11,7 @@ from dbus_next.service import ServiceInterface, method, dbus_property
 from dbus_next import Variant, BusType, Message, MessageType
 
 from blueness import module
+from bluer_options import string
 from bluer_options.env import abcli_hostname
 
 from bluer_sandbox import NAME
@@ -155,11 +156,12 @@ async def main(
     x: float,
     y: float,
     sigma: float,
+    spacing: float = 2.0,
 ):
     # Connect to the SYSTEM bus (the one BlueZ uses)
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
-    logger.info(f"{NAME}: connected to system bus as {bus.unique_name}")
+    logger.info(f"connected to system bus as {bus.unique_name}")
 
     # Register with BlueZ
     try:
@@ -195,7 +197,7 @@ async def main(
     try:
         while not stop.is_set():
             logger.info(f"advertising {abcli_hostname} ...")
-            await asyncio.sleep(2.0)
+            await asyncio.sleep(spacing)
     finally:
         try:
             await unregister_advertisement(bus)
@@ -221,12 +223,67 @@ if __name__ == "__main__":
         type=float,
         default=3.0,
     )
+    parser.add_argument(
+        "--spacing",
+        type=float,
+        default=2.0,
+        help="in seconds.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=10,
+        help="in seconds, -1: infinite.",
+    )
     args = parser.parse_args()
 
-    asyncio.run(
-        main(
-            x=args.x,
-            y=args.y,
-            sigma=args.sigma,
+    logger.info(
+        "{}: every {}{}.".format(
+            NAME,
+            string.pretty_duration(
+                args.spacing,
+                short=True,
+            ),
+            (
+                ""
+                if args.timeout == -1
+                else " for {}".format(
+                    string.pretty_duration(
+                        args.timeout,
+                        short=True,
+                    )
+                )
+            ),
         )
     )
+
+    async def runner():
+        task = asyncio.create_task(
+            main(
+                x=args.x,
+                y=args.y,
+                sigma=args.sigma,
+                spacing=args.spacing,
+            )
+        )
+        try:
+            if args.timeout > 0:
+                await asyncio.wait_for(task, timeout=args.timeout)
+            else:
+                await task
+        except asyncio.TimeoutError:
+            print(
+                "timeout ({}) reached, stopping advertisement.".format(
+                    string.pretty_duration(
+                        args.timeout,
+                        short=True,
+                    )
+                )
+            )
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+
+    asyncio.run(runner())

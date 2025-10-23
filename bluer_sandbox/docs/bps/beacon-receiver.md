@@ -1,17 +1,20 @@
 # bps: beacon-receiver
 
 ```bash
-@bps beacon
+@bps beacon - \
+    --x 1.1 \
+    --y 2.2 \
+    --sigma 3.3
 ```
 
 ```text
-🌀  bluer_sandbox.bps.utils.beacon: connected to system bus as :1.28
-🌀  bluer_sandbox.bps.utils.beacon: advertising as 'sparrow3-back' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop.
+🌀  bluer_sandbox.bps.utils.beacon: connected to system bus as :1.85
+🌀  registering advertisement: x: 1.10, y: 2.20, sigma: 3.30
+🌀  advertising as 'sparrow3-back' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop.
 🌀  advertising sparrow3-back ...
+...
 🌀  advertising sparrow3-back ...
-🌀  advertising sparrow3-back ...
-🌀  advertising sparrow3-back ...
-^C🌀  bluer_sandbox.bps.utils.beacon: unregistered advertisement.
+^C🌀  unregistered advertisement.
 ```
 
 on another pi,
@@ -27,13 +30,15 @@ on another pi,
 🌀  . .. ... .. . .. ... .. . .. .
 🌀  device name: sparrow3-back
 🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -65
-🌀  x: 1.20, y: 2.30, sigma: 0.80
+🌀  rssi: -51
+🌀  x: 1.10, y: 2.20, sigma: 3.30
+🌀  . .. ... .. . .. ... .. . .. .
+...
 🌀  . .. ... .. . .. ... .. . .. .
 🌀  device name: sparrow3-back
 🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -50
-🌀  x: 1.20, y: 2.30, sigma: 0.80
-🌀  timeout reached after 10.0s.
+🌀  rssi: -41
+🌀  x: 1.10, y: 2.20, sigma: 3.30
+^C🌀  Ctrl+C detected, stopping scan ...
 🌀  scan stopped.
 ```
