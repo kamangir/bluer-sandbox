@@ -1,6 +1,5 @@
 from typing import Dict
 
-from bluer_objects.README.consts import assets2
 from bluer_objects.README.consts import assets_url
 
 
