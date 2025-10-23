@@ -13,10 +13,11 @@
 
 ```text
 🌀  bluer_sandbox.bps.utils.beacon: every 2 s for 10 s.
-🌀  connected to system bus as :1.133
-🌀  registering advertisement: x: 97.63, y: 88.52, z: 63.67, sigma: 59.24
-🌀  advertising as 'sparrow3-back' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop.
-🌀  advertising sparrow3-back ...
+🌀  connected to system bus as :1.41
+⚠️  🌀  unknown tx_power reply.message_type: MessageType.ERROR
+🌀  adapter TxPower=-1.0 dBm
+🌀  registering advertisement: x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.0 dBm
+🌀  advertising as 'sparrow3-back' (manuf 0xFFFF: <x,y,z,sigma,tx_power>) - ^C to stop.
 🌀  advertising sparrow3-back ...
 🌀  advertising sparrow3-back ...
 🌀  advertising sparrow3-back ...
@@ -39,28 +40,28 @@ on another pi,
 🌀  . .. ... .. . .. ... .. . .. .
 🌀  device name: sparrow3-back
 🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -40
-🌀  x: 97.63, y: 88.52, z: 63.67, sigma: 59.24
+🌀  rssi: -67
+🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
 🌀  . .. ... .. . .. ... .. . .. .
 🌀  device name: sparrow3-back
 🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -40
-🌀  x: 97.63, y: 88.52, z: 63.67, sigma: 59.24
+🌀  rssi: -51
+🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
+🌀  . .. ... .. . .. ... .. . .. .
+🌀  device name: sparrow3-back
+🌀  device address: B8:27:EB:57:B6:DA
+🌀  rssi: -50
+🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
 🌀  . .. ... .. . .. ... .. . .. .
 🌀  device name: sparrow3-back
 🌀  device address: B8:27:EB:57:B6:DA
 🌀  rssi: -49
-🌀  x: 97.63, y: 88.52, z: 63.67, sigma: 59.24
+🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
 🌀  . .. ... .. . .. ... .. . .. .
 🌀  device name: sparrow3-back
 🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -48
-🌀  x: 97.63, y: 88.52, z: 63.67, sigma: 59.24
-🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow3-back
-🌀  device address: B8:27:EB:57:B6:DA
-🌀  rssi: -48
-🌀  x: 97.63, y: 88.52, z: 63.67, sigma: 59.24
+🌀  rssi: -49
+🌀  x: 67.52, y: 68.49, z: 3.03, sigma: 58.06, tx_power: -1.00
 🌀  timeout (10 s) reached, stopping advertisement.
 🌀  scan stopped.
 ```
