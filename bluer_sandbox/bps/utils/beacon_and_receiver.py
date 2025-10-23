@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
-# beacon_and_receiver.py — alternate BLE advertise/scan cycles using pure BlueZ D-Bus
-# Requires: dbus-next, bluetoothd --experimental, adapter powered on.
+# beacon_and_receiver.py — combined BLE advertiser + receiver (BlueZ + Bleak)
+# Requires: dbus-next 0.2.x, bluetoothd --experimental, adapter powered on.
 
 import asyncio
 import struct
 import signal
+import dataclasses
+
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method, dbus_property
 from dbus_next import Variant, BusType, Message, MessageType
 
+from bleak import BleakScanner
+from bleak.backends.device import BLEDevice
+from bleak.backends.scanner import AdvertisementData
+
 from blueness import module
 from bluer_options.env import abcli_hostname
+from bluer_options.terminal.functions import hr
 from bluer_sandbox import NAME
 from bluer_sandbox.logger import logger
 
@@ -19,14 +26,13 @@ NAME = module.name(__file__, NAME)
 BUS_NAME = "org.bluez"
 ADAPTER_PATH = "/org/bluez/hci0"
 ADVERTISING_MGR_IFACE = "org.bluez.LEAdvertisingManager1"
-ADAPTER_IFACE = "org.bluez.Adapter1"
 AD_OBJECT_PATH = "/org/bluez/example/advertisement0"
 AD_IFACE = "org.bluez.LEAdvertisement1"
 
 
+# ----------------------------------------------------------------------
+# Advertisement
 class Advertisement(ServiceInterface):
-    """Minimal LE advertisement implementing org.bluez.LEAdvertisement1"""
-
     def __init__(self, name: str, x=0.0, y=0.0, sigma=1.0):
         super().__init__(AD_IFACE)
         self._name = name
@@ -39,51 +45,31 @@ class Advertisement(ServiceInterface):
     def Type(self) -> "s":
         return self._type
 
-    @Type.setter
-    def Type(self, _v):
-        pass
-
     @dbus_property()
     def LocalName(self) -> "s":
         return self._name
-
-    @LocalName.setter
-    def LocalName(self, _v):
-        pass
 
     @dbus_property()
     def ServiceUUIDs(self) -> "as":
         return self._service_uuids
 
-    @ServiceUUIDs.setter
-    def ServiceUUIDs(self, _v):
-        pass
-
     @dbus_property()
     def IncludeTxPower(self) -> "b":
         return self._include_tx_power
-
-    @IncludeTxPower.setter
-    def IncludeTxPower(self, _v):
-        pass
 
     @dbus_property()
     def ManufacturerData(self) -> "a{qv}":
         return {0xFFFF: Variant("ay", self._mfg[0xFFFF])}
 
-    @ManufacturerData.setter
-    def ManufacturerData(self, _v):
-        pass
-
     @method()
     def Release(self):
-        logger.info(f"{NAME}: BlueZ requested Release()")
+        logger.info(f"{NAME}: BlueZ requested Release() — advertisement unregistered.")
 
 
-async def register_advertisement(bus: MessageBus) -> Advertisement:
-    adv = Advertisement(abcli_hostname, x=1.0, y=2.0, sigma=0.5)
+async def register_advertisement(bus: MessageBus):
+    adv = Advertisement(name=abcli_hostname, x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJECT_PATH, adv)
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(1.0)
     msg = Message(
         destination=BUS_NAME,
         path=ADAPTER_PATH,
@@ -99,90 +85,59 @@ async def register_advertisement(bus: MessageBus) -> Advertisement:
 
 
 async def unregister_advertisement(bus: MessageBus):
-    try:
-        msg = Message(
-            destination=BUS_NAME,
-            path=ADAPTER_PATH,
-            interface=ADVERTISING_MGR_IFACE,
-            member="UnregisterAdvertisement",
-            signature="o",
-            body=[AD_OBJECT_PATH],
-        )
-        await bus.call(msg)
-    except Exception as e:
-        logger.warning(f"{NAME}: unregister_advertisement failed: {e}")
-    try:
-        bus.unexport(AD_OBJECT_PATH, AD_IFACE)
-    except Exception:
-        pass
-    await asyncio.sleep(0.5)
-
-
-async def advertise_once(bus: MessageBus, duration: float = 2.0):
-    """Advertise for a short duration."""
-    logger.info(f"{NAME}: starting advertisement...")
-    await register_advertisement(bus)
-    await asyncio.sleep(duration)
-    await unregister_advertisement(bus)
-    logger.info(f"{NAME}: stopped advertisement.")
-
-
-async def start_discovery(bus: MessageBus):
-    """Start scanning via org.bluez.Adapter1.StartDiscovery()"""
     msg = Message(
         destination=BUS_NAME,
         path=ADAPTER_PATH,
-        interface=ADAPTER_IFACE,
-        member="StartDiscovery",
+        interface=ADVERTISING_MGR_IFACE,
+        member="UnregisterAdvertisement",
+        signature="o",
+        body=[AD_OBJECT_PATH],
     )
-    reply = await bus.call(msg)
-    if reply.message_type == MessageType.ERROR:
-        logger.warning(f"{NAME}: StartDiscovery failed: {reply.error_name}")
+    await bus.call(msg)
 
 
-async def stop_discovery(bus: MessageBus):
-    """Stop scanning via org.bluez.Adapter1.StopDiscovery()"""
-    msg = Message(
-        destination=BUS_NAME,
-        path=ADAPTER_PATH,
-        interface=ADAPTER_IFACE,
-        member="StopDiscovery",
-    )
-    reply = await bus.call(msg)
-    if reply.message_type == MessageType.ERROR:
-        logger.warning(f"{NAME}: StopDiscovery failed: {reply.error_name}")
+# ----------------------------------------------------------------------
+# Receiver
+def to_dict(obj):
+    if dataclasses.is_dataclass(obj):
+        return dataclasses.asdict(obj)
+    if hasattr(obj, "__dict__"):
+        return vars(obj)
+    if isinstance(obj, dict):
+        return obj
+    return {"repr": repr(obj)}
 
 
-async def scan_once(bus: MessageBus, duration: float = 8.0):
-    """Scan for nearby BLE devices via D-Bus."""
-    logger.info(f"{NAME}: scanning for {duration:.1f}s...")
-    devices = {}
-
-    def handle_signal(msg: Message):
-        if msg.member != "InterfacesAdded":
+async def scan_for(t_b: float, grep: str = ""):
+    def callback(device: BLEDevice, advertisement_data: AdvertisementData):
+        if grep and (device.name is None or grep not in device.name):
             return
-        if not msg.body or len(msg.body) < 2:
-            return
-        _, interfaces = msg.body
-        dev_info = interfaces.get("org.bluez.Device1")
-        if not dev_info:
-            return
-        addr = dev_info.get("Address")
-        name = dev_info.get("Name") or dev_info.get("Alias")
-        if addr and addr not in devices:
-            devices[addr] = name or "(unknown)"
-            logger.info(f"{NAME}: found {addr} {devices[addr]}")
+        logger.info(hr(width=30))
+        logger.info(f"device name: {device.name}")
+        logger.info(f"device address: {device.address}")
+        try:
+            logger.info(f"rssi: {advertisement_data.rssi}")
+        except Exception:
+            pass
+        try:
+            x_, y_, sigma_ = struct.unpack(
+                "<fff", advertisement_data.manufacturer_data[0xFFFF]
+            )
+            logger.info(f"x: {x_:.2f}, y: {y_:.2f}, sigma: {sigma_:.2f}")
+        except Exception:
+            logger.info(advertisement_data)
 
-    bus.add_message_handler(handle_signal)
-    await start_discovery(bus)
-    await asyncio.sleep(duration)
-    await stop_discovery(bus)
-    bus.remove_message_handler(handle_signal)
-    logger.info(f"{NAME}: found {len(devices)} device(s).")
-    await asyncio.sleep(0.5)
+    scanner = BleakScanner(detection_callback=callback)
+    await scanner.start()
+    logger.info(f"{NAME}: scanning for {t_b:.1f}s ...")
+    await asyncio.sleep(t_b)
+    await scanner.stop()
+    logger.info(f"{NAME}: scan stopped.")
 
 
-async def main():
+# ----------------------------------------------------------------------
+# Combined loop
+async def main(t_a=2.0, t_b=8.0):
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
     logger.info(f"{NAME}: connected to system bus as {bus.unique_name}")
@@ -199,14 +154,25 @@ async def main():
         except NotImplementedError:
             pass
 
-    try:
-        while not stop.is_set():
-            await advertise_once(bus, duration=1.0)
-            await scan_once(bus, duration=10.0)
-    finally:
-        await unregister_advertisement(bus)
-        logger.info(f"{NAME}: exiting cleanly.")
+    while not stop.is_set():
+        # advertise
+        try:
+            adv = await register_advertisement(bus)
+            logger.info(f"advertising {abcli_hostname} for {t_a:.1f}s ...")
+            await asyncio.sleep(t_a)
+            await unregister_advertisement(bus)
+            logger.info("advertisement stopped.")
+        except Exception as e:
+            logger.info(f"advertise error: {e}")
+
+        # scan
+        try:
+            await scan_for(t_b)
+        except Exception as e:
+            logger.info(f"scan error: {e}")
+
+    logger.info(f"{NAME}: terminated.")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main(t_a=2.0, t_b=8.0))
