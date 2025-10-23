@@ -1,13 +1,31 @@
 #! /usr/bin/env bash
 
 function bluer_sandbox_bps_start_bluetooth() {
+    local options=$1
+    local verbose=$(bluer_ai_option_int "$options" verbose 0)
+
     bluer_ai_log "starting bluetooth..."
 
-    sudo systemctl start bluetooth
-    sudo systemctl status --no-pager bluetooth
-
-    sudo bluetoothctl power on
-    sudo bluetoothctl discoverable on
     bluer_ai_eval - \
-        sudo bluetoothctl show
+        sudo systemctl start bluetooth
+    [[ $? -ne 0 ]] && return 1
+
+    [[ "$verbose" == 1 ]] &&
+        bluer_ai_eval - \
+            sudo systemctl status \
+            --no-pager bluetooth
+
+    bluer_ai_eval - \
+        sudo bluetoothctl power on
+    [[ $? -ne 0 ]] && return 1
+
+    bluer_ai_eval - \
+        sudo bluetoothctl discoverable on
+    [[ $? -ne 0 ]] && return 1
+
+    [[ "$verbose" == 1 ]] &&
+        bluer_ai_eval - \
+            sudo bluetoothctl show
+
+    return 0
 }

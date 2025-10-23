@@ -62,8 +62,8 @@ async def main(
                 logger.warning("rssi not found.")
 
             try:
-                x_, y_, z_, sigma_ = struct.unpack(
-                    "<ffff", advertisement_data.manufacturer_data[0xFFFF]
+                x_, y_, z_, sigma_, tx_power = struct.unpack(
+                    "<fffff", advertisement_data.manufacturer_data[0xFFFF]
                 )
                 logger.info(
                     ", ".join(
@@ -72,6 +72,7 @@ async def main(
                             f"y: {y_:.2f}",
                             f"z: {z_:.2f}",
                             f"sigma: {sigma_:.2f}",
+                            f"tx_power: {tx_power:.2f}",
                         ]
                     )
                 )

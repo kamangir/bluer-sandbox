@@ -7,7 +7,7 @@ def help_beacon(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("~start_bluetooth", mono=mono)
+    options = xtra("~start_bluetooth,verbose", mono=mono)
 
     args = [
         "[--x <1.0>]",
@@ -50,7 +50,7 @@ def help_introspect(
 ) -> str:
     options = "".join(
         [
-            xtra("~start_bluetooth,", mono=mono),
+            xtra("~start_bluetooth,verbose,", mono=mono),
             "unique_bus_name=<1:234>",
         ]
     )
@@ -70,7 +70,7 @@ def help_receiver(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("~start_bluetooth", mono=mono)
+    options = xtra("~start_bluetooth,verbose", mono=mono)
 
     args = [
         "[--grep <sparrow>]",
@@ -89,7 +89,7 @@ def help_receiver(
     )
 
     # ---
-    options = xtra("~python,~start_bluetooth", mono=mono)
+    options = xtra("~python,~start_bluetooth,verbose", mono=mono)
 
     usage_2 = show_usage(
         [
@@ -113,10 +113,13 @@ def help_start_bluetooth(
     tokens: List[str],
     mono: bool,
 ) -> str:
+    options = xtra("verbose", mono=mono)
+
     return show_usage(
         [
             "@bps",
             "start_bluetooth",
+            f"[{options}]",
         ],
         "start bluetooth.",
         mono=mono,
@@ -127,7 +130,7 @@ def help_test(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("~start_bluetooth", mono=mono)
+    options = xtra("~start_bluetooth,verbose", mono=mono)
 
     return show_usage(
         [

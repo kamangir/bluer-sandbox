@@ -17,7 +17,7 @@ function bluer_sandbox_bps() {
     do_start_bluetooth=$(bluer_ai_option_int "$options" start_bluetooth $do_start_bluetooth)
 
     if [[ "$do_start_bluetooth" == 1 ]]; then
-        bluer_sandbox_bps_start_bluetooth "$@"
+        bluer_sandbox_bps_start_bluetooth $options
         [[ $? -ne 0 ]] && return 1
     fi
 
