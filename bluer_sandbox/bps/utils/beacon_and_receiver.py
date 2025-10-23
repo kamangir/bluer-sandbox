@@ -88,9 +88,16 @@ class Advertisement(ServiceInterface):
 
 
 async def register_advertisement(bus: MessageBus):
+    # If already exported, remove the old instance
+    try:
+        bus.unexport(AD_OBJECT_PATH)
+    except Exception:
+        pass
+
     adv = Advertisement(name=abcli_hostname, x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJECT_PATH, adv)
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(0.5)
+
     msg = Message(
         destination=BUS_NAME,
         path=ADAPTER_PATH,
@@ -106,15 +113,24 @@ async def register_advertisement(bus: MessageBus):
 
 
 async def unregister_advertisement(bus: MessageBus):
-    msg = Message(
-        destination=BUS_NAME,
-        path=ADAPTER_PATH,
-        interface=ADVERTISING_MGR_IFACE,
-        member="UnregisterAdvertisement",
-        signature="o",
-        body=[AD_OBJECT_PATH],
-    )
-    await bus.call(msg)
+    try:
+        msg = Message(
+            destination=BUS_NAME,
+            path=ADAPTER_PATH,
+            interface=ADVERTISING_MGR_IFACE,
+            member="UnregisterAdvertisement",
+            signature="o",
+            body=[AD_OBJECT_PATH],
+        )
+        await bus.call(msg)
+    except Exception as e:
+        logger.info(f"unregister_advertisement: {e}")
+
+    # Always unexport locally so the next cycle can reuse the path
+    try:
+        bus.unexport(AD_OBJECT_PATH)
+    except Exception:
+        pass
 
 
 # ----------------------------------------------------------------------
