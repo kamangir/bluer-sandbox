@@ -6,6 +6,7 @@ import asyncio
 import struct
 import signal
 import dataclasses
+import argparse
 
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method, dbus_property
@@ -108,7 +109,10 @@ def to_dict(obj):
     return {"repr": repr(obj)}
 
 
-async def scan_for(t_b: float, grep: str = ""):
+async def scan_for(
+    timeout: float,
+    grep: str = "",
+):
     def callback(device: BLEDevice, advertisement_data: AdvertisementData):
         if grep and (device.name is None or grep not in device.name):
             return
@@ -129,15 +133,19 @@ async def scan_for(t_b: float, grep: str = ""):
 
     scanner = BleakScanner(detection_callback=callback)
     await scanner.start()
-    logger.info(f"{NAME}: scanning for {t_b:.1f}s ...")
-    await asyncio.sleep(t_b)
+    logger.info(f"{NAME}: scanning for {timeout:.1f}s ...")
+    await asyncio.sleep(timeout)
     await scanner.stop()
     logger.info(f"{NAME}: scan stopped.")
 
 
 # ----------------------------------------------------------------------
 # Combined loop
-async def main(t_a=2.0, t_b=8.0):
+async def main(
+    t_advertisement: float = 2.0,
+    t_scan: float = 8.0,
+    grep: str = "",
+):
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
     logger.info(f"{NAME}: connected to system bus as {bus.unique_name}")
@@ -155,24 +163,58 @@ async def main(t_a=2.0, t_b=8.0):
             pass
 
     while not stop.is_set():
+
         # advertise
-        try:
-            adv = await register_advertisement(bus)
-            logger.info(f"advertising {abcli_hostname} for {t_a:.1f}s ...")
-            await asyncio.sleep(t_a)
-            await unregister_advertisement(bus)
-            logger.info("advertisement stopped.")
-        except Exception as e:
-            logger.info(f"advertise error: {e}")
+        if t_advertisement > 0:
+            try:
+                adv = await register_advertisement(bus)
+                logger.info(
+                    f"advertising {abcli_hostname} for {t_advertisement:.1f}s ..."
+                )
+                await asyncio.sleep(t_advertisement)
+                await unregister_advertisement(bus)
+                logger.info("advertisement stopped.")
+            except Exception as e:
+                logger.info(f"advertise error: {e}")
 
         # scan
-        try:
-            await scan_for(t_b)
-        except Exception as e:
-            logger.info(f"scan error: {e}")
+        if t_scan > 0:
+            try:
+                await scan_for(
+                    timeout=t_scan,
+                    grep=grep,
+                )
+            except Exception as e:
+                logger.info(f"scan error: {e}")
 
     logger.info(f"{NAME}: terminated.")
 
 
 if __name__ == "__main__":
-    asyncio.run(main(t_a=2.0, t_b=8.0))
+    parser = argparse.ArgumentParser(NAME)
+    parser.add_argument(
+        "--grep",
+        type=str,
+        default="",
+    )
+    parser.add_argument(
+        "--t_advertisement",
+        type=float,
+        default=2.0,
+        help="in seconds, -1: disable",
+    )
+    parser.add_argument(
+        "--t_scan",
+        type=float,
+        default=8.0,
+        help="in seconds, -1: disable",
+    )
+    args = parser.parse_args()
+
+    asyncio.run(
+        main(
+            t_advertisement=2.0,
+            t_scan=8.0,
+            grep=args.grep,
+        )
+    )
