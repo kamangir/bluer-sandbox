@@ -1,5 +1,7 @@
 title:::
 
+> ℹ️ tx-power is not implemented in rpi. nominal value: 10-12 dBm. -1: indicates unknown.
+
 ```bash
 @bps beacon - \
     --x $(@random --float 1) \
