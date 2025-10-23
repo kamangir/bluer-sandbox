@@ -7,7 +7,10 @@
  . start beacon.
 @bps \
 	beacon_and_receiver \
-	[~start_bluetooth]
+	[~start_bluetooth] \
+	[--grep <sparrow>] \
+	[--t_advertisement <10 | -1>] \
+	[--t_scan <10 | -1>]
  . start beacon and/or receiver.
 @bps \
 	install

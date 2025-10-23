@@ -26,12 +26,19 @@ def help_beacon_and_receiver(
 ) -> str:
     options = xtra("~start_bluetooth", mono=mono)
 
+    args = [
+        "[--grep <sparrow>]",
+        "[--t_advertisement <10 | -1>]",
+        "[--t_scan <10 | -1>]",
+    ]
+
     return show_usage(
         [
             "@bps",
             "beacon_and_receiver",
             f"[{options}]",
-        ],
+        ]
+        + args,
         "start beacon and/or receiver.",
         mono=mono,
     )
