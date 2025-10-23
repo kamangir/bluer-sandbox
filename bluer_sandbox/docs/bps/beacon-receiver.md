@@ -5,11 +5,12 @@
 ```
 
 ```text
-🌀  bluer_sandbox.bps.utils.beacon: connected to system bus as :1.87
-🌀  bluer_sandbox.bps.utils.beacon: advertising as 'sparrow2' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop.
-🌀  advertising sparrow2 ...
-🌀  advertising sparrow2 ...
-🌀  advertising sparrow2 ...
+🌀  bluer_sandbox.bps.utils.beacon: connected to system bus as :1.28
+🌀  bluer_sandbox.bps.utils.beacon: advertising as 'sparrow3-back' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop.
+🌀  advertising sparrow3-back ...
+🌀  advertising sparrow3-back ...
+🌀  advertising sparrow3-back ...
+🌀  advertising sparrow3-back ...
 ^C🌀  bluer_sandbox.bps.utils.beacon: unregistered advertisement.
 ```
 
@@ -24,17 +25,15 @@ on another pi,
 🌀  bluer_sandbox.bps.utils.receiver: LE Scan for 10.0s (Ctrl+C to stop) ...
 🌀  scanning started...
 🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow2
-🌀  device address: B8:27:EB:41:BD:97
-🌀  AdvertisementData(local_name='sparrow2', manufacturer_data={65535: b'\x9a\x99\x99?33\x13@\xcd\xccL?'}, rssi=-63)
+🌀  device name: sparrow3-back
+🌀  device address: B8:27:EB:57:B6:DA
+🌀  rssi: -65
+🌀  x: 1.20, y: 2.30, sigma: 0.80
 🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow2
-🌀  device address: B8:27:EB:41:BD:97
-🌀  AdvertisementData(local_name='sparrow2', manufacturer_data={65535: b'\x9a\x99\x99?33\x13@\xcd\xccL?'}, rssi=-46)
-🌀  . .. ... .. . .. ... .. . .. .
-🌀  device name: sparrow2
-🌀  device address: B8:27:EB:41:BD:97
-🌀  AdvertisementData(local_name='sparrow2', manufacturer_data={65535: b'\x9a\x99\x99?33\x13@\xcd\xccL?'}, rssi=-67)
+🌀  device name: sparrow3-back
+🌀  device address: B8:27:EB:57:B6:DA
+🌀  rssi: -50
+🌀  x: 1.20, y: 2.30, sigma: 0.80
 🌀  timeout reached after 10.0s.
 🌀  scan stopped.
 ```
