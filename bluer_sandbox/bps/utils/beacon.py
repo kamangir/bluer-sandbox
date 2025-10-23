@@ -272,7 +272,7 @@ if __name__ == "__main__":
             else:
                 await task
         except asyncio.TimeoutError:
-            print(
+            logger.info(
                 "timeout ({}) reached, stopping advertisement.".format(
                     string.pretty_duration(
                         args.timeout,

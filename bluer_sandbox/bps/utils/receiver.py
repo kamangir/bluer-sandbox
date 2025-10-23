@@ -8,6 +8,7 @@ import signal
 import struct
 
 from blueness import module
+from bluer_options import string
 from bluer_options.terminal.functions import hr
 from bluer_sandbox import NAME
 from bluer_sandbox.logger import logger
@@ -33,7 +34,15 @@ async def main(
     grep: str = "",
     timeout: float = 10.0,
 ):
-    logger.info(f"{NAME}: LE Scan for {timeout:.1f}s (Ctrl+C to stop) ...")
+    logger.info(
+        "{}: LE Scan for {:.1f}s (Ctrl+C to stop) ...".format(
+            NAME,
+            string.pretty_duration(
+                timeout,
+                short=True,
+            ),
+        )
+    )
 
     def callback(
         device: BLEDevice,
@@ -83,7 +92,14 @@ async def main(
         # wait either for timeout or Ctrl+C
         await asyncio.wait_for(stop_event.wait(), timeout=timeout)
     except asyncio.TimeoutError:
-        logger.info(f"timeout reached after {timeout:.1f}s.")
+        logger.info(
+            "timeout ({}) reached, stopping advertisement.".format(
+                string.pretty_duration(
+                    timeout,
+                    short=True,
+                )
+            )
+        )
 
     await scanner.stop()
     logger.info("scan stopped.")
@@ -104,4 +120,9 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(main(grep=args.grep, timeout=args.timeout))
+    asyncio.run(
+        main(
+            grep=args.grep,
+            timeout=args.timeout,
+        )
+    )
