@@ -94,6 +94,8 @@ async def register_advertisement(bus: MessageBus):
     except Exception:
         pass
 
+    await asyncio.sleep(0.5)
+
     adv = Advertisement(name=abcli_hostname, x=1.2, y=2.3, sigma=0.8)
     bus.export(AD_OBJECT_PATH, adv)
     await asyncio.sleep(0.5)
@@ -212,6 +214,8 @@ async def main(
                 logger.info("advertisement stopped.")
             except Exception as e:
                 logger.warning(f"advertise error: {e}")
+
+        await asyncio.sleep(1)
 
         # scan
         if t_scan > 0:
