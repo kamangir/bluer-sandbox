@@ -198,7 +198,7 @@ async def main(
     await bus.connect()
     logger.info(f"connected to system bus as {bus.unique_name}")
 
-    await asyncio.sleep(1.0)
+    await asyncio.sleep(2.0)
 
     # get adapter tx_power
     tx_power = await get_adapter_tx_power(bus)
