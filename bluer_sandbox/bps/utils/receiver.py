@@ -49,17 +49,19 @@ async def main(
         if advertisement_data:
             log_advertisement_data = True
 
-            import ipdb
+            try:
+                logger.info(f"rssi: {advertisement_data.rssi}")
+            except:
+                pass
 
-            ipdb.set_trace()
-
-            if 0xFFFF in advertisement_data:
-                try:
-                    x_, y_, sigma_ = struct.unpack("<fff", advertisement_data[0xFFFF])
-                    logger.info(f"x: {x_:.2f}, y: {y_:.2f}, sigma: {sigma_:.2f}")
-                    log_advertisement_data = False
-                except Exception as e:
-                    logger.warning(f"cannot unpack payload: {e}")
+            try:
+                x_, y_, sigma_ = struct.unpack(
+                    "<fff", advertisement_data.manufacturer_data[0xFFFF]
+                )
+                logger.info(f"x: {x_:.2f}, y: {y_:.2f}, sigma: {sigma_:.2f}")
+                log_advertisement_data = False
+            except:
+                pass
 
             if log_advertisement_data:
                 logger.info(advertisement_data)
