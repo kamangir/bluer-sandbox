@@ -30,11 +30,12 @@ async def main():
         logger.info(f"{NAME}: received Ctrl+C — shutting down gracefully ...")
         stop_event.set()
 
-    # Register signal handler for Ctrl+C
+    # Register signal handlers
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
         loop.add_signal_handler(sig, handle_sigint)
 
+    # Connect to system bus
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
     logger.info(f"{NAME}: connected to system bus with unique name: {bus.unique_name}")
@@ -47,15 +48,16 @@ async def main():
         f'run in another terminal: "@bps introspect unique_bus_name={bus.unique_name}"'
     )
 
-    # Wait until stop_event is set by Ctrl+C
+    # Wait until interrupted
     await stop_event.wait()
+
+    # Clean shutdown
     logger.info(f"{NAME}: disconnected cleanly.")
-    await bus.disconnect()
+    bus.disconnect()
 
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        # This is a fallback for environments where signal handlers might not work
         logger.info(f"{NAME}: interrupted — exiting.")
