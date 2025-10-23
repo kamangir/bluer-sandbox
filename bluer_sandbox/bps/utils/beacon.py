@@ -46,6 +46,7 @@ async def get_adapter_tx_power(bus: MessageBus) -> float:
         logger.warning(f"cannot get tx_power: {e}")
         pass
 
+    # Fallback for adapters that don’t expose TxPower (e.g., Raspberry Pi)
     return 12.0
 
 
