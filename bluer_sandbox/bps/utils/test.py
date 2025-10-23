@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import asyncio
+import signal
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method
 from dbus_next import BusType
 
 from blueness import module
-
 from bluer_sandbox import NAME
 from bluer_sandbox.logger import logger
 
@@ -24,9 +24,19 @@ class Hello(ServiceInterface):
 
 
 async def main():
+    stop_event = asyncio.Event()
+
+    def handle_sigint():
+        logger.info(f"{NAME}: received Ctrl+C — shutting down gracefully ...")
+        stop_event.set()
+
+    # Register signal handler for Ctrl+C
+    loop = asyncio.get_running_loop()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, handle_sigint)
+
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
-
     logger.info(f"{NAME}: connected to system bus with unique name: {bus.unique_name}")
 
     obj_path = "/org/example/Hello"
@@ -37,9 +47,15 @@ async def main():
         f'run in another terminal: "@bps introspect unique_bus_name={bus.unique_name}"'
     )
 
-    while True:
-        await asyncio.sleep(1)
+    # Wait until stop_event is set by Ctrl+C
+    await stop_event.wait()
+    logger.info(f"{NAME}: disconnected cleanly.")
+    await bus.disconnect()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        # This is a fallback for environments where signal handlers might not work
+        logger.info(f"{NAME}: interrupted — exiting.")
