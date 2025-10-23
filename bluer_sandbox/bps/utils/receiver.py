@@ -49,6 +49,10 @@ async def main(
         if advertisement_data:
             log_advertisement_data = True
 
+            import ipdb
+
+            ipdb.set_trace()
+
             if 0xFFFF in advertisement_data:
                 try:
                     x_, y_, sigma_ = struct.unpack("<fff", advertisement_data[0xFFFF])
