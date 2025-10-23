@@ -22,9 +22,29 @@ NAME = module.name(__file__, NAME)
 # ---- BlueZ constants
 BUS_NAME = "org.bluez"
 ADAPTER_PATH = "/org/bluez/hci0"
+ADAPTER_IFACE = "org.bluez.Adapter1"
 ADVERTISING_MGR_IFACE = "org.bluez.LEAdvertisingManager1"
 AD_OBJECT_PATH = "/org/bluez/example/advertisement0"  # any unique path is fine
 AD_IFACE = "org.bluez.LEAdvertisement1"
+
+
+# --- helper: read current adapter TxPower ---
+async def get_adapter_tx_power(bus: MessageBus) -> float:
+    msg = Message(
+        destination=BUS_NAME,
+        path=ADAPTER_PATH,
+        interface="org.freedesktop.DBus.Properties",
+        member="Get",
+        signature="ss",
+        body=[ADAPTER_IFACE, "TxPower"],
+    )
+    try:
+        reply = await bus.call(msg)
+        if reply.message_type == MessageType.METHOD_RETURN:
+            return float(reply.body[0].value)
+    except Exception:
+        pass
+    return 0.0
 
 
 class Advertisement(ServiceInterface):
@@ -34,7 +54,7 @@ class Advertisement(ServiceInterface):
       - Type           : "peripheral"
       - LocalName      : e.g., "TEST-PI"
       - IncludeTxPower : True
-      - ManufacturerData (0xFFFF): 3 floats (x,y,sigma) as little-endian
+      - ManufacturerData (0xFFFF): 5 floats (x,y,z,sigma,tx_power)
     """
 
     def __init__(
@@ -44,13 +64,14 @@ class Advertisement(ServiceInterface):
         y=0.0,
         z=0.0,
         sigma=1.0,
+        tx_power=0.0,
     ):
         super().__init__(AD_IFACE)
         self._name = name
         self._type = "peripheral"
         self._include_tx_power = True
         self._service_uuids = []  # keep empty for raw ADV + manufacturer payload
-        self._mfg = {0xFFFF: struct.pack("<ffff", x, y, z, sigma)}
+        self._mfg = {0xFFFF: struct.pack("<fffff", x, y, z, sigma, tx_power)}
 
     # ---- Required properties (older dbus-next may treat them as writable; add no-op setters)
 
@@ -107,6 +128,7 @@ async def register_advertisement(
     y: float,
     z: float,
     sigma: float,
+    tx_power: float,
 ):
     logger.info(
         "registering advertisement: {}".format(
@@ -116,6 +138,7 @@ async def register_advertisement(
                     f"y: {y:.2f}",
                     f"z: {z:.2f}",
                     f"sigma: {sigma:.2f}",
+                    f"tx_power: {tx_power:.1f} dBm",
                 ]
             )
         )
@@ -128,6 +151,7 @@ async def register_advertisement(
         y=y,
         z=z,
         sigma=sigma,
+        tx_power=tx_power,
     )
     bus.export(AD_OBJECT_PATH, adv)
 
@@ -174,6 +198,10 @@ async def main(
     await bus.connect()
     logger.info(f"connected to system bus as {bus.unique_name}")
 
+    # get adapter tx_power
+    tx_power = await get_adapter_tx_power(bus)
+    logger.info(f"adapter TxPower={tx_power:.1f} dBm")
+
     # Register with BlueZ
     try:
         await register_advertisement(
@@ -182,6 +210,7 @@ async def main(
             y=y,
             z=z,
             sigma=sigma,
+            tx_power=tx_power,
         )
     except Exception as e:
         logger.error(f"failed to start advertising: {e}")
@@ -189,7 +218,7 @@ async def main(
 
     logger.info(
         f"advertising as '{abcli_hostname}'"
-        " (manuf 0xFFFF: <x,y,sigma>) - ^C to stop."
+        " (manuf 0xFFFF: <x,y,z,sigma,tx_power>) - ^C to stop."
     )
 
     # Handle Ctrl+C to cleanly unregister
