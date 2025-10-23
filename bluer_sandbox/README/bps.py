@@ -19,6 +19,7 @@ docs = (
             "literature",
             "beacon-receiver",
             "test-introspect",
+            "mathematics",
         ]
     ]
     + [
