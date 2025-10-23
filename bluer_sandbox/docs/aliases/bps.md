@@ -6,7 +6,8 @@
 	[~start_bluetooth] \
 	[--x <1.0>] \
 	[--y <2.0>] \
-	[--sigma <3.0>] \
+	[--z <3.0>] \
+	[--sigma <4.0>] \
 	[--spacing <2.0>] \
 	[--timeout <10.0 | -1>]
  . start beacon.

@@ -37,13 +37,20 @@ class Advertisement(ServiceInterface):
       - ManufacturerData (0xFFFF): 3 floats (x,y,sigma) as little-endian
     """
 
-    def __init__(self, name: str, x=0.0, y=0.0, sigma=1.0):
+    def __init__(
+        self,
+        name: str,
+        x=0.0,
+        y=0.0,
+        z=0.0,
+        sigma=1.0,
+    ):
         super().__init__(AD_IFACE)
         self._name = name
         self._type = "peripheral"
         self._include_tx_power = True
         self._service_uuids = []  # keep empty for raw ADV + manufacturer payload
-        self._mfg = {0xFFFF: struct.pack("<fff", x, y, sigma)}
+        self._mfg = {0xFFFF: struct.pack("<ffff", x, y, z, sigma)}
 
     # ---- Required properties (older dbus-next may treat them as writable; add no-op setters)
 
@@ -98,6 +105,7 @@ async def register_advertisement(
     bus: MessageBus,
     x: float,
     y: float,
+    z: float,
     sigma: float,
 ):
     logger.info(
@@ -106,6 +114,7 @@ async def register_advertisement(
                 [
                     f"x: {x:.2f}",
                     f"y: {y:.2f}",
+                    f"z: {z:.2f}",
                     f"sigma: {sigma:.2f}",
                 ]
             )
@@ -117,6 +126,7 @@ async def register_advertisement(
         name=abcli_hostname,
         x=x,
         y=y,
+        z=z,
         sigma=sigma,
     )
     bus.export(AD_OBJECT_PATH, adv)
@@ -155,6 +165,7 @@ async def unregister_advertisement(bus: MessageBus):
 async def main(
     x: float,
     y: float,
+    z: float,
     sigma: float,
     spacing: float = 2.0,
 ):
@@ -169,6 +180,7 @@ async def main(
             bus=bus,
             x=x,
             y=y,
+            z=z,
             sigma=sigma,
         )
     except Exception as e:
@@ -219,9 +231,14 @@ if __name__ == "__main__":
         default=2.0,
     )
     parser.add_argument(
-        "--sigma",
+        "--z",
         type=float,
         default=3.0,
+    )
+    parser.add_argument(
+        "--sigma",
+        type=float,
+        default=4.0,
     )
     parser.add_argument(
         "--spacing",
@@ -262,6 +279,7 @@ if __name__ == "__main__":
             main(
                 x=args.x,
                 y=args.y,
+                z=args.z,
                 sigma=args.sigma,
                 spacing=args.spacing,
             )

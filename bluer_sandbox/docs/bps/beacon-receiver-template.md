@@ -4,6 +4,7 @@ title:::
 @bps beacon - \
     --x $(@random --float 1) \
     --y $(@random --float 1) \
+    --z $(@random --float 1) \
     --sigma $(@random --float 1) \
     --timeout 10
 ```

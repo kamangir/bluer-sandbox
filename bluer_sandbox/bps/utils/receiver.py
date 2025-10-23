@@ -62,10 +62,19 @@ async def main(
                 logger.warning("rssi not found.")
 
             try:
-                x_, y_, sigma_ = struct.unpack(
-                    "<fff", advertisement_data.manufacturer_data[0xFFFF]
+                x_, y_, z_, sigma_ = struct.unpack(
+                    "<ffff", advertisement_data.manufacturer_data[0xFFFF]
                 )
-                logger.info(f"x: {x_:.2f}, y: {y_:.2f}, sigma: {sigma_:.2f}")
+                logger.info(
+                    ", ".join(
+                        [
+                            f"x: {x_:.2f}",
+                            f"y: {y_:.2f}",
+                            f"z: {z_:.2f}",
+                            f"sigma: {sigma_:.2f}",
+                        ]
+                    )
+                )
             except:
                 logger.info(advertisement_data)
 
