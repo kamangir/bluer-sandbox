@@ -3,7 +3,7 @@
 ```bash
 @bps \
 	beacon \
-	[~start_bluetooth] \
+	[~start_bluetooth,verbose] \
 	[--x <1.0>] \
 	[--y <2.0>] \
 	[--z <3.0>] \
@@ -16,23 +16,24 @@
  . install bps.
 @bps \
 	introspect \
-	[~start_bluetooth,unique_bus_name=<1:234>]
+	[~start_bluetooth,verbose,unique_bus_name=<1:234>]
  . introspect <1:234>.
 @bps \
 	receiver \
-	[~start_bluetooth] \
+	[~start_bluetooth,verbose] \
 	[--grep <sparrow>] \
 	[--timeout <10>]
  . start receiver.
 @bps \
 	receiver \
-	[~python,~start_bluetooth]
+	[~python,~start_bluetooth,verbose]
  . start receiver.
 @bps \
-	start_bluetooth
+	start_bluetooth \
+	[verbose]
  . start bluetooth.
 @bps \
 	test \
-	[~start_bluetooth]
+	[~start_bluetooth,verbose]
  . d-bus ping test.
 ```
