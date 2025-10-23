@@ -7,6 +7,7 @@ import struct
 import signal
 import dataclasses
 import argparse
+import time
 
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method, dbus_property
@@ -27,7 +28,6 @@ NAME = module.name(__file__, NAME)
 BUS_NAME = "org.bluez"
 ADAPTER_PATH = "/org/bluez/hci0"
 ADVERTISING_MGR_IFACE = "org.bluez.LEAdvertisingManager1"
-AD_OBJECT_PATH = "/org/bluez/example/advertisement0"
 AD_IFACE = "org.bluez.LEAdvertisement1"
 
 
@@ -48,7 +48,7 @@ class Advertisement(ServiceInterface):
 
     @Type.setter
     def Type(self, _value: "s"):
-        pass  # BlueZ never writes this; satisfy older dbus-next
+        pass
 
     @dbus_property()
     def LocalName(self) -> "s":
@@ -87,17 +87,14 @@ class Advertisement(ServiceInterface):
         logger.info(f"{NAME}: BlueZ requested Release() — advertisement unregistered.")
 
 
+# ----------------------------------------------------------------------
+# Advertiser helpers (Option A: unique D-Bus path each cycle)
 async def register_advertisement(bus: MessageBus):
-    # If already exported, remove the old instance
-    try:
-        bus.unexport(AD_OBJECT_PATH)
-    except Exception:
-        pass
-
-    await asyncio.sleep(0.5)
+    # unique D-Bus object path per cycle
+    ad_path = f"/org/bluez/example/advertisement{int(time.time() * 1000)}"
 
     adv = Advertisement(name=abcli_hostname, x=1.2, y=2.3, sigma=0.8)
-    bus.export(AD_OBJECT_PATH, adv)
+    bus.export(ad_path, adv)
     await asyncio.sleep(0.5)
 
     msg = Message(
@@ -106,15 +103,16 @@ async def register_advertisement(bus: MessageBus):
         interface=ADVERTISING_MGR_IFACE,
         member="RegisterAdvertisement",
         signature="oa{sv}",
-        body=[AD_OBJECT_PATH, {}],
+        body=[ad_path, {}],
     )
     reply = await bus.call(msg)
     if reply.message_type == MessageType.ERROR:
         raise RuntimeError(f"RegisterAdvertisement failed: {reply.error_name}")
-    return adv
+
+    return adv, ad_path
 
 
-async def unregister_advertisement(bus: MessageBus):
+async def unregister_advertisement(bus: MessageBus, ad_path: str):
     try:
         msg = Message(
             destination=BUS_NAME,
@@ -122,15 +120,14 @@ async def unregister_advertisement(bus: MessageBus):
             interface=ADVERTISING_MGR_IFACE,
             member="UnregisterAdvertisement",
             signature="o",
-            body=[AD_OBJECT_PATH],
+            body=[ad_path],
         )
         await bus.call(msg)
     except Exception as e:
         logger.info(f"unregister_advertisement: {e}")
 
-    # Always unexport locally so the next cycle can reuse the path
     try:
-        bus.unexport(AD_OBJECT_PATH)
+        bus.unexport(ad_path)
     except Exception:
         pass
 
@@ -147,10 +144,7 @@ def to_dict(obj):
     return {"repr": repr(obj)}
 
 
-async def scan_for(
-    timeout: float,
-    grep: str = "",
-):
+async def scan_for(timeout: float, grep: str = ""):
     def callback(device: BLEDevice, advertisement_data: AdvertisementData):
         if grep and (device.name is None or grep not in device.name):
             return
@@ -179,11 +173,7 @@ async def scan_for(
 
 # ----------------------------------------------------------------------
 # Combined loop
-async def main(
-    t_advertisement: float = 2.0,
-    t_scan: float = 8.0,
-    grep: str = "",
-):
+async def main(t_advertisement: float = 2.0, t_scan: float = 8.0, grep: str = ""):
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
     logger.info(f"{NAME}: connected to system bus as {bus.unique_name}")
@@ -201,53 +191,40 @@ async def main(
             pass
 
     while not stop.is_set():
-
-        # advertise
+        # --- advertise ---
         if t_advertisement > 0:
             try:
-                adv = await register_advertisement(bus)
+                adv, ad_path = await register_advertisement(bus)
                 logger.info(
-                    f"advertising {abcli_hostname} for {t_advertisement:.1f}s ..."
+                    f"advertising {abcli_hostname} for {t_advertisement:.1f}s at {ad_path} ..."
                 )
                 await asyncio.sleep(t_advertisement)
-                await unregister_advertisement(bus)
+                await unregister_advertisement(bus, ad_path)
                 logger.info("advertisement stopped.")
             except Exception as e:
                 logger.warning(f"advertise error: {e}")
 
         await asyncio.sleep(1)
 
-        # scan
+        # --- scan ---
         if t_scan > 0:
             try:
-                await scan_for(
-                    timeout=t_scan,
-                    grep=grep,
-                )
+                await scan_for(timeout=t_scan, grep=grep)
             except Exception as e:
                 logger.info(f"scan error: {e}")
 
     logger.info(f"{NAME}: terminated.")
 
 
+# ----------------------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(NAME)
+    parser.add_argument("--grep", type=str, default="")
     parser.add_argument(
-        "--grep",
-        type=str,
-        default="",
+        "--t_advertisement", type=float, default=2.0, help="in seconds, -1: disable"
     )
     parser.add_argument(
-        "--t_advertisement",
-        type=float,
-        default=2.0,
-        help="in seconds, -1: disable",
-    )
-    parser.add_argument(
-        "--t_scan",
-        type=float,
-        default=8.0,
-        help="in seconds, -1: disable",
+        "--t_scan", type=float, default=8.0, help="in seconds, -1: disable"
     )
     args = parser.parse_args()
 
