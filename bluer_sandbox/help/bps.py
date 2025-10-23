@@ -9,30 +9,22 @@ def help_beacon(
 ) -> str:
     options = xtra("~start_bluetooth", mono=mono)
 
+    args = [
+        "[--x <1.0>]",
+        "[--y <2.0>]",
+        "[--sigma <3.0>]",
+        "[--spacing <2.0>]",
+        "[--timeout <10.0 | -1>]",
+    ]
+
     return show_usage(
         [
             "@bps",
             "beacon",
             f"[{options}]",
-        ],
+        ]
+        + args,
         "start beacon.",
-        mono=mono,
-    )
-
-
-def help_beacon_and_receiver(
-    tokens: List[str],
-    mono: bool,
-) -> str:
-    options = xtra("~start_bluetooth", mono=mono)
-
-    return show_usage(
-        [
-            "@bps",
-            "beacon_and_receiver",
-            f"[{options}]",
-        ],
-        "start beacon and/or receiver.",
         mono=mono,
     )
 
@@ -79,12 +71,18 @@ def help_receiver(
 ) -> str:
     options = xtra("~start_bluetooth", mono=mono)
 
+    args = [
+        "[--grep <sparrow>]",
+        "[--timeout <10>]",
+    ]
+
     usage_1 = show_usage(
         [
             "@bps",
             "receiver",
             f"[{options}]",
-        ],
+        ]
+        + args,
         "start receiver.",
         mono=mono,
     )
@@ -143,7 +141,6 @@ def help_test(
 
 help_functions = {
     "beacon": help_beacon,
-    "beacon_and_receiver": help_beacon_and_receiver,
     "install": help_install,
     "introspect": help_introspect,
     "receiver": help_receiver,

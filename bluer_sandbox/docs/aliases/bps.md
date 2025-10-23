@@ -3,12 +3,13 @@
 ```bash
 @bps \
 	beacon \
-	[~start_bluetooth]
+	[~start_bluetooth] \
+	[--x <1.0>] \
+	[--y <2.0>] \
+	[--sigma <3.0>] \
+	[--spacing <2.0>] \
+	[--timeout <10.0 | -1>]
  . start beacon.
-@bps \
-	beacon_and_receiver \
-	[~start_bluetooth]
- . start beacon and/or receiver.
 @bps \
 	install
  . install bps.
@@ -18,7 +19,9 @@
  . introspect <1:234>.
 @bps \
 	receiver \
-	[~start_bluetooth]
+	[~start_bluetooth] \
+	[--grep <sparrow>] \
+	[--timeout <10>]
  . start receiver.
 @bps \
 	receiver \

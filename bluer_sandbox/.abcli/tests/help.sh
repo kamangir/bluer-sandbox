@@ -11,7 +11,6 @@ function test_bluer_sandbox_help() {
         \
         "@bps" \
         "@bps beacon" \
-        "@bps beacon_and_receiver" \
         "@bps install" \
         "@bps introspect" \
         "@bps receiver" \

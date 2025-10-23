@@ -3,6 +3,7 @@
 # Requires: dbus-next 0.2.x, bluetoothd --experimental, adapter powered on.
 
 import asyncio
+import argparse
 import struct
 import signal
 from dbus_next.aio import MessageBus
@@ -10,6 +11,7 @@ from dbus_next.service import ServiceInterface, method, dbus_property
 from dbus_next import Variant, BusType, Message, MessageType
 
 from blueness import module
+from bluer_options import string
 from bluer_options.env import abcli_hostname
 
 from bluer_sandbox import NAME
@@ -89,16 +91,33 @@ class Advertisement(ServiceInterface):
     # ---- Optional method BlueZ may call when it drops the ad
     @method()
     def Release(self):
-        logger.info(f"{NAME}: blueZ requested Release() — advertisement unregistered.")
+        logger.info("blueZ requested Release() — advertisement unregistered.")
 
 
-async def register_advertisement(bus: MessageBus):
+async def register_advertisement(
+    bus: MessageBus,
+    x: float,
+    y: float,
+    sigma: float,
+):
+    logger.info(
+        "registering advertisement: {}".format(
+            ", ".join(
+                [
+                    f"x: {x:.2f}",
+                    f"y: {y:.2f}",
+                    f"sigma: {sigma:.2f}",
+                ]
+            )
+        )
+    )
+
     # Export our advertisement object on the system bus
     adv = Advertisement(
         name=abcli_hostname,
-        x=1.2,
-        y=2.3,
-        sigma=0.8,
+        x=x,
+        y=y,
+        sigma=sigma,
     )
     bus.export(AD_OBJECT_PATH, adv)
 
@@ -133,21 +152,32 @@ async def unregister_advertisement(bus: MessageBus):
     await bus.call(msg)
 
 
-async def main():
+async def main(
+    x: float,
+    y: float,
+    sigma: float,
+    spacing: float = 2.0,
+):
     # Connect to the SYSTEM bus (the one BlueZ uses)
     bus = MessageBus(bus_type=BusType.SYSTEM)
     await bus.connect()
-    logger.info(f"{NAME}: connected to system bus as {bus.unique_name}")
+    logger.info(f"connected to system bus as {bus.unique_name}")
 
     # Register with BlueZ
     try:
-        await register_advertisement(bus)
+        await register_advertisement(
+            bus=bus,
+            x=x,
+            y=y,
+            sigma=sigma,
+        )
     except Exception as e:
-        logger.info(f"{NAME}: failed to start advertising: {e}")
+        logger.error(f"failed to start advertising: {e}")
         return
 
     logger.info(
-        f"{NAME}: advertising as '{abcli_hostname}' (manuf 0xFFFF: <x,y,sigma>) - ^C to stop."
+        f"advertising as '{abcli_hostname}'"
+        " (manuf 0xFFFF: <x,y,sigma>) - ^C to stop."
     )
 
     # Handle Ctrl+C to cleanly unregister
@@ -166,15 +196,94 @@ async def main():
     # Heartbeat
     try:
         while not stop.is_set():
-            logger.info("... advertising ...")
-            await asyncio.sleep(2.0)
+            logger.info(f"advertising {abcli_hostname} ...")
+            await asyncio.sleep(spacing)
     finally:
         try:
             await unregister_advertisement(bus)
-            logger.info(f"{NAME}: unregistered advertisement.")
+            logger.info("unregistered advertisement.")
         except Exception as e:
-            logger.info(f"{NAME}: cannot unregister: {e}")
+            logger.error(f"cannot unregister: {e}")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(NAME)
+    parser.add_argument(
+        "--x",
+        type=float,
+        default=1.0,
+    )
+    parser.add_argument(
+        "--y",
+        type=float,
+        default=2.0,
+    )
+    parser.add_argument(
+        "--sigma",
+        type=float,
+        default=3.0,
+    )
+    parser.add_argument(
+        "--spacing",
+        type=float,
+        default=2.0,
+        help="in seconds.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=10,
+        help="in seconds, -1: infinite.",
+    )
+    args = parser.parse_args()
+
+    logger.info(
+        "{}: every {}{}.".format(
+            NAME,
+            string.pretty_duration(
+                args.spacing,
+                short=True,
+            ),
+            (
+                ""
+                if args.timeout == -1
+                else " for {}".format(
+                    string.pretty_duration(
+                        args.timeout,
+                        short=True,
+                    )
+                )
+            ),
+        )
+    )
+
+    async def runner():
+        task = asyncio.create_task(
+            main(
+                x=args.x,
+                y=args.y,
+                sigma=args.sigma,
+                spacing=args.spacing,
+            )
+        )
+        try:
+            if args.timeout > 0:
+                await asyncio.wait_for(task, timeout=args.timeout)
+            else:
+                await task
+        except asyncio.TimeoutError:
+            logger.info(
+                "timeout ({}) reached, stopping advertisement.".format(
+                    string.pretty_duration(
+                        args.timeout,
+                        short=True,
+                    )
+                )
+            )
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+
+    asyncio.run(runner())
