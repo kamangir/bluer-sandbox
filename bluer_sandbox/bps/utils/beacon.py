@@ -42,11 +42,10 @@ async def get_adapter_tx_power(bus: MessageBus) -> float:
         reply = await bus.call(msg)
         if reply.message_type == MessageType.METHOD_RETURN:
             return float(reply.body[0].value)
-        else:
-            logger.warning(f"unknown tx_power reply.message_type: {reply.message_type}")
+
+        logger.warning(f"unknown tx_power reply.message_type: {reply.message_type}")
     except Exception as e:
         logger.warning(f"cannot get tx_power: {e}")
-        pass
 
     # Fallback for adapters that don’t expose TxPower (e.g., Raspberry Pi)
     return -1.0
