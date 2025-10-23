@@ -56,23 +56,17 @@ async def main(
         logger.info(f"device address: {device.address}")
 
         if advertisement_data:
-            log_advertisement_data = True
-
             try:
                 logger.info(f"rssi: {advertisement_data.rssi}")
             except:
-                pass
+                logger.warning("rssi not found.")
 
             try:
                 x_, y_, sigma_ = struct.unpack(
                     "<fff", advertisement_data.manufacturer_data[0xFFFF]
                 )
                 logger.info(f"x: {x_:.2f}, y: {y_:.2f}, sigma: {sigma_:.2f}")
-                log_advertisement_data = False
             except:
-                pass
-
-            if log_advertisement_data:
                 logger.info(advertisement_data)
 
     scanner = BleakScanner(detection_callback=callback)
