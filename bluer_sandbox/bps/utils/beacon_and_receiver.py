@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# beacon_and_receiver.py — combined BLE advertiser + receiver (BlueZ + Bleak)
-# Requires: dbus-next 0.2.x, bluetoothd --experimental, adapter powered on.
+# beacon_and_receiver_dual.py — reliable BLE advertiser + receiver (BlueZ + Bleak)
+# Each Raspberry Pi alternates between advertising and scanning.
 
 import asyncio
 import struct
@@ -12,7 +12,6 @@ import time
 from dbus_next.aio import MessageBus
 from dbus_next.service import ServiceInterface, method, dbus_property
 from dbus_next import Variant, BusType, Message, MessageType
-
 from bleak import BleakScanner
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
@@ -25,15 +24,22 @@ from bluer_sandbox.logger import logger
 
 NAME = module.name(__file__, NAME)
 
+# ----------------------------------------------------------------------
 BUS_NAME = "org.bluez"
 ADAPTER_PATH = "/org/bluez/hci0"
 ADVERTISING_MGR_IFACE = "org.bluez.LEAdvertisingManager1"
+PROPERTIES_IFACE = "org.freedesktop.DBus.Properties"
 AD_IFACE = "org.bluez.LEAdvertisement1"
 
 
 # ----------------------------------------------------------------------
 # Advertisement
 class Advertisement(ServiceInterface):
+    """
+    Minimal LE advertisement implementing org.bluez.LEAdvertisement1
+    with dummy setters (for compatibility).
+    """
+
     def __init__(self, name: str, x=0.0, y=0.0, sigma=1.0):
         super().__init__(AD_IFACE)
         self._name = name
@@ -42,13 +48,14 @@ class Advertisement(ServiceInterface):
         self._service_uuids = []
         self._mfg = {0xFFFF: struct.pack("<fff", x, y, sigma)}
 
+    # ---- Required D-Bus properties ----
     @dbus_property()
     def Type(self) -> "s":
         return self._type
 
     @Type.setter
     def Type(self, _value: "s"):
-        pass
+        pass  # dummy setter for older dbus-next
 
     @dbus_property()
     def LocalName(self) -> "s":
@@ -82,18 +89,34 @@ class Advertisement(ServiceInterface):
     def ManufacturerData(self, _value: "a{qv}"):
         pass
 
+    # ---- Optional method ----
     @method()
     def Release(self):
         logger.info(f"{NAME}: BlueZ requested Release() — advertisement unregistered.")
 
 
 # ----------------------------------------------------------------------
-# Advertiser helpers (Option A: unique D-Bus path each cycle)
-async def register_advertisement(bus: MessageBus):
-    # unique D-Bus object path per cycle
-    ad_path = f"/org/bluez/example/advertisement{int(time.time() * 1000)}"
+# Adapter utilities
+async def set_adapter_power(bus: MessageBus, on: bool):
+    """Toggle the adapter power (reliable BlueZ reset)."""
+    msg = Message(
+        destination=BUS_NAME,
+        path=ADAPTER_PATH,
+        interface=PROPERTIES_IFACE,
+        member="Set",
+        signature="ssv",
+        body=["org.bluez.Adapter1", "Powered", Variant("b", on)],
+    )
+    await bus.call(msg)
+    await asyncio.sleep(0.8 if on else 0.5)
 
-    adv = Advertisement(name=abcli_hostname, x=1.2, y=2.3, sigma=0.8)
+
+# ----------------------------------------------------------------------
+# Advertiser
+async def register_advertisement(bus: MessageBus):
+    """Register an advertisement under a unique path each cycle."""
+    ad_path = f"/org/bluez/example/advertisement{int(time.time() * 1000)}"
+    adv = Advertisement(abcli_hostname, x=1.2, y=2.3, sigma=0.8)
     bus.export(ad_path, adv)
     await asyncio.sleep(0.5)
 
@@ -109,10 +132,12 @@ async def register_advertisement(bus: MessageBus):
     if reply.message_type == MessageType.ERROR:
         raise RuntimeError(f"RegisterAdvertisement failed: {reply.error_name}")
 
-    return adv, ad_path
+    logger.info(f"{NAME}: advertising as '{abcli_hostname}' at {ad_path}")
+    return ad_path
 
 
 async def unregister_advertisement(bus: MessageBus, ad_path: str):
+    """Unregister and unexport advertisement object."""
     try:
         msg = Message(
             destination=BUS_NAME,
@@ -131,6 +156,8 @@ async def unregister_advertisement(bus: MessageBus, ad_path: str):
     except Exception:
         pass
 
+    await asyncio.sleep(0.5)
+
 
 # ----------------------------------------------------------------------
 # Receiver
@@ -145,23 +172,21 @@ def to_dict(obj):
 
 
 async def scan_for(timeout: float, grep: str = ""):
-    def callback(device: BLEDevice, advertisement_data: AdvertisementData):
+    def callback(device: BLEDevice, ad: AdvertisementData):
         if grep and (device.name is None or grep not in device.name):
             return
         logger.info(hr(width=30))
         logger.info(f"device name: {device.name}")
         logger.info(f"device address: {device.address}")
         try:
-            logger.info(f"rssi: {advertisement_data.rssi}")
+            logger.info(f"rssi: {ad.rssi}")
         except Exception:
             pass
         try:
-            x_, y_, sigma_ = struct.unpack(
-                "<fff", advertisement_data.manufacturer_data[0xFFFF]
-            )
+            x_, y_, sigma_ = struct.unpack("<fff", ad.manufacturer_data[0xFFFF])
             logger.info(f"x: {x_:.2f}, y: {y_:.2f}, sigma: {sigma_:.2f}")
         except Exception:
-            logger.info(advertisement_data)
+            logger.info(ad)
 
     scanner = BleakScanner(detection_callback=callback)
     await scanner.start()
@@ -191,27 +216,27 @@ async def main(t_advertisement: float = 2.0, t_scan: float = 8.0, grep: str = ""
             pass
 
     while not stop.is_set():
-        # --- advertise ---
+        # ---- advertise phase ----
         if t_advertisement > 0:
             try:
-                adv, ad_path = await register_advertisement(bus)
-                logger.info(
-                    f"advertising {abcli_hostname} for {t_advertisement:.1f}s at {ad_path} ..."
-                )
+                ad_path = await register_advertisement(bus)
                 await asyncio.sleep(t_advertisement)
                 await unregister_advertisement(bus, ad_path)
-                logger.info("advertisement stopped.")
+
+                # Important: fully reset adapter between cycles
+                await set_adapter_power(bus, False)
+                await set_adapter_power(bus, True)
+
+                logger.info(f"{NAME}: advertisement cycle done.")
             except Exception as e:
                 logger.warning(f"advertise error: {e}")
 
-        await asyncio.sleep(10)
-
-        # --- scan ---
+        # ---- scan phase ----
         if t_scan > 0:
             try:
-                await scan_for(timeout=t_scan, grep=grep)
+                await scan_for(t_scan, grep)
             except Exception as e:
-                logger.info(f"scan error: {e}")
+                logger.warning(f"scan error: {e}")
 
     logger.info(f"{NAME}: terminated.")
 
