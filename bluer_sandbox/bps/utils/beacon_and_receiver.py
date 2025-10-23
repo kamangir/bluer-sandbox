@@ -46,21 +46,41 @@ class Advertisement(ServiceInterface):
     def Type(self) -> "s":
         return self._type
 
+    @Type.setter
+    def Type(self, _value: "s"):
+        pass  # BlueZ never writes this; satisfy older dbus-next
+
     @dbus_property()
     def LocalName(self) -> "s":
         return self._name
+
+    @LocalName.setter
+    def LocalName(self, _value: "s"):
+        pass
 
     @dbus_property()
     def ServiceUUIDs(self) -> "as":
         return self._service_uuids
 
+    @ServiceUUIDs.setter
+    def ServiceUUIDs(self, _value: "as"):
+        pass
+
     @dbus_property()
     def IncludeTxPower(self) -> "b":
         return self._include_tx_power
 
+    @IncludeTxPower.setter
+    def IncludeTxPower(self, _value: "b"):
+        pass
+
     @dbus_property()
     def ManufacturerData(self) -> "a{qv}":
         return {0xFFFF: Variant("ay", self._mfg[0xFFFF])}
+
+    @ManufacturerData.setter
+    def ManufacturerData(self, _value: "a{qv}"):
+        pass
 
     @method()
     def Release(self):
