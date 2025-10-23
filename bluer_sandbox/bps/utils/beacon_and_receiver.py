@@ -213,8 +213,8 @@ if __name__ == "__main__":
 
     asyncio.run(
         main(
-            t_advertisement=2.0,
-            t_scan=8.0,
+            t_advertisement=args.t_advertisement,
+            t_scan=args.t_scan,
             grep=args.grep,
         )
     )
