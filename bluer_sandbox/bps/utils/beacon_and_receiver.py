@@ -204,7 +204,7 @@ async def main(t_advertisement: float = 2.0, t_scan: float = 8.0, grep: str = ""
             except Exception as e:
                 logger.warning(f"advertise error: {e}")
 
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
 
         # --- scan ---
         if t_scan > 0:
