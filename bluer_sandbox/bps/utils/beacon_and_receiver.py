@@ -195,7 +195,7 @@ async def main(
                 await unregister_advertisement(bus)
                 logger.info("advertisement stopped.")
             except Exception as e:
-                logger.info(f"advertise error: {e}")
+                logger.warning(f"advertise error: {e}")
 
         # scan
         if t_scan > 0:
