@@ -13,6 +13,6 @@ items:::
 
 - [sandbox](../../../sandbox/bps)
 - [bluer_sandbox.bps](../../bps)
-- [test & introspect](./test-introspect.md)
-- [beacon & receiver](./beacon-receiver.md)
-- [beacon & receiver simultaneously](./beacon-and-receiver.md)
+- [test -> introspect](./test-introspect.md)
+- [beacon -> receiver](./beacon-receiver.md)
+- [beacon <-> receiver](./beacon-and-receiver.md)

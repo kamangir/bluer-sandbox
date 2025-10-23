@@ -21,11 +21,11 @@ in another terminal,
 ```
 
 ```text
-"Pong"
+s "Pong"
 ```
 
 validate in the first window,
 
 ```text
-🌀  bluer_sandbox.bps.test.ping() called by busctl!
+🌀  bluer_sandbox.bps.utils.test.ping() called by busctl!
 ```
