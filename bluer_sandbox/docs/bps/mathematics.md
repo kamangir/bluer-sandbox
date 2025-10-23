@@ -1,6 +1,6 @@
 # bps: mathematics
 
-> BLE Localization Cost Function with σ
+> ℹ️ BLE Localization Cost Function with σ
 
 This document defines the mathematical model used to estimate the position of a UGV based on BLE advertisements.  
 Each beacon advertises its position $(x_i, y_i, z_i)$ and uncertainty $\sigma_i$ along with its transmitted power.
@@ -12,19 +12,19 @@ Each beacon advertises its position $(x_i, y_i, z_i)$ and uncertainty $\sigma_i$
 The received signal strength indicator (RSSI) is related to distance by the log-distance path-loss model:
 
 $$
-\text{RSSI}_i = P_{\text{tx},i} - 10\, n_i \log_{10}(d_i) + \varepsilon_i
+\mathrm{RSSI}_i = P_{\mathrm{tx},i} - 10\, n_i \log_{10}(d_i) + \varepsilon_i
 $$
 
 where:
 
-- $P_{\text{tx},i}$ is the transmit power (dBm) of beacon *i*
+- $P_{\mathrm{tx},i}$ is the transmit power (dBm) of beacon *i*
 - $n_i$ is the path-loss exponent (≈ 2 for open space, higher indoors)
-- $\varepsilon_i$ is zero-mean Gaussian noise with standard deviation $\sigma_{\text{rssi},i}$
+- $\varepsilon_i$ is zero-mean Gaussian noise with standard deviation $\sigma_{\mathrm{rssi},i}$
 
 Rearranging gives an estimate of the distance to beacon *i*:
 
 $$
-d_i = 10^{\frac{P_{\text{tx},i} - \text{RSSI}_i}{10\, n_i}}
+d_i = 10^{(P_{\mathrm{tx},i} - \mathrm{RSSI}_i) / (10\, n_i)}
 $$
 
 ---
@@ -57,7 +57,7 @@ where $r_i$ is the residual of beacon *i*.
 
 Each measurement has an associated variance $s_i^2$ that combines:
 
-1. Range noise from RSSI
+1. Range noise from RSSI  
 2. Beacon’s advertised position uncertainty
 
 ### 3.1 Range variance (from RSSI noise)
@@ -65,31 +65,29 @@ Each measurement has an associated variance $s_i^2$ that combines:
 Using first-order error propagation:
 
 $$
-\text{Var}(d_i)
+\mathrm{Var}(d_i)
   \approx
-  \left(
-      \frac{\partial d_i}{\partial \text{RSSI}_i}
-  \right)^2
-  \text{Var}(\text{RSSI}_i)
-  =
-  \left(
-      \frac{\ln 10}{10\, n_i}\, d_i
-  \right)^2
-  \sigma_{\text{rssi},i}^2
+  \left( \frac{\partial d_i}{\partial \mathrm{RSSI}_i} \right)^2
+  \mathrm{Var}(\mathrm{RSSI}_i)
+  \;=\;
+  \left( \frac{\ln(10)}{10\, n_i} \, d_i \right)^2
+  \sigma_{\mathrm{rssi},i}^2
 $$
+
+*(All variables are scalar; this is KaTeX-safe.)*
 
 ### 3.2 Beacon position variance
 
 If a beacon advertises an isotropic uncertainty $\sigma_i$:
 
 $$
-\text{Var}_{\text{beacon},i} \approx \sigma_i^2
+\mathrm{Var}_{\mathrm{beacon},i} \approx \sigma_i^2
 $$
 
 ### 3.3 Total variance per measurement
 
 $$
-s_i^2 = \text{Var}(d_i) + \text{Var}_{\text{beacon},i}
+s_i^2 = \mathrm{Var}(d_i) + \mathrm{Var}_{\mathrm{beacon},i}
 $$
 
 ---
