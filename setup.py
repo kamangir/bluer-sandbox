@@ -11,8 +11,6 @@ setup(
     packages=[
         NAME,
         f"{NAME}.ai4k",
-        f"{NAME}.bps",
-        f"{NAME}.bps.utils",
         f"{NAME}.help",
         f"{NAME}.help.offline_llm",
         f"{NAME}.interview",

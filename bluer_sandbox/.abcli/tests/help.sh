@@ -9,13 +9,6 @@ function test_bluer_sandbox_help() {
         "@arvan seed" \
         "@arvan ssh" \
         \
-        "@bps" \
-        "@bps beacon" \
-        "@bps install" \
-        "@bps introspect" \
-        "@bps receiver" \
-        "@bps test_bluetooth" \
-        \
         "@docker" \
         "@docker browse" \
         "@docker build" \
