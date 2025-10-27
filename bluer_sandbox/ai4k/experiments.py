@@ -1,6 +1,6 @@
 from typing import Dict
 
-from bluer_objects.README.consts import assets2
+from bluer_objects.README.consts import assets, assets2
 
 
 dict_of_experiments: Dict[str, Dict] = {
@@ -34,6 +34,7 @@ dict_of_experiments: Dict[str, Dict] = {
             f"{assets2}/arzhang/20251005_112250.jpg?raw=true": "",
             f"{assets2}/arzhang/VID-20250830-WA0000~3_1.gif?raw=true": "",
             f"{assets2}/arzhang/VID-20250830-WA0000~3_1.gif?raw=true": "",
+            f"{assets}/2025-10-19-14-16-36-tunrlm/ultrasonic-sensor-detections.gif?raw=true": "",
         },
         "cols": 2,
     },
