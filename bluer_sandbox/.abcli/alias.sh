@@ -3,8 +3,6 @@
 alias @arvan=bluer_sandbox_arvancloud
 alias @arvancloud=bluer_sandbox_arvancloud
 
-alias @bps=bluer_sandbox_bps
-
 alias @docker=bluer_sandbox_docker
 
 alias @interview=bluer_sandbox_interview

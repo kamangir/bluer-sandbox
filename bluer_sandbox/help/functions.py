@@ -1,6 +1,5 @@
 from bluer_ai.help.generic import help_functions as generic_help_functions
 from bluer_sandbox.help.arvancloud import help_functions as help_arvancloud
-from bluer_sandbox.help.bps import help_functions as help_bps
 from bluer_sandbox.help.docker import help_functions as help_docker
 from bluer_sandbox.help.interview import help_functions as help_interview
 from bluer_sandbox.help.notebooks import help_functions as help_notebooks
@@ -18,7 +17,6 @@ help_functions = generic_help_functions(plugin_name=ALIAS)
 help_functions.update(
     {
         "arvancloud": help_arvancloud,
-        "bps": help_bps,
         "docker": help_docker,
         "interview": help_interview,
         "notebooks": help_notebooks,

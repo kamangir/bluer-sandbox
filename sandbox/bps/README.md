@@ -1,5 +1,5 @@
 # bps
 
-- [bps](../../bluer_sandbox/docs/bps)
 - [v1](./v1)
-- [bluer_sandbox.bps](../../bluer_sandbox/docs/bps/)
+- [docs](https://github.com/kamangir/bluer-algo/tree/main/bluer_algo/docs/bps)
+- [bluer_algo.bps](https://github.com/kamangir/bluer-algo/tree/main/bluer_algo/bps)

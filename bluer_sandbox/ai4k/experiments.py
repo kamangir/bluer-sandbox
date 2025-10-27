@@ -1,12 +1,11 @@
 from typing import Dict
 
-from bluer_objects.README.consts import assets2
+from bluer_objects.README.consts import assets, assets2
 
-from bluer_sandbox.README.consts import ai4k_assets2
 
 dict_of_experiments: Dict[str, Dict] = {
     "caliper": {
-        "marquee": f"{ai4k_assets2}/20251009_114411.jpg",
+        "marquee": f"{assets2}/ai4k/20251009_114411.jpg",
         "description": [
             "mechanical calipers",
             "digital calipers",
@@ -17,7 +16,7 @@ dict_of_experiments: Dict[str, Dict] = {
         ],
     },
     "multimeter": {
-        "marquee": f"{ai4k_assets2}/20250616_112027.jpg",
+        "marquee": f"{assets2}/ai4k/20250616_112027.jpg",
         "description": [
             "measure the voltage of batteries, AC, battery-bus w/ different lights + on charger, what else?",
             "measure the resistance of water, metal, what else?",
@@ -35,6 +34,7 @@ dict_of_experiments: Dict[str, Dict] = {
             f"{assets2}/arzhang/20251005_112250.jpg?raw=true": "",
             f"{assets2}/arzhang/VID-20250830-WA0000~3_1.gif?raw=true": "",
             f"{assets2}/arzhang/VID-20250830-WA0000~3_1.gif?raw=true": "",
+            f"{assets}/2025-10-19-14-16-36-tunrlm/ultrasonic-sensor-detections.gif?raw=true": "",
         },
         "cols": 2,
     },
