@@ -27,7 +27,7 @@
 
 |   |   |
 | --- | --- |
-| [![image](https://github.com/kamangir/assets2/raw/main/ai4k/ultrasonic-sensor-tester/00.jpg?raw=true)](https://github.com/kamangir/assets2/raw/main/ai4k/ultrasonic-sensor-tester/00.jpg?raw=true) | [![image](https://github.com/kamangir/assets2/raw/main/ai4k/arzhang/20251005_112250.jpg?raw=true)](https://github.com/kamangir/assets2/raw/main/ai4k/arzhang/20251005_112250.jpg?raw=true) |
-| [![image](https://github.com/kamangir/assets2/raw/main/ai4k/arzhang/VID-20250830-WA0000~3_1.gif?raw=true)](https://github.com/kamangir/assets2/raw/main/ai4k/arzhang/VID-20250830-WA0000~3_1.gif?raw=true) |  |
+| [![image](https://github.com/kamangir/assets2/raw/main/ultrasonic-sensor-tester/00.jpg?raw=true)](https://github.com/kamangir/assets2/raw/main/ultrasonic-sensor-tester/00.jpg?raw=true) | [![image](https://github.com/kamangir/assets2/raw/main/arzhang/20251005_112250.jpg?raw=true)](https://github.com/kamangir/assets2/raw/main/arzhang/20251005_112250.jpg?raw=true) |
+| [![image](https://github.com/kamangir/assets2/raw/main/arzhang/VID-20250830-WA0000~3_1.gif?raw=true)](https://github.com/kamangir/assets2/raw/main/arzhang/VID-20250830-WA0000~3_1.gif?raw=true) |  |
 
 [AI convo](https://chatgpt.com/c/68eb90c3-fd94-8332-ab1b-2b45871b2c3a)

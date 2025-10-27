@@ -1,17 +1,11 @@
 from typing import Dict
 
-from bluer_objects.README.consts import assets_url
-
-
-assets2 = assets_url(
-    suffix="ai4k",
-    volume=2,
-)
+from bluer_objects.README.consts import assets2
 
 
 dict_of_experiments: Dict[str, Dict] = {
     "caliper": {
-        "marquee": f"{assets2}/20251009_114411.jpg",
+        "marquee": f"{assets2}/ai4k/20251009_114411.jpg",
         "description": [
             "mechanical calipers",
             "digital calipers",
@@ -22,7 +16,7 @@ dict_of_experiments: Dict[str, Dict] = {
         ],
     },
     "multimeter": {
-        "marquee": f"{assets2}/20250616_112027.jpg",
+        "marquee": f"{assets2}/ai4k/20250616_112027.jpg",
         "description": [
             "measure the voltage of batteries, AC, battery-bus w/ different lights + on charger, what else?",
             "measure the resistance of water, metal, what else?",
