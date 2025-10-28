@@ -21,8 +21,7 @@ function bluer_sandbox_offline_llm_model_download() {
     bluer_ai_log "downloading $repo_name/$filename -> $model_object_name ..."
 
     bluer_ai_eval dryrun=$do_dryrun \
-        huggingface-cli download $repo_name \
+        hf download $repo_name \
         $filename \
-        --local-dir $model_object_path \
-        --local-dir-use-symlinks False
+        --local-dir $model_object_path
 }

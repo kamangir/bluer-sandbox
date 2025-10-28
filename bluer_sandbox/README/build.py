@@ -5,7 +5,7 @@ from bluer_objects import file, README
 
 from bluer_sandbox import NAME, VERSION, ICON, REPO_NAME
 from bluer_sandbox.help.functions import help_functions
-from bluer_sandbox.README import ai4k, aliases, bps
+from bluer_sandbox.README import aliases, bps
 from bluer_sandbox.README.items import items
 
 
@@ -29,6 +29,7 @@ def build():
         for readme in [
             {
                 "path": "../..",
+                "cols": 2,
                 "items": items,
             },
             {
@@ -49,7 +50,6 @@ def build():
                 "tor",
             ]
         ]
-        + ai4k.docs
         + aliases.docs
         + bps.docs
     )
