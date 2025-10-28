@@ -1,14 +1,8 @@
 from bluer_objects import README
-from bluer_objects.README.consts import assets, assets2
+from bluer_objects.README.consts import assets
 
 items = README.Items(
     [
-        {
-            "name": "ai4k",
-            "description": "ai for kids.",
-            "marquee": f"{assets2}/ai4k/20250604_154200.jpg?raw=true",
-            "url": "./bluer_sandbox/docs/ai4k",
-        },
         {
             "name": "bluer village",
             "description": "a bluer village.",
