@@ -16,6 +16,7 @@ pip install bluer-sandbox
 [@offline_llm](./bluer_sandbox/docs/aliases/offline_llm.md), 
 [@speedtest](./bluer_sandbox/docs/aliases/speedtest.md), 
 [@tor](./bluer_sandbox/docs/aliases/tor.md),
+[@v2ray](./bluer_sandbox/docs/aliases/v2ray.md).
 [@village](./bluer_sandbox/docs/aliases/village.md).
 
 items:::
