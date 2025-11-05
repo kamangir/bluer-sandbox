@@ -14,3 +14,5 @@ def test_bluer_sandbox_env():
 
     assert env.BLUER_VILLAGE_TEST_OBJECT
     assert env.BLUER_VILLAGE_OBJECT
+
+    assert env.BLUER_SANDBOX_V2RAY_TEST_VLESS

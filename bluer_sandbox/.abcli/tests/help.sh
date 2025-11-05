@@ -59,6 +59,8 @@ function test_bluer_sandbox_help() {
         "@tor start" \
         \
         "@v2ray" \
+        "@v2ray import" \
+        "@v2ray install" \
         "@v2ray test" \
         "@v2ray start" \
         \
