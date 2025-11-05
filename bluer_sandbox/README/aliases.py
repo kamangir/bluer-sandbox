@@ -13,6 +13,7 @@ docs = [
         "offline_llm",
         "speedtest",
         "tor",
+        "v2ray",
         "village",
     ]
 ]

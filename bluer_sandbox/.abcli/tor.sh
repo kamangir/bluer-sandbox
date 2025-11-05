@@ -9,7 +9,7 @@ function bluer_sandbox_tor() {
         return
     fi
 
-    bluer_ai_log_error "@sandbox: @tor: $task: command not found."
+    bluer_ai_log_error "@tor: $task: command not found."
 }
 
 bluer_ai_source_caller_suffix_path /tor

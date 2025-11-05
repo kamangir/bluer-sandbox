@@ -48,6 +48,7 @@ def build():
                 "offline_llm",
                 "LSTM",
                 "tor",
+                "v2ray",
             ]
         ]
         + aliases.docs
