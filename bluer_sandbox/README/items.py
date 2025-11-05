@@ -5,7 +5,7 @@ items = README.Items(
     [
         {
             "name": "v2ray",
-            "description": "tools to work with [v2ray](hhttps://en.wikipedia.org/wiki/V2Ray).",
+            "description": "tools to work with [v2ray](https://en.wikipedia.org/wiki/V2Ray).",
             "marquee": f"{assets2}/v2ray/v2ray.png?raw=true",
             "url": "./bluer_sandbox/docs/v2ray.md",
         },
