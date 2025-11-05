@@ -29,7 +29,7 @@ def build():
         for readme in [
             {
                 "path": "../..",
-                "cols": 2,
+                "cols": 3,
                 "items": items,
             },
             {
@@ -48,6 +48,7 @@ def build():
                 "offline_llm",
                 "LSTM",
                 "tor",
+                "v2ray",
             ]
         ]
         + aliases.docs

@@ -21,4 +21,6 @@ alias @speedtest=bluer_sandbox_speedtest
 
 alias @tor=bluer_sandbox_tor
 
+alias @v2ray=bluer_sandbox_v2ray
+
 alias @village=bluer_sandbox_village
