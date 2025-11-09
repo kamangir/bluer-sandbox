@@ -15,4 +15,7 @@ function bluer_sandbox_v2ray_start() {
 
     sudo v2ray run \
         -config /usr/local/etc/v2ray/config.json
+
+    unset http_proxy
+    unset https_proxy
 }
