@@ -3,6 +3,7 @@
 function bluer_sandbox_v2ray_import() {
     local options=$1
     local do_cat=$(bluer_ai_option_int "$options" cat 0)
+    local do_install=$(bluer_ai_option_int "$options" install 0)
 
     local vless=$2
     if [[ -z "$vless" ]]; then
@@ -24,7 +25,7 @@ function bluer_sandbox_v2ray_import() {
         [[ $? -ne 0 ]] && return 1
     fi
 
-    cd $abcli_path_git/v2ray-uri2json
+    pushd $abcli_path_git/v2ray-uri2json >/dev/null
     [[ $? -ne 0 ]] && return 1
 
     [[ -f "./config.json" ]] &&
@@ -39,6 +40,8 @@ function bluer_sandbox_v2ray_import() {
         $ABCLI_OBJECT_ROOT/$object_name/config.json
     [[ $? -ne 0 ]] && return 1
 
+    popd >/dev/null
+
     python3 -m bluer_sandbox.v2ray \
         complete_import \
         --object_name $object_name
@@ -48,9 +51,12 @@ function bluer_sandbox_v2ray_import() {
     sudo cp -v \
         $filename \
         /usr/local/etc/v2ray/config.json
+    [[ $? -ne 0 ]] && return 1
 
     [[ "$do_cat" == 1 ]] &&
         bluer_ai_cat $filename
 
-    return 0
+    if [[ "$do_install" == 1 ]]; then
+        bluer_sandbox_v2ray_install "$@"
+    fi
 }
