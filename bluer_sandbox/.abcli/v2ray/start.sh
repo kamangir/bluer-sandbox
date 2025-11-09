@@ -16,6 +16,7 @@ function bluer_sandbox_v2ray_start() {
     sudo v2ray run \
         -config /usr/local/etc/v2ray/config.json
 
+    bluer_ai_log "unsetting proxy settings..."
     unset http_proxy
     unset https_proxy
 }
