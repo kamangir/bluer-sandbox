@@ -20,14 +20,15 @@ def import_args(
                 else thing
             )
         ]
-    )('"vless://..."')
+    )('"vless://..." | "vmess://..."')
 
 
 def import_options(mono: bool):
     return "".join(
         [
             "cat",
-            xtra(",dryrun,install", mono=mono),
+            xtra(",dryrun,install,", mono=mono),
+            "vless | vmess",
         ]
     )
 

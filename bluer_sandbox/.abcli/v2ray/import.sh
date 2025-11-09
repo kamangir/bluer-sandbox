@@ -4,17 +4,18 @@ function bluer_sandbox_v2ray_import() {
     local options=$1
     local do_cat=$(bluer_ai_option_int "$options" cat 0)
     local do_install=$(bluer_ai_option_int "$options" install 0)
+    local vless_type=$(bluer_ai_option_choice "$options" vless,vmess vless)
 
     local vless=$2
     if [[ -z "$vless" ]]; then
-        bluer_ai_log_error "vless not found."
+        bluer_ai_log_error "vl/mess not found."
         return 1
     fi
 
     local object_name=v2ray-import-$(bluer_ai_string_timestamp)
     local object_path=$ABCLI_OBJECT_ROOT/$object_name
     local filename=$object_path/config.json
-    bluer_ai_log "importing to $filename..."
+    bluer_ai_log "importing $vless_type to $filename..."
 
     mkdir -pv $object_path
 
@@ -32,7 +33,7 @@ function bluer_sandbox_v2ray_import() {
         rm -v ./config.json
 
     bash \
-        scripts/vless2json.sh \
+        scripts/${vless_type}2json.sh \
         "$vless"
     [[ $? -ne 0 ]] && return 1
 
