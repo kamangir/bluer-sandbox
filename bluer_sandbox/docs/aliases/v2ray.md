@@ -3,19 +3,16 @@
 ```bash
 @v2ray \
 	import \
-	[cat,dryrun] \
-	"vless://..."
- . install v2ray.
+	[cat,dryrun,install,vless | vmess] \
+	"vless://..." | "vmess://..."
+ . import v2ray.
 @v2ray \
-	install \
-	[import,cat,dryrun] \
-	["vless://..."]
+	install
  . install v2ray.
 @v2ray \
 	start \
-	[install] \
-	[import,cat,dryrun] \
-	["vless://..."]
+	[import,cat,dryrun,install,vless | vmess] \
+	["vless://..." | "vmess://..."]
  . start v2ray.
 @v2ray \
 	test

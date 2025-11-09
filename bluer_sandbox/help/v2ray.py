@@ -20,14 +20,15 @@ def import_args(
                 else thing
             )
         ]
-    )('"vless://..."')
+    )('"vless://..." | "vmess://..."')
 
 
 def import_options(mono: bool):
     return "".join(
         [
             "cat",
-            xtra(",dryrun", mono=mono),
+            xtra(",dryrun,install,", mono=mono),
+            "vless | vmess",
         ]
     )
 
@@ -47,12 +48,26 @@ def help_import(
             f"[{options}]",
         ]
         + args,
-        "install v2ray.",
+        "import v2ray.",
         mono=mono,
     )
 
 
 def help_install(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    return show_usage(
+        [
+            "@v2ray",
+            "install",
+        ],
+        "install v2ray.",
+        mono=mono,
+    )
+
+
+def help_start(
     tokens: List[str],
     mono: bool,
 ) -> str:
@@ -63,31 +78,8 @@ def help_install(
     return show_usage(
         [
             "@v2ray",
-            "install",
-            f"[{options}]",
-        ]
-        + args,
-        "install v2ray.",
-        mono=mono,
-    )
-
-
-def help_start(
-    tokens: List[str],
-    mono: bool,
-) -> str:
-    options = xtra("install", mono=mono)
-
-    import_options_ = xtra("import,{}".format(import_options(mono=mono)), mono=mono)
-
-    args = import_args(mono=mono)
-
-    return show_usage(
-        [
-            "@v2ray",
             "start",
             f"[{options}]",
-            f"[{import_options_}]",
         ]
         + args,
         "start v2ray.",
