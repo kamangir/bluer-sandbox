@@ -12,6 +12,10 @@ function bluer_sandbox_offline_llm_prompt() {
     fi
 
     local prompt=$2
+    if [[ -z "$prompt" ]]; then
+        bluer_ai_log_error "prompt not found."
+        return 1
+    fi
     bluer_ai_log "🗣️ $prompt"
 
     local object_name=$(bluer_ai_clarify_object $3 offline_llm-reply-$(bluer_ai_string_timestamp_short))
