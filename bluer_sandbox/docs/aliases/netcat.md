@@ -8,5 +8,5 @@
 @netcat \
 	listen \
 	[port=<port>]
- . listen netcat.
+ . listen to netcat.
 ```

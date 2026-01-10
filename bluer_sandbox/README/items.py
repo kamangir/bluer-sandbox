@@ -4,6 +4,11 @@ from bluer_objects.README.consts import assets, assets2
 items = README.Items(
     [
         {
+            "name": "netcat",
+            "description": "tools to work with netcat.",
+            "url": "./bluer_sandbox/docs/netcat.md",
+        },
+        {
             "name": "v2ray",
             "description": "tools to work with [v2ray](https://en.wikipedia.org/wiki/V2Ray).",
             "marquee": f"{assets2}/v2ray/v2ray.png?raw=true",

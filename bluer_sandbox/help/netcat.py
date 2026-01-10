@@ -37,7 +37,7 @@ def help_listen(
             "listen",
             f"[{options}]",
         ],
-        "listen netcat.",
+        "listen to netcat.",
         mono=mono,
     )
 
