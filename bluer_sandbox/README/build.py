@@ -51,6 +51,7 @@ def build():
                 "arvancloud",
                 "offline_llm",
                 "LSTM",
+                "netcat",
                 "tor",
                 "v2ray",
             ]
