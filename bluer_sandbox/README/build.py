@@ -2,6 +2,7 @@ import os
 
 from bluer_options.help.functions import get_help
 from bluer_objects import file, README
+from bluer_objects.README.alias import list_of_aliases
 
 from bluer_sandbox import NAME, VERSION, ICON, REPO_NAME
 from bluer_sandbox.help.functions import help_functions
@@ -31,6 +32,9 @@ def build():
                 "path": "../..",
                 "cols": 3,
                 "items": items,
+                "macros": {
+                    "aliases:::": list_of_aliases(NAME),
+                },
             },
             {
                 "path": "../docs",

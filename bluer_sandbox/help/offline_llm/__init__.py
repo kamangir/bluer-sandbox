@@ -13,11 +13,11 @@ def help_build(
 
     return show_usage(
         [
-            "@offline_llm",
+            "@llm",
             "build",
             f"[{options}]",
         ],
-        "build offline_llm.",
+        "build llm.",
         mono=mono,
     )
 
@@ -30,12 +30,12 @@ def help_chat(
 
     return show_usage(
         [
-            "@offline_llm",
+            "@llm",
             "chat",
             f"[{options}]",
             "[-|<object-name>]",
         ],
-        "chat with offline_llm.",
+        "chat with llm.",
         mono=mono,
     )
 
@@ -67,13 +67,13 @@ def help_prompt(
 
     return show_usage(
         [
-            "@offline_llm",
+            "@llm",
             "prompt",
             f"[{options}]",
             '"<prompt>"',
             "[-|<object-name>]",
         ],
-        '"<prompt>" -> offline_llm.',
+        '"<prompt>" -> llm.',
         mono=mono,
     )
 

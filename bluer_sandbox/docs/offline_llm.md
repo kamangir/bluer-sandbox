@@ -1,16 +1,16 @@
 # offline-llm
 
 - using [llama.cpp](https://github.com/ggerganov/llama.cpp).
-- [@offline_llm](./aliases/offline_llm.md)
+- [@llm](./aliases/llm.md)
 
 ```bash
-@offline_llm build
+@llm build
 ```
 
 ```bash
-@select offline_llm-$(@@timestamp)
+@select llm-$(@@timestamp)
 
-@offline_llm prompt download_model \
+@llm prompt download_model \
     "Why is Mathematics said to be the Voice of God?" .
 ```
 

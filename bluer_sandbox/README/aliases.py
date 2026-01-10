@@ -1,19 +1,18 @@
+from bluer_objects.README.alias import list_of_aliases
+
+from bluer_sandbox import NAME
+
+
 docs = [
     {
         "path": "../docs/aliases",
     },
 ] + [
     {
-        "path": f"../docs/aliases/{alias}.md",
+        "path": f"../docs/aliases/{alias_name}.md",
     }
-    for alias in [
-        "arvancloud",
-        "docker",
-        "notebooks",
-        "offline_llm",
-        "speedtest",
-        "tor",
-        "v2ray",
-        "village",
-    ]
+    for alias_name in list_of_aliases(
+        NAME,
+        as_markdown=False,
+    )
 ]

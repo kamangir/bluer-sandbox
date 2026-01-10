@@ -32,7 +32,7 @@ function bluer_sandbox_offline_llm_prompt() {
     pushd $abcli_path_git/llama.cpp >/dev/null
 
     if [[ ! -f "./build/bin/llama-cli" ]]; then
-        bluer_ai_log_error "llama-cli not found, please run '@offline_llm build' first."
+        bluer_ai_log_error "llama-cli not found, please run '@llm build' first."
         return 1
     fi
 

@@ -20,6 +20,15 @@ function test_bluer_sandbox_help() {
         \
         "@interview" \
         \
+        "@llm" \
+        "@llm build" \
+        "@llm chat" \
+        "@llm create_env" \
+        "@llm model" \
+        "@llm model download" \
+        "@llm model get" \
+        "@llm prompt" \
+        \
         "@netcat" \
         "@netcat connect" \
         "@netcat listen" \
@@ -31,15 +40,6 @@ function test_bluer_sandbox_help() {
         "@notebooks create" \
         "@notebooks host" \
         "@notebooks open" \
-        \
-        "@offline_llm" \
-        "@offline_llm build" \
-        "@offline_llm chat" \
-        "@offline_llm create_env" \
-        "@offline_llm model" \
-        "@offline_llm model download" \
-        "@offline_llm model get" \
-        "@offline_llm prompt" \
         \
         "@parser" \
         "@parser parse" \
