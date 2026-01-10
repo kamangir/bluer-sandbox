@@ -7,6 +7,8 @@ alias @docker=bluer_sandbox_docker
 
 alias @interview=bluer_sandbox_interview
 
+alias @netcat=bluer_sandbox_netcat
+
 alias @notebooks=bluer_sandbox_notebooks
 
 alias @parser=bluer_sandbox_parser

@@ -20,6 +20,10 @@ function test_bluer_sandbox_help() {
         \
         "@interview" \
         \
+        "@netcat" \
+        "@netcat connect" \
+        "@netcat listen" \
+        \
         "@notebooks" \
         "@notebooks build" \
         "@notebooks code" \
