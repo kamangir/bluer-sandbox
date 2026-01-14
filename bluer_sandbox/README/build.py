@@ -49,6 +49,7 @@ def build():
             }
             for doc in [
                 "arvancloud",
+                "green",
                 "offline_llm",
                 "LSTM",
                 "netcat",
