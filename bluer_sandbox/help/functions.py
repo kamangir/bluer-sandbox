@@ -1,6 +1,7 @@
 from bluer_ai.help.generic import help_functions as generic_help_functions
 from bluer_sandbox.help.arvancloud import help_functions as help_arvancloud
 from bluer_sandbox.help.docker import help_functions as help_docker
+from bluer_sandbox.help.green import help_functions as help_green
 from bluer_sandbox.help.interview import help_functions as help_interview
 from bluer_sandbox.help.netcat import help_functions as help_netcat
 from bluer_sandbox.help.notebooks import help_functions as help_notebooks
@@ -20,6 +21,7 @@ help_functions.update(
     {
         "arvancloud": help_arvancloud,
         "docker": help_docker,
+        "green": help_green,
         "interview": help_interview,
         "netcat": help_netcat,
         "notebooks": help_notebooks,

@@ -18,6 +18,10 @@ function test_bluer_sandbox_help() {
         "@docker run" \
         "@docker seed" \
         \
+        "@green" \
+        "@green edit" \
+        "@green review" \
+        \
         "@interview" \
         \
         "@llm" \

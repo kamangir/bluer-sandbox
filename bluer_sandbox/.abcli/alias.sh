@@ -4,6 +4,8 @@ alias @arvancloud=bluer_sandbox_arvancloud
 
 alias @docker=bluer_sandbox_docker
 
+alias @green=bluer_sandbox_green
+
 alias @netcat=bluer_sandbox_netcat
 
 alias @notebooks=bluer_sandbox_notebooks

@@ -12,6 +12,7 @@ setup(
         NAME,
         f"{NAME}.help",
         f"{NAME}.help.offline_llm",
+        f"{NAME}.green",
         f"{NAME}.interview",
         f"{NAME}.offline_llm",
         f"{NAME}.offline_llm.model",
