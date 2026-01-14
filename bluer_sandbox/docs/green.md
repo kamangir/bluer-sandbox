@@ -4,6 +4,7 @@
 
 ```bash
 @green edit
+
 @green review
 @assets publish \
 	extensions=png,push \
@@ -12,3 +13,5 @@
 
 
 ![image](../../../assets/green-v1/gr.png?raw=true)
+
+![image](../../../assets/green-v1/daily-gr.png?raw=true)

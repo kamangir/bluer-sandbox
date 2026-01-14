@@ -1,5 +1,6 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 from bluer_options.logger.config import log_list
 from bluer_objects import objects
@@ -23,6 +24,16 @@ class GreenDB:
 
         if load:
             self.load()
+
+    def generate_daily(self):
+        logger.info(f"{self.__class__.__name__}.generate_daily")
+
+        for current, previous in zip(self.raw[:-1], self.raw[1:]):
+            current["daily gr"] = (
+                current["gr"] / (current["date"] - previous["date"]).days
+            )
+
+        return
 
     def graph(
         self,
@@ -60,7 +71,12 @@ class GreenDB:
         return file.save_fig(
             objects.path_of(
                 object_name=self.object_name,
-                filename=f"{what}.png",
+                filename="{}.png".format(
+                    what.replace(
+                        " ",
+                        "-",
+                    )
+                ),
             ),
             log=log,
         )
@@ -88,9 +104,17 @@ class GreenDB:
         self,
         log: bool = False,
     ) -> bool:
-        return self.graph(
-            "gr",
-            log=log,
+        self.generate_daily()
+
+        return all(
+            self.graph(
+                what=what,
+                log=log,
+            )
+            for what in [
+                "gr",
+                "daily gr",
+            ]
         )
 
     def save(self) -> bool:
@@ -100,14 +124,33 @@ class GreenDB:
             self.raw,
         )
 
+    @property
+    def start_date(self) -> datetime:
+        return min(self.values("date"))
+
+    @property
+    def end_date(self) -> datetime:
+        return max(self.values("date"))
+
     def signature(self) -> List[str]:
         return [
             "{} entry(s)".format(len(self.raw)),
-            "{} .. {}".format(
-                min(self.values("date")),
-                max(self.values("date")),
+            "{} day(s): {} .. {}".format(
+                (self.end_date - self.start_date).days,
+                self.start_date,
+                self.end_date,
             ),
         ]
 
-    def values(self, what: str) -> List:
-        return [entry[what] for entry in self.raw]
+    def values(
+        self,
+        what: str,
+        default: Any = 0,
+    ) -> List:
+        return [
+            entry.get(
+                what,
+                default,
+            )
+            for entry in self.raw
+        ]
