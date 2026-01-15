@@ -16,12 +16,19 @@
         - [Visuino](https://patoghu.com/software/gonagon/engineering/14528-visuino.html): windows. 🛑
     - https://download.ir/page/2/?s=arduino: broken links 🛑
         - [arduino IDE](https://download.ir/programino-ide-for-arduino/): broken link 🛑
-        - [vstudio plugin](https://download.ir/visual-micro-arduino-studio/): broken link 🛑
+        - [vscode plugin](https://download.ir/visual-micro-arduino-studio/): broken link 🛑
         - [tutorial video](https://download.ir/beginning-arduino/): broken link 🛑
-    - https://www.yasdl.com/?s=arduino: many 🔥
-        - [arduino IDE](https://www.yasdl.com/134583/%d8%af%d8%a7%d9%86%d9%84%d9%88%d8%af-arduino.html), linked to arduino.cc 🛑
     - https://soft98.ir:
         - [Visuino](https://soft98.ir/software/engineering/2191-visuino.html): visual coding environment: ⚠️ cracked, mac? download started - windows. 🛑
+    - https://www.yasdl.com/?s=arduino:
+        - [arduino IDE](https://www.yasdl.com/134583/%d8%af%d8%a7%d9%86%d9%84%d9%88%d8%af-arduino.html), linked to arduino.cc 🛑
+        - [Arduino: A Beginner’s Guide to Arduino Programming ](https://www.yasdl.com/274880/%d8%af%d8%a7%d9%86%d9%84%d9%88%d8%af-%da%a9%d8%aa%d8%a7%d8%a8-arduino-a-beginners-guide-to-arduino-programming.html) - downloading - basic. 🛑
+        - [vscode plugin](https://www.yasdl.com/264549/%d8%af%d8%a7%d9%86%d9%84%d9%88%d8%af-visual-micro.html) - incompatible, likely too old. 🛑
+        - [Arduino Cookbook](https://www.yasdl.com/270758/%d8%af%d8%a7%d9%86%d9%84%d9%88%d8%af-%da%a9%d8%aa%d8%a7%d8%a8-arduino-cookbook.html) - downloaded ✅
+        - [tutorial](https://www.yasdl.com/184429/%d8%af%d8%a7%d9%86%d9%84%d9%88%d8%af-%d8%a2%d9%85%d9%88%d8%b2%d8%b4-%d9%82%d8%af%d9%85-%d8%a8%d9%87-%d9%82%d8%af%d9%85-%d8%a2%d8%b1%d8%af%d9%88%db%8c%d9%86%d9%88-arduino-step-by-step-2018.html) - too large. 🛑
+        - [tutorial](https://www.yasdl.com/183056/%d8%a2%d9%85%d9%88%d8%b2%d8%b4-%d8%b3%d8%a7%d8%ae%d8%aa-%d8%b1%d8%a8%d8%a7%d8%aa-%d8%a2%d8%b1%d8%af%d9%88%db%8c%d9%86%d9%88-%d8%af%d8%b1-%db%8c%da%a9-%d8%b3%d8%a7%d8%b9%d8%aa.html) - too large. 🛑
+        - [tutorial](https://www.yasdl.com/164667/%d8%af%d8%a7%d9%86%d9%84%d9%88%d8%af-%d8%a2%d9%85%d9%88%d8%b2%d8%b4-%d8%a8%d8%b1%d9%86%d8%a7%d9%85%d9%87-%d9%86%d9%88%db%8c%d8%b3%db%8c-%d8%a2%d8%b1%d8%af%d9%88%db%8c%d9%86%d9%88.html) - too large. 🛑
+
 
 </details>
 
