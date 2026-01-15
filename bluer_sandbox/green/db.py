@@ -95,6 +95,9 @@ class GreenDB:
             logger.warning(f"list expected, {self.raw.__class__.__name__} found.")
             self.raw = []
 
+        for entry in self.raw:
+            entry["gr"] = entry["gr"] * (1 - entry.get("shared", 0))
+
         log_list(
             logger,
             "loaded",
