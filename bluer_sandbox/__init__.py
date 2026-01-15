@@ -4,7 +4,7 @@ ICON = "🌀"
 
 DESCRIPTION = f"{ICON} A sandbox for ideas and experiments."
 
-VERSION = "5.559.1"
+VERSION = "5.560.1"
 
 REPO_NAME = "bluer-sandbox"
 
