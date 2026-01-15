@@ -2,12 +2,10 @@ import os
 
 from bluer_options.help.functions import get_help
 from bluer_objects import file, README
-from bluer_objects.README.alias import list_of_aliases
 
 from bluer_sandbox import NAME, VERSION, ICON, REPO_NAME
 from bluer_sandbox.help.functions import help_functions
-from bluer_sandbox.README import aliases, bps
-from bluer_sandbox.README.items import items
+from bluer_sandbox.README.docs import docs
 
 
 def build():
@@ -27,36 +25,5 @@ def build():
             ),
             macros=readme.get("macros", {}),
         )
-        for readme in [
-            {
-                "path": "../..",
-                "cols": 3,
-                "items": items,
-                "macros": {
-                    "aliases:::": list_of_aliases(NAME),
-                },
-            },
-            {
-                "path": "../docs",
-            },
-            {
-                "path": "../../sandbox",
-            },
-        ]
-        + [
-            {
-                "path": f"../docs/{doc}.md",
-            }
-            for doc in [
-                "arvancloud",
-                "green",
-                "offline_llm",
-                "LSTM",
-                "netcat",
-                "tor",
-                "v2ray",
-            ]
-        ]
-        + aliases.docs
-        + bps.docs
+        for readme in docs
     )
