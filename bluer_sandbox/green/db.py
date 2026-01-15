@@ -33,6 +33,9 @@ class GreenDB:
                 current["gr"] / (current["date"] - previous["date"]).days
             )
 
+        if self.raw:
+            logger.info("today: {:.2f} gr / day".format(self.raw[0]["daily gr"]))
+
         return
 
     def graph(
