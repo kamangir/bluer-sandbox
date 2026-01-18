@@ -1,10 +1,9 @@
-# parser
+# parser: surface
 
 ```bash
 @select parser-$(@@timestamp)
-@parser parse ~upload \
+@parser parse - \
 	https://www.zoomit.ir/websites/342552-websites-directory-internet-shutdown/ .
-@upload - .
 ```
 
 

@@ -4,8 +4,10 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
 from blueness import module
-from bluer_objects import path, file
+from bluer_options.logger.config import log_list
+from bluer_objects import file
 from bluer_objects import objects
+from bluer_objects import path
 from bluer_objects.metadata import post_to_object
 
 from bluer_sandbox import NAME
@@ -16,12 +18,20 @@ from bluer_sandbox.logger import logger
 NAME = module.name(__file__, NAME)
 
 
-def parse(
+def parse_url(
     url: str,
     object_name: str = "",
     filename: str = "",
+    roots: bool = True,
 ) -> Tuple[bool, List[str]]:
-    logger.info("{}.parse({})".format(NAME, url))
+    logger.info(
+        "{}.parse_url{}: {}{}".format(
+            NAME,
+            "[roots]" if roots else "",
+            url,
+            f"-> {filename}" if filename else "",
+        )
+    )
 
     success = False
     list_of_urls: List[str] = []
@@ -37,15 +47,25 @@ def parse(
             for url_ in list_of_urls
             if isinstance(url_, str) and not url_.startswith("#")
         ]
-        list_of_urls = sorted(
-            [
-                urljoin(url, url_) if url_.startswith("/") else url_
-                for url_ in list_of_urls
-            ]
+        list_of_urls = [
+            urljoin(url, url_) if url_.startswith("/") else url_
+            for url_ in list_of_urls
+        ]
+
+        if roots:
+            # list_of_urls_ = ...
+            pass
+
+        list_of_urls = sorted(list_of_urls)
+
+        log_list(
+            logger,
+            "found",
+            list_of_urls,
+            "url(s)",
+            max_count=-1,
+            max_length=-1,
         )
-        logger.info(f"found {len(list_of_urls)} url(s):")
-        for index, url_ in enumerate(list_of_urls):
-            logger.info(f"#{index+1: 3}: {url_}")
 
         if object_name:
             if not filename:
@@ -54,15 +74,16 @@ def parse(
             filename = objects.path_of(
                 object_name=object_name,
                 filename=filename,
+                create=True,
             )
 
             if not path.create(file.path(filename)):
-                return False, []
+                return False
 
             with open(filename, "w") as f:
                 f.write(content)
 
-            logger.info(f"-> {filename}")
+            logger.info(f"{url} -> {filename}")
 
         success = True
     except Exception as e:

@@ -1,7 +1,7 @@
 from bluer_objects import objects
 from bluer_ai.env import abcli_is_github_workflow
 
-from bluer_sandbox.parser.parsing import parse
+from bluer_sandbox.parser.url import parse
 
 
 def test_parser_parse():

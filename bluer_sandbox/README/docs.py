@@ -3,7 +3,7 @@ import os
 from bluer_objects.README.alias import list_of_aliases
 
 from bluer_sandbox import NAME
-from bluer_sandbox.README import aliases, arduino, bps
+from bluer_sandbox.README import aliases, arduino, bps, parser
 from bluer_sandbox.README.items import items
 
 docs = (
@@ -33,7 +33,6 @@ docs = (
             "offline_llm",
             "LSTM",
             "netcat",
-            "parser",
             "tor",
             "v2ray",
         ]
@@ -41,4 +40,5 @@ docs = (
     + aliases.docs
     + arduino.docs
     + bps.docs
+    + parser.docs
 )

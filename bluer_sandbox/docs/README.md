@@ -1,6 +1,6 @@
 # 
 
-- [parser](./parser.md)
+- [parser](./parser)
 - [arduino](./arduino)
 - [arvancloud](./arvancloud.md)
 - [LSTM](./LSTM.md)

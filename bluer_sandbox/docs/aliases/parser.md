@@ -8,6 +8,8 @@ an html parser.
 	[dryrun,~upload] \
 	<url> \
 	[-|<object-name>] \
-	[--filename <filename>]
+	[--depth <depth>] \
+	[--filename <filename>] \
+	[--root 0]
  . parse <url> -> <object-name>.
 ```
