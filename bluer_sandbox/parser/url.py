@@ -1,8 +1,7 @@
-from typing import Tuple, List
+from typing import Tuple
 import urllib.request
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
-import os
 
 from blueness import module
 from bluer_options.logger.config import log_list
@@ -13,7 +12,6 @@ from bluer_objects.metadata import post_to_object
 
 from bluer_sandbox import NAME
 from bluer_sandbox.parser.hashing import hash_of
-from bluer_sandbox.parser.functions import get_root
 from bluer_sandbox.parser.classes import WebState, URLState
 from bluer_sandbox.logger import logger
 
@@ -88,14 +86,15 @@ def parse_url(
         logger.error(e)
         output.append(url, URLState.FOUND)
 
-    if success:
-        output.append(url, URLState.ACCESSED)
+    if not success:
+        return success, output
 
-    if success:
-        success = post_to_object(
-            object_name,
-            "parser",
-            output.as_dict,
-        )
+    output.append(url, URLState.ACCESSED)
+
+    success = post_to_object(
+        object_name,
+        "parser",
+        output.as_dict,
+    )
 
     return success, output
