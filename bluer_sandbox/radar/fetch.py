@@ -93,7 +93,7 @@ def fetch_url(
 
     success = post_to_object(
         object_name,
-        "parser",
+        "radar",
         output.as_dict,
     )
 

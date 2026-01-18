@@ -8,7 +8,7 @@
 
 
 ```yaml
-parser:
+radar:
   accessed:
   - https://zoomit.ir
   found:

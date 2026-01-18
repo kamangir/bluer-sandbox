@@ -6,6 +6,6 @@ title:::
 	$BLUER_AI_NATIONAL_INTERNAT_INDEX .
 ```
 
-set:::object_name fetch-2026-01-18-i0scfm
+set:::object_name fetch-2026-01-18-ppgcyj
 
 metadata:::get:::object_name
