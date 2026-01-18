@@ -1,4 +1,4 @@
-# parser: one
+# radar: one
 
 ```bash
 @select fetch-$(@@timestamp)

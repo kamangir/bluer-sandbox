@@ -1,4 +1,4 @@
-# parser: depth-2
+# radar: depth-2
 
 
 ```bash
