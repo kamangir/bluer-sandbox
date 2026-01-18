@@ -11,22 +11,22 @@ from bluer_objects import path
 from bluer_objects.metadata import post_to_object
 
 from bluer_sandbox import NAME
-from bluer_sandbox.parser.hashing import hash_of
-from bluer_sandbox.parser.classes import WebState, URLState
+from bluer_sandbox.radar.hashing import hash_of
+from bluer_sandbox.radar.classes import WebState, URLState
 from bluer_sandbox.logger import logger
 
 
 NAME = module.name(__file__, NAME)
 
 
-def parse_url(
+def fetch_url(
     url: str,
     object_name: str = "",
     filename: str = "",
     roots: bool = True,
 ) -> Tuple[bool, WebState]:
     logger.info(
-        "{}.parse_url{}: {}{}".format(
+        "{}.fetch_url{}: {}{}".format(
             NAME,
             "[roots]" if roots else "",
             url,

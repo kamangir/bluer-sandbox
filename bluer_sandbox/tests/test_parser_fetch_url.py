@@ -3,8 +3,8 @@ import pytest
 from bluer_objects import objects
 from bluer_ai import env
 
-from bluer_sandbox.parser.url import parse_url
-from bluer_sandbox.parser.classes import WebState
+from bluer_sandbox.radar.fetch import fetch_url
+from bluer_sandbox.radar.classes import WebState
 
 
 @pytest.mark.parametrize(
@@ -15,13 +15,13 @@ from bluer_sandbox.parser.classes import WebState
     ["roots"],
     [[True], [False]],
 )
-def test_parser_parse(
+def test_parser_fetch_url(
     url: str,
     roots: bool,
 ):
-    object_name = objects.unique_object("test_parser_parse")
+    object_name = objects.unique_object("test_parser_fetch_url")
 
-    success, state = parse_url(
+    success, state = fetch_url(
         url=url,
         object_name=object_name,
         roots=roots,

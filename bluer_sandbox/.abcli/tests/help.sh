@@ -45,8 +45,8 @@ function test_bluer_sandbox_help() {
         "@notebooks host" \
         "@notebooks open" \
         \
-        "@parser" \
-        "@parser parse" \
+        "@radar" \
+        "@radar fetch" \
         \
         "@sandbox" \
         \

@@ -1,11 +1,11 @@
 title:::
 
 ```bash
-@select parser-$(@@timestamp)
-@parser parse - \
+@select fetch-$(@@timestamp)
+@radar fetch - \
 	$BLUER_AI_NATIONAL_INTERNAT_INDEX .
 ```
 
-set:::object_name parser-2026-01-18-k3e3fc
+set:::object_name fetch-2026-01-18-i0scfm
 
 metadata:::get:::object_name

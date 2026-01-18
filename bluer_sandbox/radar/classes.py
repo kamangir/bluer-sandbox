@@ -1,7 +1,7 @@
 from typing import Dict, List
 from enum import Enum, auto
 
-from bluer_sandbox.parser.functions import get_root
+from bluer_sandbox.radar.functions import get_root
 from bluer_sandbox.logger import logger
 
 

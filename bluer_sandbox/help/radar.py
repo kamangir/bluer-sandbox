@@ -3,7 +3,7 @@ from typing import List
 from bluer_options.terminal import show_usage, xtra
 
 
-def help_parse(
+def help_fetch(
     tokens: List[str],
     mono: bool,
 ) -> str:
@@ -17,18 +17,18 @@ def help_parse(
 
     return show_usage(
         [
-            "@parser",
-            "parse",
+            "@radar",
+            "fetch",
             f"[{options}]",
             "<url>",
             "[-|<object-name>]",
         ]
         + args,
-        "parse <url> -> <object-name>.",
+        "fetch <url> -> <object-name>.",
         mono=mono,
     )
 
 
 help_functions = {
-    "parse": help_parse,
+    "fetch": help_fetch,
 }

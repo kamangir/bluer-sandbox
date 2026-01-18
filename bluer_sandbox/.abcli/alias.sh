@@ -12,8 +12,6 @@ alias @netcat=bluer_sandbox_netcat
 
 alias @notebooks=bluer_sandbox_notebooks
 
-alias @parser=bluer_sandbox_parser
-
 alias @speedtest=bluer_sandbox_speedtest
 
 alias @tor=bluer_sandbox_tor
@@ -21,6 +19,8 @@ alias @tor=bluer_sandbox_tor
 alias @v2ray=bluer_sandbox_v2ray
 
 alias @village=bluer_sandbox_village
+
+alias @radar=bluer_sandbox_radar
 
 # ignore
 

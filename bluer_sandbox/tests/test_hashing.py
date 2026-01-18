@@ -1,6 +1,6 @@
 from bluer_options import string
 
-from bluer_sandbox.parser.hashing import hash_of
+from bluer_sandbox.radar.hashing import hash_of
 
 
 def test_hashing_hash_of():

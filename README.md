@@ -16,7 +16,7 @@ pip install bluer-sandbox
 [@llm](./bluer_sandbox/docs/aliases/llm.md) 
 [@netcat](./bluer_sandbox/docs/aliases/netcat.md) 
 [@notebooks](./bluer_sandbox/docs/aliases/notebooks.md) 
-[@parser](./bluer_sandbox/docs/aliases/parser.md) 
+[@radar](./bluer_sandbox/docs/aliases/radar.md) 
 [@speedtest](./bluer_sandbox/docs/aliases/speedtest.md) 
 [@tor](./bluer_sandbox/docs/aliases/tor.md) 
 [@v2ray](./bluer_sandbox/docs/aliases/v2ray.md) 
@@ -24,9 +24,9 @@ pip install bluer-sandbox
 
 |   |   |   |
 | --- | --- | --- |
-| [`green`](./bluer_sandbox/docs/green.md) [![image](../assets/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/green.md) ☘️ tracking green use. | [`netcat`](./bluer_sandbox/docs/netcat.md) [![image](../assets/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/netcat.md) tools to work with netcat. | [`v2ray`](./bluer_sandbox/docs/v2ray.md) [![image](../assets2/v2ray/v2ray.png?raw=true)](./bluer_sandbox/docs/v2ray.md) tools to work with [v2ray](https://en.wikipedia.org/wiki/V2Ray). |
-| [`arvancloud`](./bluer_sandbox/docs/arvancloud.md) [![image](../assets/arvancloud/arvancloud.png?raw=true)](./bluer_sandbox/docs/arvancloud.md) tools to work with [arvancloud](https://arvancloud.ir/). | [`tor`](./bluer_sandbox/docs/tor.md) [![image](../assets/tor/tor2.png?raw=true)](./bluer_sandbox/docs/tor.md) tools to work with [tor](https://www.torproject.org/). | [`offline LLM`](./bluer_sandbox/docs/offline_llm.md) [![image](https://user-images.githubusercontent.com/1991296/230134379-7181e485-c521-4d23-a0d6-f7b3b61ba524.png)](./bluer_sandbox/docs/offline_llm.md) using [llama.cpp](https://github.com/ggerganov/llama.cpp). |
-| [`bluer village`](./bluer_sandbox/docs/aliases/village.md) [![image](../assets/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/aliases/village.md) a bluer village. |  |  |
+| [`parser`](./bluer_sandbox/docs/parser) [![image](../assets/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/parser) a web radar. | [`green`](./bluer_sandbox/docs/green.md) [![image](../assets/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/green.md) ☘️ tracking green use. | [`netcat`](./bluer_sandbox/docs/netcat.md) [![image](../assets/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/netcat.md) tools to work with netcat. |
+| [`v2ray`](./bluer_sandbox/docs/v2ray.md) [![image](../assets2/v2ray/v2ray.png?raw=true)](./bluer_sandbox/docs/v2ray.md) tools to work with [v2ray](https://en.wikipedia.org/wiki/V2Ray). | [`arvancloud`](./bluer_sandbox/docs/arvancloud.md) [![image](../assets/arvancloud/arvancloud.png?raw=true)](./bluer_sandbox/docs/arvancloud.md) tools to work with [arvancloud](https://arvancloud.ir/). | [`tor`](./bluer_sandbox/docs/tor.md) [![image](../assets/tor/tor2.png?raw=true)](./bluer_sandbox/docs/tor.md) tools to work with [tor](https://www.torproject.org/). |
+| [`offline LLM`](./bluer_sandbox/docs/offline_llm.md) [![image](https://user-images.githubusercontent.com/1991296/230134379-7181e485-c521-4d23-a0d6-f7b3b61ba524.png)](./bluer_sandbox/docs/offline_llm.md) using [llama.cpp](https://github.com/ggerganov/llama.cpp). | [`bluer village`](./bluer_sandbox/docs/aliases/village.md) [![image](../assets/blue-plugin/marquee.png?raw=true)](./bluer_sandbox/docs/aliases/village.md) a bluer village. |  |
 
 ---
 
@@ -37,4 +37,4 @@ pip install bluer-sandbox
 
 [![pylint](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml) [![pytest](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml) [![bashtest](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml) [![PyPI version](https://img.shields.io/pypi/v/bluer-sandbox.svg)](https://pypi.org/project/bluer-sandbox/) [![PyPI - Downloads](https://img.shields.io/pypi/dd/bluer-sandbox)](https://pypistats.org/packages/bluer-sandbox)
 
-built by 🌀 [`bluer README`](../bluer-objects/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.568.1`](https://github.com/kamangir/bluer-sandbox).
+built by 🌀 [`bluer README`](../bluer-objects/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.569.1`](https://github.com/kamangir/bluer-sandbox).

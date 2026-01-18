@@ -4,6 +4,11 @@ from bluer_objects.README.consts import assets, assets2
 items = README.Items(
     [
         {
+            "name": "parser",
+            "description": "a web radar.",
+            "url": "./bluer_sandbox/docs/parser",
+        },
+        {
             "name": "green",
             "description": "☘️ tracking green use.",
             "url": "./bluer_sandbox/docs/green.md",

@@ -1,6 +1,6 @@
 import pytest
 
-from bluer_sandbox.parser.classes import WebState, URLState
+from bluer_sandbox.radar.classes import WebState, URLState
 
 
 @pytest.mark.parametrize(

@@ -1,15 +1,15 @@
-# aliases: parser
+# aliases: radar
 
-an html parser.
+a web radar.
 
 ```bash
-@parser \
-	parse \
+@radar \
+	fetch \
 	[dryrun,~upload] \
 	<url> \
 	[-|<object-name>] \
 	[--depth <depth>] \
 	[--filename <filename>] \
 	[--root 0]
- . parse <url> -> <object-name>.
+ . fetch <url> -> <object-name>.
 ```

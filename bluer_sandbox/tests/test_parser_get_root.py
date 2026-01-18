@@ -2,7 +2,7 @@ import pytest
 
 from bluer_ai import env
 
-from bluer_sandbox.parser.functions import get_root
+from bluer_sandbox.radar.functions import get_root
 
 
 @pytest.mark.parametrize(
