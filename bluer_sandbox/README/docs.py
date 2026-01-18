@@ -33,6 +33,7 @@ docs = (
             "offline_llm",
             "LSTM",
             "netcat",
+            "parser",
             "tor",
             "v2ray",
         ]

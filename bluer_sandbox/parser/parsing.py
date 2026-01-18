@@ -2,11 +2,11 @@ from typing import Tuple, List
 import urllib.request
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
-import re
 
 from blueness import module
 from bluer_objects import path, file
 from bluer_objects import objects
+from bluer_objects.metadata import post_to_object
 
 from bluer_sandbox import NAME
 from bluer_sandbox.parser.hashing import hash_of
@@ -37,10 +37,12 @@ def parse(
             for url_ in list_of_urls
             if isinstance(url_, str) and not url_.startswith("#")
         ]
-        list_of_urls = [
-            urljoin(url, url_) if url_.startswith("/") else url_
-            for url_ in list_of_urls
-        ]
+        list_of_urls = sorted(
+            [
+                urljoin(url, url_) if url_.startswith("/") else url_
+                for url_ in list_of_urls
+            ]
+        )
         logger.info(f"found {len(list_of_urls)} url(s):")
         for index, url_ in enumerate(list_of_urls):
             logger.info(f"#{index+1: 3}: {url_}")
@@ -65,5 +67,15 @@ def parse(
         success = True
     except Exception as e:
         logger.error(e)
+
+    if success:
+        success = post_to_object(
+            object_name,
+            "parser",
+            {
+                "url": url,
+                "list_of_urls": list_of_urls,
+            },
+        )
 
     return success, list_of_urls
