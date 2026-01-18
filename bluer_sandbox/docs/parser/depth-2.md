@@ -4,9 +4,14 @@
 ```bash
 @select parser-$(@@timestamp)
 @parser parse - \
-	https://www.zoomit.ir/websites/342552-websites-directory-internet-shutdown/ . \
-    --depth 2 \
-    --roots 1
+	$BLUER_AI_NATIONAL_INTERNAT_INDEX . \
+    --depth 2
 ```
 
 🔥
+
+
+```yaml
+{}
+
+```

@@ -5,11 +5,7 @@ function bluer_sandbox_parser_parse() {
     local do_dryrun=$(bluer_ai_option_int "$options" dryrun 0)
     local do_upload=$(bluer_ai_option_int "$options" upload $(bluer_ai_not $do_dryrun))
 
-    local url=$2
-    if [[ -z "$url" ]]; then
-        bluer_ai_log_error "url not found."
-        return 0
-    fi
+    local url=${2:-$BLUER_AI_NATIONAL_INTERNAT_INDEX}
 
     local object_name=$(bluer_ai_clarify_object $3 parsed-$(bluer_ai_string_timestamp))
 

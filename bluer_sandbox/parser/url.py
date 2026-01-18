@@ -2,6 +2,7 @@ from typing import Tuple, List
 import urllib.request
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
+import os
 
 from blueness import module
 from bluer_options.logger.config import log_list
@@ -12,6 +13,8 @@ from bluer_objects.metadata import post_to_object
 
 from bluer_sandbox import NAME
 from bluer_sandbox.parser.hashing import hash_of
+from bluer_sandbox.parser.functions import get_root
+from bluer_sandbox.parser.classes import WebState, URLState
 from bluer_sandbox.logger import logger
 
 
@@ -23,7 +26,7 @@ def parse_url(
     object_name: str = "",
     filename: str = "",
     roots: bool = True,
-) -> Tuple[bool, List[str]]:
+) -> Tuple[bool, WebState]:
     logger.info(
         "{}.parse_url{}: {}{}".format(
             NAME,
@@ -33,9 +36,9 @@ def parse_url(
         )
     )
 
-    success = False
-    list_of_urls: List[str] = []
+    output = WebState(roots=roots)
 
+    success = False
     try:
         response = urllib.request.urlopen(url)
         content = response.read().decode("utf-8")
@@ -52,20 +55,15 @@ def parse_url(
             for url_ in list_of_urls
         ]
 
-        if roots:
-            # list_of_urls_ = ...
-            pass
-
-        list_of_urls = sorted(list_of_urls)
-
         log_list(
             logger,
             "found",
             list_of_urls,
             "url(s)",
-            max_count=-1,
-            max_length=-1,
         )
+
+        for url_ in sorted(list(set(list_of_urls))):
+            output.append(url_, URLState.FOUND)
 
         if object_name:
             if not filename:
@@ -88,15 +86,16 @@ def parse_url(
         success = True
     except Exception as e:
         logger.error(e)
+        output.append(url, URLState.FOUND)
+
+    if success:
+        output.append(url, URLState.ACCESSED)
 
     if success:
         success = post_to_object(
             object_name,
             "parser",
-            {
-                "url": url,
-                "list_of_urls": list_of_urls,
-            },
+            output.as_dict,
         )
 
-    return success, list_of_urls
+    return success, output
