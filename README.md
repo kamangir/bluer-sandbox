@@ -16,6 +16,7 @@ pip install bluer-sandbox
 [@llm](./bluer_sandbox/docs/aliases/llm.md) 
 [@netcat](./bluer_sandbox/docs/aliases/netcat.md) 
 [@notebooks](./bluer_sandbox/docs/aliases/notebooks.md) 
+[@parser](./bluer_sandbox/docs/aliases/parser.md) 
 [@speedtest](./bluer_sandbox/docs/aliases/speedtest.md) 
 [@tor](./bluer_sandbox/docs/aliases/tor.md) 
 [@v2ray](./bluer_sandbox/docs/aliases/v2ray.md) 
@@ -36,4 +37,4 @@ pip install bluer-sandbox
 
 [![pylint](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pylint.yml) [![pytest](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/pytest.yml) [![bashtest](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml/badge.svg)](https://github.com/kamangir/bluer-sandbox/actions/workflows/bashtest.yml) [![PyPI version](https://img.shields.io/pypi/v/bluer-sandbox.svg)](https://pypi.org/project/bluer-sandbox/) [![PyPI - Downloads](https://img.shields.io/pypi/dd/bluer-sandbox)](https://pypistats.org/packages/bluer-sandbox)
 
-built by 🌀 [`bluer README`](https://github.com/kamangir/bluer-objects/tree/main/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.563.1`](https://github.com/kamangir/bluer-sandbox).
+built by 🌀 [`bluer README`](../bluer-objects/bluer_objects/README), based on 🌀 [`bluer_sandbox-5.564.1`](https://github.com/kamangir/bluer-sandbox).
