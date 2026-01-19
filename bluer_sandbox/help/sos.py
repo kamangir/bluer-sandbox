@@ -11,12 +11,7 @@ def help_env(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = "".join(
-        [
-            xtra("dryrun,", mono=mono),
-            "rpi=<rpi-name>",
-        ]
-    )
+    options = xtra("dryrun", mono=mono)
 
     return show_usage(
         [
@@ -33,12 +28,7 @@ def help_git(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = "".join(
-        [
-            xtra("dryrun,repo=<repo-name>,", mono=mono),
-            "rpi=<rpi-name>",
-        ]
-    )
+    options = xtra("dryrun,repo=<repo-name>", mono=mono)
 
     return show_usage(
         [
