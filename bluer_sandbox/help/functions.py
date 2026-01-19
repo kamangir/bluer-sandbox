@@ -7,6 +7,7 @@ from bluer_sandbox.help.netcat import help_functions as help_netcat
 from bluer_sandbox.help.notebooks import help_functions as help_notebooks
 from bluer_sandbox.help.offline_llm import help_functions as help_offline_llm
 from bluer_sandbox.help.radar import help_functions as help_radar
+from bluer_sandbox.help.sos import help_functions as help_sos
 from bluer_sandbox.help.speedtest import help_speedtest
 from bluer_sandbox.help.tor import help_functions as help_tor
 from bluer_sandbox.help.v2ray import help_functions as help_v2ray
@@ -27,6 +28,7 @@ help_functions.update(
         "notebooks": help_notebooks,
         "offline_llm": help_offline_llm,
         "radar": help_radar,
+        "sos": help_sos,
         "speedtest": help_speedtest,
         "tor": help_tor,
         "v2ray": help_v2ray,

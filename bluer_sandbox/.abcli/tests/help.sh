@@ -60,6 +60,10 @@ function test_bluer_sandbox_help() {
         "@sandbox test" \
         "@sandbox test list" \
         \
+        "@sos" \
+        "@sos env" \
+        "@sos git" \
+        \
         "@speedtest" \
         \
         "@tor" \

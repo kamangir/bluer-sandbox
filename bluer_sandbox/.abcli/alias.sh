@@ -32,3 +32,5 @@ alias @offline_llm=bluer_sandbox_offline_llm
 alias @ollm=bluer_sandbox_offline_llm
 
 alias @sandbox=bluer_sandbox
+
+alias @sos=bluer_sandbox_sos
