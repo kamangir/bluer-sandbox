@@ -1,4 +1,4 @@
-# radar: depth-2
+# radar: two
 
 
 ```bash

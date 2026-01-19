@@ -6,6 +6,6 @@ docs = [
         "path": f"../docs/radar/one.md",
     },
     {
-        "path": f"../docs/radar/depth-2.md",
+        "path": f"../docs/radar/two.md",
     },
 ]

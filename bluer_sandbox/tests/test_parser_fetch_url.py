@@ -3,7 +3,7 @@ import pytest
 from bluer_objects import objects
 from bluer_ai import env
 
-from bluer_sandbox.radar.fetch import fetch_url
+from bluer_sandbox.radar.fetch import seed
 from bluer_sandbox.radar.classes import WebState
 
 
@@ -21,7 +21,7 @@ def test_parser_fetch_url(
 ):
     object_name = objects.unique_object("test_parser_fetch_url")
 
-    success, state = fetch_url(
+    success, state = seed(
         url=url,
         object_name=object_name,
         roots=roots,

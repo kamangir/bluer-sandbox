@@ -1,10 +1,12 @@
 import argparse
 
+from bluer_ai.env import BLUER_AI_NATIONAL_INTERNAT_INDEX
 from blueness import module
 from blueness.argparse.generic import sys_exit
 
 from bluer_sandbox import NAME
-from bluer_sandbox.radar.fetch import fetch_url
+from bluer_sandbox.radar.classes import WebState, URLState
+from bluer_sandbox.radar.fetch import fetch
 from bluer_sandbox.logger import logger
 
 NAME = module.name(__file__, NAME)
@@ -16,16 +18,12 @@ parser.add_argument(
     help="fetch",
 )
 parser.add_argument(
+    "--depth",
+    type=int,
+    default=1,
+)
+parser.add_argument(
     "--object_name",
-    type=str,
-)
-parser.add_argument(
-    "--filename",
-    type=str,
-    default="",
-)
-parser.add_argument(
-    "--url",
     type=str,
 )
 parser.add_argument(
@@ -35,20 +33,33 @@ parser.add_argument(
     help="0 | 1",
 )
 parser.add_argument(
-    "--depth",
-    type=int,
-    default=1,
+    "--seed",
+    type=str,
+    default="",
 )
 args = parser.parse_args()
 
 success = False
 if args.task == "fetch":
-    success, _ = fetch_url(
-        url=args.url,
+    state = WebState(
         object_name=args.object_name,
-        filename=args.filename,
         roots=args.roots == 1,
     )
+
+    success = state.load()
+
+    if success:
+        seed: str = state.seed
+        if not seed:
+            seed = args.seed
+        if not seed:
+            seed = BLUER_AI_NATIONAL_INTERNAT_INDEX
+        logger.info(f"seed: {seed}")
+
+        success = state.fetch(seed=seed)
+
+    if success:
+        success = state.save()
 else:
     success = None
 

@@ -2,10 +2,9 @@ title:::
 
 ```bash
 @select fetch-$(@@timestamp)
-@radar fetch - \
-	$BLUER_AI_NATIONAL_INTERNAT_INDEX .
+@radar fetch - .
 ```
 
-set:::object_name fetch-2026-01-18-ppgcyj
+set:::object_name TBA
 
 metadata:::get:::object_name
