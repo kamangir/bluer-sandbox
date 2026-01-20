@@ -7,6 +7,20 @@ from bluer_plugin import ALIAS
 from bluer_plugin.help.node.functions import help_functions as help_node
 
 
+def help_cd(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    return show_usage(
+        [
+            "@sos",
+            "cd",
+        ],
+        "cd sos folder.",
+        mono=mono,
+    )
+
+
 def help_env(
     tokens: List[str],
     mono: bool,
@@ -19,7 +33,7 @@ def help_env(
             "env",
             f"[{options}]",
         ],
-        "sos env.",
+        "sos += env.",
         mono=mono,
     )
 
@@ -36,12 +50,28 @@ def help_git(
             "git",
             f"[{options}]",
         ],
-        "sos git.",
+        "sos += git.",
+        mono=mono,
+    )
+
+
+def help_open(
+    tokens: List[str],
+    mono: bool,
+) -> str:
+    return show_usage(
+        [
+            "@sos",
+            "open",
+        ],
+        "open sos folder.",
         mono=mono,
     )
 
 
 help_functions = {
+    "cd": help_cd,
     "env": help_env,
     "git": help_git,
+    "open": help_open,
 }

@@ -61,8 +61,10 @@ function test_bluer_sandbox_help() {
         "@sandbox test list" \
         \
         "@sos" \
+        "@sos cd" \
         "@sos env" \
         "@sos git" \
+        "@sos open" \
         \
         "@speedtest" \
         \
