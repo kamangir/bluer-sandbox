@@ -10,9 +10,8 @@ def help_fetch(
     options = xtra("~download,upload", mono=mono)
 
     args = [
-        "[--filename <filename>]",
         "[--max_iteration <5>]",
-        "[--root 0]",
+        "[--roots 0]",
         "[--seed <url>]",
     ]
 
@@ -21,7 +20,6 @@ def help_fetch(
             "@radar",
             "fetch",
             f"[{options}]",
-            "<url>",
             "[-|<object-name>]",
         ]
         + args,
