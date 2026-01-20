@@ -96,8 +96,8 @@ class WebState:
 
         success = False
         try:
-            response = urllib.request.urlopen(url)
-            content = response.read().decode("utf-8")
+            with urllib.request.urlopen(url) as response:
+                content = response.read().decode("utf-8")
             soup = BeautifulSoup(content, "html.parser")
 
             list_of_urls = list({link.get("href") for link in soup.find_all("a")})

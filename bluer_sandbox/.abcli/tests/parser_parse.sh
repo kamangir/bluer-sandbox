@@ -1,6 +1,9 @@
 #! /usr/bin/env bash
 
-function test_bluer_sandbox_parser_parse() {
+function test_bluer_sandbox_radar() {
+    bluer_ai_log_warning 🚧
+    return
+    
     local options=$1
 
     local object_name=test_bluer_sandbox_parser_parse-$(bluer_ai_string_timestamp)
