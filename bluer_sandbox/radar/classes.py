@@ -24,6 +24,7 @@ NAME = module.name(__file__, NAME)
 class URLState(Enum):
     FOUND = auto()
     ACCESSED = auto()
+    FAILED = auto()
 
 
 class WebState:
@@ -86,6 +87,7 @@ class WebState:
     def fetch(
         self,
         url: str,
+        timeout: int = 3,
     ) -> bool:
         logger.info(
             "{}.fetch({})".format(
@@ -96,7 +98,10 @@ class WebState:
 
         success = False
         try:
-            with urllib.request.urlopen(url) as response:
+            with urllib.request.urlopen(
+                url,
+                timeout=timeout,
+            ) as response:
                 content = response.read().decode("utf-8")
             soup = BeautifulSoup(content, "html.parser")
 
@@ -142,12 +147,6 @@ class WebState:
 
         self.append(url, URLState.ACCESSED)
 
-        success = post_to_object(
-            self.object_name,
-            "radar",
-            self.as_dict,
-        )
-
         return success
 
     def load(self) -> bool:
@@ -187,11 +186,18 @@ class WebState:
         self,
         log: bool = True,
     ) -> bool:
-        return file.save(
+        if not file.save(
             objects.path_of(
                 object_name=self.object_name,
                 filename=self.filename,
             ),
             self.dict_of_urls,
             log=log,
+        ):
+            return False
+
+        return post_to_object(
+            self.object_name,
+            "radar",
+            self.as_dict,
         )

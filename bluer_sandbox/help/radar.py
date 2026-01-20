@@ -7,11 +7,11 @@ def help_fetch(
     tokens: List[str],
     mono: bool,
 ) -> str:
-    options = xtra("~download,~upload", mono=mono)
+    options = xtra("~download,upload", mono=mono)
 
     args = [
-        "[--depth <depth>]",
         "[--filename <filename>]",
+        "[--max_iteration <5>]",
         "[--root 0]",
         "[--seed <url>]",
     ]

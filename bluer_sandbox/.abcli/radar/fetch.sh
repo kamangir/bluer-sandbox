@@ -2,7 +2,7 @@
 
 function bluer_sandbox_radar_fetch() {
     local options=$1
-    local do_download=$(bluer_ai_option_int "$options" download 0)
+    local do_download=$(bluer_ai_option_int "$options" download 1)
     local do_upload=$(bluer_ai_option_int "$options" upload 0)
 
     local object_name=$(bluer_ai_clarify_object $2 fetch-$(bluer_ai_string_timestamp))
