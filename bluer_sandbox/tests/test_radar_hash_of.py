@@ -15,7 +15,7 @@ from bluer_sandbox.radar.hashing import hash_of
         ],
     ],
 )
-def test_parser_hash_of(
+def test_radar_hash_of(
     input: str,
     expected_output: str,
 ):

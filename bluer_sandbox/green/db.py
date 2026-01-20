@@ -36,8 +36,6 @@ class GreenDB:
         if self.raw:
             logger.info("today: {:.2f} gr / day".format(self.raw[0]["daily gr"]))
 
-        return
-
     def graph(
         self,
         what: str = "gr",

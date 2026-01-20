@@ -1,11 +1,11 @@
 docs = [
     {
-        "path": f"../docs/radar",
+        "path": "../docs/radar",
     },
     {
-        "path": f"../docs/radar/one.md",
+        "path": "../docs/radar/one.md",
     },
     {
-        "path": f"../docs/radar/two.md",
+        "path": "../docs/radar/two.md",
     },
 ]

@@ -54,7 +54,7 @@ from bluer_sandbox.radar.functions import get_root
         ],
     ],
 )
-def test_parser_get_root(
+def test_radar_get_root(
     url: str,
     expected_root: str,
     expected_success: bool,

@@ -1,12 +1,11 @@
 import argparse
 
-from bluer_ai.env import BLUER_AI_NATIONAL_INTERNAT_INDEX
 from blueness import module
 from blueness.argparse.generic import sys_exit
+from bluer_ai.env import BLUER_AI_NATIONAL_INTERNAT_INDEX
 
 from bluer_sandbox import NAME
 from bluer_sandbox.radar.classes import WebState, URLState
-from bluer_sandbox.radar.fetch import fetch
 from bluer_sandbox.logger import logger
 
 NAME = module.name(__file__, NAME)
@@ -56,7 +55,7 @@ if args.task == "fetch":
             seed = BLUER_AI_NATIONAL_INTERNAT_INDEX
         logger.info(f"seed: {seed}")
 
-        success = state.fetch(seed=seed)
+        success = state.fetch(url=seed)
 
     if success:
         success = state.save()

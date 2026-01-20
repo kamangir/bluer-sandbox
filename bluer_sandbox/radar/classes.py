@@ -8,7 +8,6 @@ from blueness import module
 from bluer_options.logger.config import log_list
 from bluer_objects import file
 from bluer_objects import objects
-from bluer_objects import path
 from bluer_objects.metadata import post_to_object
 from bluer_objects import file
 from bluer_objects import objects
@@ -16,7 +15,6 @@ from bluer_objects import objects
 from bluer_sandbox.radar.functions import get_root
 from bluer_sandbox import NAME
 from bluer_sandbox.radar.hashing import hash_of
-from bluer_sandbox.radar.classes import URLState
 from bluer_sandbox.logger import logger
 
 
@@ -137,17 +135,17 @@ class WebState:
             success = True
         except Exception as e:
             logger.error(e)
-            output.append(url, URLState.FOUND)
+            self.append(url, URLState.FOUND)
 
         if not success:
-            return success, output
+            return success
 
-        output.append(url, URLState.ACCESSED)
+        self.append(url, URLState.ACCESSED)
 
         success = post_to_object(
-            object_name,
+            self.object_name,
             "radar",
-            output.as_dict,
+            self.as_dict,
         )
 
         return success
@@ -176,14 +174,14 @@ class WebState:
         candidates = [
             url for url, state in self.dict_of_urls.items() if state == URLState.FOUND
         ]
-        seed = candidates[0] if candidates else ""
+        output = candidates[0] if candidates else ""
 
-        if seed:
-            logger.info(f"{self.__class__.__name__}.seed={seed}")
+        if output:
+            logger.info(f"{self.__class__.__name__}.seed={output}")
         else:
             logger.info(f"no seed in {self.__class__.__name__}.")
 
-        return seed
+        return output
 
     def save(
         self,

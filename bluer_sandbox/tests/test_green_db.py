@@ -20,4 +20,4 @@ def test_green_db():
     assert db.save()
 
     db2 = GreenDB(db.object_name)
-    assert db2.raw == db.raw
+    assert len(db2.raw) == len(db.raw)

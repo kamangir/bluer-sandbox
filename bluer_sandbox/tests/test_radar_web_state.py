@@ -12,17 +12,16 @@ from bluer_sandbox.radar.classes import WebState, URLState
         [False],
     ],
 )
-def test_parser_web_state(roots: bool):
-    object_name = objects.unique_object("test_parser_web_state")
+def test_radar_web_state(roots: bool):
+    object_name = objects.unique_object("test_radar_web_state")
 
     state = WebState(
         object_name=object_name,
         roots=roots,
     )
 
-    seed = state.seed
-    assert isinstance(seed, str)
-    assert seed == ""
+    assert isinstance(state.seed, str)
+    assert state.seed == ""
 
     assert isinstance(state.dict_of_urls, dict)
 
@@ -35,5 +34,6 @@ def test_parser_web_state(roots: bool):
 
     assert state.load()
 
-    assert isinstance(state.seed, str)
-    assert seed == "https://irna.ir"
+    assert state.seed == "https://irna.ir"
+
+    assert isinstance(state.as_dict, dict)
