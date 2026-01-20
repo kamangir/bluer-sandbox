@@ -59,11 +59,14 @@ def help_create(
     tokens: List[str],
     mono: bool,
 ) -> str:
+    options = xtra("~open", mono=mono)
+
     return show_usage(
         [
             "@notebooks",
             "create | touch",
             "<notebook-name> | <path>/<notebook-name> | notebook",
+            f"[{options}]",
         ],
         "create <notebook-name>.",
         mono=mono,
