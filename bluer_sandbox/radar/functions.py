@@ -20,6 +20,9 @@ def get_root(url: str) -> Tuple[bool, str]:
     if url_root.startswith("www."):
         url_root = url_root.split("www.", 1)[1]
 
+    if "?" in url_root:
+        url_root = url_root.split("?", 1)[0]
+
     if os.sep in url_root:
         url_root = url_root.split(os.sep, 1)[0]
 

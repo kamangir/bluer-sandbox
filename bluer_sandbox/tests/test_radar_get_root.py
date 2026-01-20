@@ -52,6 +52,11 @@ from bluer_sandbox.radar.functions import get_root
             "",
             False,
         ],
+        [
+            "https://app.azkisarmayeh.com?utm_source=azki_site&utm_medium=banner&utm_campaign=azki_web_banner&utm_id=AZKI_WEB",
+            "https://app.azkisarmayeh.com",
+            True,
+        ],
     ],
 )
 def test_radar_get_root(
