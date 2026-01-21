@@ -29,9 +29,9 @@ class GreenDB:
         logger.info(f"{self.__class__.__name__}.generate_daily")
 
         for current, previous in zip(self.raw[:-1], self.raw[1:]):
-            current["daily gr"] = (
-                current["gr"] / (current["date"] - previous["date"]).days
-            )
+            current["daily gr"] = (current["gr"] - current.get("stock", 0)) / (
+                current["date"] - previous["date"]
+            ).days
 
         if self.raw:
             logger.info("today: {:.2f} gr / day".format(self.raw[0]["daily gr"]))
