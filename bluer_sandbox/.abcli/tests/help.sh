@@ -18,10 +18,6 @@ function test_bluer_sandbox_help() {
         "@docker run" \
         "@docker seed" \
         \
-        "@green" \
-        "@green edit" \
-        "@green review" \
-        \
         "@interview" \
         \
         "@llm" \
@@ -33,10 +29,6 @@ function test_bluer_sandbox_help() {
         "@llm model get" \
         "@llm prompt" \
         \
-        "@netcat" \
-        "@netcat connect" \
-        "@netcat listen" \
-        \
         "@notebooks" \
         "@notebooks build" \
         "@notebooks code" \
@@ -44,9 +36,6 @@ function test_bluer_sandbox_help() {
         "@notebooks create" \
         "@notebooks host" \
         "@notebooks open" \
-        \
-        "@radar" \
-        "@radar fetch" \
         \
         "@sandbox" \
         \
@@ -60,23 +49,7 @@ function test_bluer_sandbox_help() {
         "@sandbox test" \
         "@sandbox test list" \
         \
-        "@sos" \
-        "@sos cd" \
-        "@sos env" \
-        "@sos git" \
-        "@sos open" \
-        \
         "@speedtest" \
-        \
-        "@tor" \
-        "@tor test" \
-        "@tor start" \
-        \
-        "@v2ray" \
-        "@v2ray import" \
-        "@v2ray install" \
-        "@v2ray test" \
-        "@v2ray start" \
         \
         "@village" \
         "@village analyze" \

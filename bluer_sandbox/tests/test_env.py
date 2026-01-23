@@ -14,10 +14,7 @@ def test_bluer_sandbox_env():
     assert are_nonempty_strs(
         [
             env.ARVANCLOUD_PRIVATE_KEY,
-            env.BLUER_SANDBOX_GREEN_OBJECT_NAME,
-            env.BLUER_SANDBOX_V2RAY_TEST_VLESS,
             env.BLUER_VILLAGE_OBJECT,
-            env.BLUER_SANDBOX_SOS_PATH,
             env.BLUER_VILLAGE_TEST_OBJECT,
         ]
     )

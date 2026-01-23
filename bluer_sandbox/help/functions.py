@@ -1,16 +1,10 @@
 from bluer_ai.help.generic import help_functions as generic_help_functions
 from bluer_sandbox.help.arvancloud import help_functions as help_arvancloud
 from bluer_sandbox.help.docker import help_functions as help_docker
-from bluer_sandbox.help.green import help_functions as help_green
 from bluer_sandbox.help.interview import help_functions as help_interview
-from bluer_sandbox.help.netcat import help_functions as help_netcat
 from bluer_sandbox.help.notebooks import help_functions as help_notebooks
 from bluer_sandbox.help.offline_llm import help_functions as help_offline_llm
-from bluer_sandbox.help.radar import help_functions as help_radar
-from bluer_sandbox.help.sos import help_functions as help_sos
 from bluer_sandbox.help.speedtest import help_speedtest
-from bluer_sandbox.help.tor import help_functions as help_tor
-from bluer_sandbox.help.v2ray import help_functions as help_v2ray
 from bluer_sandbox.help.village import help_functions as help_village
 
 from bluer_sandbox import ALIAS
@@ -22,16 +16,10 @@ help_functions.update(
     {
         "arvancloud": help_arvancloud,
         "docker": help_docker,
-        "green": help_green,
         "interview": help_interview,
-        "netcat": help_netcat,
         "notebooks": help_notebooks,
         "offline_llm": help_offline_llm,
-        "radar": help_radar,
-        "sos": help_sos,
         "speedtest": help_speedtest,
-        "tor": help_tor,
-        "v2ray": help_v2ray,
         "village": help_village,
     }
 )

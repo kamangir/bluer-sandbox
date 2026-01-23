@@ -1,40 +1,13 @@
 from bluer_objects import README
-from bluer_objects.README.consts import assets, assets2
+from bluer_objects.README.consts import assets
 
 items = README.Items(
     [
-        {
-            "name": "parser",
-            "description": "a web radar.",
-            "url": "./bluer_sandbox/docs/parser",
-        },
-        {
-            "name": "green",
-            "description": "☘️ tracking green use.",
-            "url": "./bluer_sandbox/docs/green.md",
-        },
-        {
-            "name": "netcat",
-            "description": "tools to work with netcat.",
-            "url": "./bluer_sandbox/docs/netcat.md",
-        },
-        {
-            "name": "v2ray",
-            "description": "tools to work with [v2ray](https://en.wikipedia.org/wiki/V2Ray).",
-            "marquee": f"{assets2}/v2ray/v2ray.png?raw=true",
-            "url": "./bluer_sandbox/docs/v2ray.md",
-        },
         {
             "name": "arvancloud",
             "description": "tools to work with [arvancloud](https://arvancloud.ir/).",
             "marquee": f"{assets}/arvancloud/arvancloud.png?raw=true",
             "url": "./bluer_sandbox/docs/arvancloud.md",
-        },
-        {
-            "name": "tor",
-            "description": "tools to work with [tor](https://www.torproject.org/).",
-            "marquee": f"{assets}/tor/tor2.png?raw=true",
-            "url": "./bluer_sandbox/docs/tor.md",
         },
         {
             "name": "offline LLM",
