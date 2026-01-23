@@ -1,6 +1,6 @@
 # 🌀 bluer-sandbox
 
-🌀 A sandbox for ideas and experiments.
+🌀 a sandbox for ideas and experiments.
 
 ## installation
 
