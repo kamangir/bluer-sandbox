@@ -2,7 +2,7 @@
 
 function bluer_sandbox_speedtest() {
     local options=$1
-    local do_install=$(bluer_ai_option_int "$options" install 1)
+    local do_install=$(bluer_ai_option_int "$options" install 0)
     local do_dryrun=$(bluer_ai_option_int "$options" dryrun 0)
     local do_ping=$(bluer_ai_option_int "$options" ping 1)
 

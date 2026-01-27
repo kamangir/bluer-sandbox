@@ -5,8 +5,7 @@ from bluer_objects import file, README
 
 from bluer_sandbox import NAME, VERSION, ICON, REPO_NAME
 from bluer_sandbox.help.functions import help_functions
-from bluer_sandbox.README import aliases, bps
-from bluer_sandbox.README.items import items
+from bluer_sandbox.README.docs import docs
 
 
 def build():
@@ -26,31 +25,5 @@ def build():
             ),
             macros=readme.get("macros", {}),
         )
-        for readme in [
-            {
-                "path": "../..",
-                "cols": 3,
-                "items": items,
-            },
-            {
-                "path": "../docs",
-            },
-            {
-                "path": "../../sandbox",
-            },
-        ]
-        + [
-            {
-                "path": f"../docs/{doc}.md",
-            }
-            for doc in [
-                "arvancloud",
-                "offline_llm",
-                "LSTM",
-                "tor",
-                "v2ray",
-            ]
-        ]
-        + aliases.docs
-        + bps.docs
+        for readme in docs
     )

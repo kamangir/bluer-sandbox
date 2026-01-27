@@ -3,6 +3,9 @@
 function bluer_sandbox_notebooks_create() {
     local notebook_name=$(bluer_ai_clarify_input $1 notebook)
 
+    local options=$2
+    local do_open=$(bluer_ai_option_int "$options" open 1)
+
     # for unity with the rest of @notebooks
     [[ "$notebook_name" == *.ipynb ]] && notebook_name="${notebook_name%.ipynb}"
 
@@ -15,5 +18,9 @@ function bluer_sandbox_notebooks_create() {
         cp -v \
             $(python3 -m bluer_sandbox locate)/assets/template.ipynb \
             "$notebook_name.ipynb"
+    fi
+
+    if [[ "$do_open" == 1 ]]; then
+        bluer_ai_code $notebook_name.ipynb
     fi
 }

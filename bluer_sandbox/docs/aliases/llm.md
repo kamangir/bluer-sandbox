@@ -1,33 +1,33 @@
-# aliases: offline-llm
+# aliases: llm
 
 ```bash
-@offline_llm \
+@llm \
 	build \
 	[dryrun]
- . build offline_llm.
-@offline_llm \
+ . build llm.
+@llm \
 	chat \
 	[download_model,tiny,~upload] \
 	[-|<object-name>]
- . chat with offline_llm.
+ . chat with llm.
 @plugin \
 	create_env
  . create env.
-@offline_llm \
+@llm \
 	model \
 	download \
 	[dryrun,overwrite,tiny]
  . download the model.
-@offline_llm \
+@llm \
 	model \
 	get \
 	[filename | object_name | repo_name] \
 	[tiny]
  . get model properties.
-@offline_llm \
+@llm \
 	prompt \
 	[download_model,tiny,upload] \
 	"<prompt>" \
 	[-|<object-name>]
- . "<prompt>" -> offline_llm.
+ . "<prompt>" -> llm.
 ```

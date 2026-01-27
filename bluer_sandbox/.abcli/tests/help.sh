@@ -20,6 +20,15 @@ function test_bluer_sandbox_help() {
         \
         "@interview" \
         \
+        "@llm" \
+        "@llm build" \
+        "@llm chat" \
+        "@llm create_env" \
+        "@llm model" \
+        "@llm model download" \
+        "@llm model get" \
+        "@llm prompt" \
+        \
         "@notebooks" \
         "@notebooks build" \
         "@notebooks code" \
@@ -27,18 +36,6 @@ function test_bluer_sandbox_help() {
         "@notebooks create" \
         "@notebooks host" \
         "@notebooks open" \
-        \
-        "@offline_llm" \
-        "@offline_llm build" \
-        "@offline_llm chat" \
-        "@offline_llm create_env" \
-        "@offline_llm model" \
-        "@offline_llm model download" \
-        "@offline_llm model get" \
-        "@offline_llm prompt" \
-        \
-        "@parser" \
-        "@parser parse" \
         \
         "@sandbox" \
         \
@@ -53,16 +50,6 @@ function test_bluer_sandbox_help() {
         "@sandbox test list" \
         \
         "@speedtest" \
-        \
-        "@tor" \
-        "@tor test" \
-        "@tor start" \
-        \
-        "@v2ray" \
-        "@v2ray import" \
-        "@v2ray install" \
-        "@v2ray test" \
-        "@v2ray start" \
         \
         "@village" \
         "@village analyze" \

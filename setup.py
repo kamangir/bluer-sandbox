@@ -15,7 +15,6 @@ setup(
         f"{NAME}.interview",
         f"{NAME}.offline_llm",
         f"{NAME}.offline_llm.model",
-        f"{NAME}.parser",
         f"{NAME}.raspbian",
         f"{NAME}.village",
     ],

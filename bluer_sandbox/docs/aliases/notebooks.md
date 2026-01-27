@@ -17,7 +17,8 @@ a [bluer Jupyter Notebook](../../assets/template.ipynb).
  . connect to jupyter notebook on ec2:<1-2-3-4>.
 @notebooks \
 	create | touch \
-	<notebook-name> | <path>/<notebook-name> | notebook
+	<notebook-name> | <path>/<notebook-name> | notebook \
+	[~open]
  . create <notebook-name>.
 @notebooks \
 	host \

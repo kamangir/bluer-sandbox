@@ -13,7 +13,7 @@ def help_get(
 
     return show_usage(
         [
-            "@offline_llm",
+            "@llm",
             "model",
             "get",
             f"[{options_what}]",
@@ -32,7 +32,7 @@ def help_download(
 
     return show_usage(
         [
-            "@offline_llm",
+            "@llm",
             "model",
             "download",
             f"[{options}]",
