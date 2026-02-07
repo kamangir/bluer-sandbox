@@ -2,7 +2,7 @@
 
 function test_bluer_sandbox_speedtest() {
     if [[ "$BLUER_AI_WEB_IS_ACCESSIBLE" == 0 ]]; then
-        bluer_ai_log_warning "web is not accessible, test is disabled."
+        bluer_ai_log_warning "web is not accessible, skipping test."
         return
     fi
 
