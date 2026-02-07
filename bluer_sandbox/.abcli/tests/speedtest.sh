@@ -6,6 +6,11 @@ function test_bluer_sandbox_speedtest() {
         return
     fi
 
+    if [[ "$abcli_is_github_workflow" == true ]]; then
+        bluer_ai_log "test is not available on github, skipping."
+        return
+    fi
+
     local options=$1
 
     bluer_ai_eval ,$options \
