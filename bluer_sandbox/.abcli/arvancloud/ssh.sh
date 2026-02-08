@@ -19,7 +19,7 @@ function bluer_sandbox_arvancloud_ssh() {
 
     chmod 400 $pem_filename
 
-    bluer_ai_badge save "🌀"
+    bluer_ai_badge - "🌀"
 
     if [[ "$do_seed" == 1 ]]; then
         bluer_ai_seed arvancloud clipboard
