@@ -8,9 +8,10 @@ from bluer_sandbox.help.functions import help_functions
 from bluer_sandbox.README.docs import docs
 
 
-def build():
+def build(args):
     return all(
         README.build(
+            args=args,
             items=readme.get("items", []),
             cols=readme.get("cols", 3),
             path=os.path.join(file.path(__file__), readme["path"]),
