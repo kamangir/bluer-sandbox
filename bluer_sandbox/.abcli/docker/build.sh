@@ -8,7 +8,7 @@ function bluer_sandbox_docker_build() {
     local no_cache=$(bluer_ai_option_int "$options" no_cache 0)
     local verbose=$(bluer_ai_option_int "$options" verbose 0)
 
-    bluer_ai_badge - "🪄🌠"
+    bluer_ai_badge - "docker ⚙️"
     bluer_ai_log "@docker: build $options ..."
 
     pushd $abcli_path_git >/dev/null
